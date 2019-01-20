@@ -18,8 +18,8 @@ class BaseViewController: UITabBarController {
         return vc
     }()
     
-    private let calendarViewController: UIViewController = {
-        let vc = UIViewController()
+    private let calendarViewController: CalendarViewController = {
+        let vc = CalendarViewController()
         vc.tabBarItem = UITabBarItem(tabBarSystemItem: .topRated, tag: 1)
         return vc
     }()
