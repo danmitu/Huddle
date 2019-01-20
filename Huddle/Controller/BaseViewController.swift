@@ -34,7 +34,9 @@ class BaseViewController: UITabBarController {
     
     init() {
         super.init(nibName: nil, bundle: nil)
-        self.viewControllers = [exploreViewController, calendarViewController, userViewController]
+        self.viewControllers = [exploreViewController, calendarViewController, userViewController].map {
+            return UINavigationController(rootViewController: $0)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
