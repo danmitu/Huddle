@@ -20,8 +20,8 @@ class BaseViewController: UITabBarController {
         return vc
     }()
     
-    private let calendarViewController: UIViewController = {
-        let vc = UIViewController()
+    private let calendarViewController: CalendarViewController = {
+        let vc = CalendarViewController()
         vc.tabBarItem = UITabBarItem(title: "Calendar",
                                      image: DrawCode.imageOfCalendarTabIcon(isSelected: false),
                                      selectedImage: DrawCode.imageOfCalendarTabIcon(isSelected: true))
