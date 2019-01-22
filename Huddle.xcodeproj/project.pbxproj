@@ -14,6 +14,7 @@
 		92758D6021F2D00500E06465 /* ViewPlaceholderFile in Resources */ = {isa = PBXBuildFile; fileRef = 92758D5F21F2D00500E06465 /* ViewPlaceholderFile */; };
 		92758D6221F2D01A00E06465 /* ModelPlaceholderFile in Resources */ = {isa = PBXBuildFile; fileRef = 92758D6121F2D01A00E06465 /* ModelPlaceholderFile */; };
 		92758D6421F2D02F00E06465 /* NetworkingPlaceholderFile in Resources */ = {isa = PBXBuildFile; fileRef = 92758D6321F2D02F00E06465 /* NetworkingPlaceholderFile */; };
+		927D274821F6A967005D949F /* DrawCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927D274721F6A967005D949F /* DrawCode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		92758D5F21F2D00500E06465 /* ViewPlaceholderFile */ = {isa = PBXFileReference; lastKnownFileType = text; path = ViewPlaceholderFile; sourceTree = "<group>"; };
 		92758D6121F2D01A00E06465 /* ModelPlaceholderFile */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelPlaceholderFile; sourceTree = "<group>"; };
 		92758D6321F2D02F00E06465 /* NetworkingPlaceholderFile */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkingPlaceholderFile; sourceTree = "<group>"; };
+		927D274721F6A967005D949F /* DrawCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawCode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				92758D5F21F2D00500E06465 /* ViewPlaceholderFile */,
+				927D274721F6A967005D949F /* DrawCode.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -185,6 +188,7 @@
 			files = (
 				92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */,
 				92758D5E21F2C97A00E06465 /* BaseViewController.swift in Sources */,
+				927D274821F6A967005D949F /* DrawCode.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
