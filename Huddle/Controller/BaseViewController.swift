@@ -6,7 +6,13 @@
 //  Copyright © 2019 Dan Mitu. All rights reserved.
 //
 
+
 import UIKit
+
+extension UIColor {
+    static var selected = UIColor(red: 0.000, green: 0.478, blue: 0.980, alpha: 1.000)
+    static var unselected = UIColor(red: 0.624, green: 0.624, blue: 0.624, alpha: 1.000)
+}
 
 class BaseViewController: UITabBarController {
     
@@ -37,8 +43,9 @@ class BaseViewController: UITabBarController {
     }()
     
     // Colors for tab text. I wish I could put it somewhere else.
-    private let selectedColor = UIColor(red: 0.000, green: 0.478, blue: 0.980, alpha: 1.000)
-    private let unselectedColor = UIColor(red: 0.624, green: 0.624, blue: 0.624, alpha: 1.000)
+    // GA: I moved this to a UIColor Extension.
+//    private let selectedColor = UIColor(red: 0.000, green: 0.478, blue: 0.980, alpha: 1.000)
+//    private let unselectedColor = UIColor(red: 0.624, green: 0.624, blue: 0.624, alpha: 1.000)
     
     // MARK: - Initialization
     
@@ -50,8 +57,8 @@ class BaseViewController: UITabBarController {
             return UINavigationController(rootViewController: $0)
         }
         
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: unselectedColor], for: .normal)
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: selectedColor], for: .selected)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.unselected], for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.selected], for: .selected)
     }
     
     required init?(coder aDecoder: NSCoder) {

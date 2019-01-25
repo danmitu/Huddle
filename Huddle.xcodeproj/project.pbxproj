@@ -18,6 +18,10 @@
 		92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */; };
 		92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */; };
 		92D605BC21F6B3DF006916EE /* DrawCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D605BB21F6B3DF006916EE /* DrawCode.swift */; };
+		E5A689C321F968DE00B9670C /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A689C221F968DE00B9670C /* LoginViewController.swift */; };
+		E5A689C521F989A100B9670C /* MainNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A689C421F989A100B9670C /* MainNavigationController.swift */; };
+		E5A689C721FA906F00B9670C /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A689C621FA906F00B9670C /* RegisterViewController.swift */; };
+		E5A689C921FA92C300B9670C /* RecoverPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5A689C821FA92C300B9670C /* RecoverPasswordViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,6 +38,10 @@
 		92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTableViewCell.swift; sourceTree = "<group>"; };
 		92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPlaceholderView.swift; sourceTree = "<group>"; };
 		92D605BB21F6B3DF006916EE /* DrawCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawCode.swift; sourceTree = "<group>"; };
+		E5A689C221F968DE00B9670C /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		E5A689C421F989A100B9670C /* MainNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainNavigationController.swift; sourceTree = "<group>"; };
+		E5A689C621FA906F00B9670C /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		E5A689C821FA92C300B9670C /* RecoverPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecoverPasswordViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +99,10 @@
 			children = (
 				92758D5D21F2C97A00E06465 /* BaseViewController.swift */,
 				92758D6521F2E82A00E06465 /* CalendarViewController.swift */,
+				E5A689C221F968DE00B9670C /* LoginViewController.swift */,
+				E5A689C421F989A100B9670C /* MainNavigationController.swift */,
+				E5A689C621FA906F00B9670C /* RegisterViewController.swift */,
+				E5A689C821FA92C300B9670C /* RecoverPasswordViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -210,10 +222,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5A689C521F989A100B9670C /* MainNavigationController.swift in Sources */,
+				E5A689C721FA906F00B9670C /* RegisterViewController.swift in Sources */,
 				92758D6621F2E82A00E06465 /* CalendarViewController.swift in Sources */,
 				92D605BC21F6B3DF006916EE /* DrawCode.swift in Sources */,
 				92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */,
+				E5A689C921FA92C300B9670C /* RecoverPasswordViewController.swift in Sources */,
 				92758D5E21F2C97A00E06465 /* BaseViewController.swift in Sources */,
+				E5A689C321F968DE00B9670C /* LoginViewController.swift in Sources */,
 				92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */,
 				92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */,
 				92758D6821F2E8B800E06465 /* EventView.swift in Sources */,
