@@ -74,9 +74,6 @@ class RegisterViewController: UIViewController {
             }
         }
         if (isPasswordConfirmed) {
-            let rootViewController = UIApplication.shared.keyWindow?.rootViewController
-            guard let mainNavigationController = rootViewController as? MainNavigationController else { return }
-            mainNavigationController.viewControllers = [LoginViewController()]
             dismiss(animated: true, completion: nil)
         }
     }

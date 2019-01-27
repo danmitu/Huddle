@@ -70,4 +70,13 @@ class BaseViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        let isLoggedIn = false
+        if !isLoggedIn {
+            let loginViewController = LoginViewController()
+            present(loginViewController, animated: false)
+        }
+    }
 }

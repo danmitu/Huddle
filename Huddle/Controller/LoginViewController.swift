@@ -87,9 +87,6 @@ class LoginViewController: UIViewController {
             isValidCredentials = true
         }
         if (isValidCredentials) {
-            let rootViewController = UIApplication.shared.keyWindow?.rootViewController
-            guard let mainNavigationController = rootViewController as? MainNavigationController else { return }
-            mainNavigationController.viewControllers = [BaseViewController()]
             dismiss(animated: true, completion: nil)
         }
     }
