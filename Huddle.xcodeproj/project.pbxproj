@@ -12,11 +12,20 @@
 		92758D5021F2C63B00E06465 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92758D4E21F2C63B00E06465 /* LaunchScreen.storyboard */; };
 		92758D5E21F2C97A00E06465 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D5D21F2C97A00E06465 /* BaseViewController.swift */; };
 		92758D6221F2D01A00E06465 /* ModelPlaceholderFile in Resources */ = {isa = PBXBuildFile; fileRef = 92758D6121F2D01A00E06465 /* ModelPlaceholderFile */; };
-		92758D6421F2D02F00E06465 /* NetworkingPlaceholderFile in Resources */ = {isa = PBXBuildFile; fileRef = 92758D6321F2D02F00E06465 /* NetworkingPlaceholderFile */; };
 		92758D6621F2E82A00E06465 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D6521F2E82A00E06465 /* CalendarViewController.swift */; };
 		92758D6821F2E8B800E06465 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D6721F2E8B800E06465 /* EventView.swift */; };
 		92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */; };
 		92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */; };
+		92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC32E21F6E33100BE4FEE /* EndPointType.swift */; };
+		92BFC33121F6E38D00BE4FEE /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33021F6E38D00BE4FEE /* HTTPMethod.swift */; };
+		92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33221F6E3D600BE4FEE /* HTTPTask.swift */; };
+		92BFC33621F6E4C300BE4FEE /* ParameterEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33521F6E4C300BE4FEE /* ParameterEncoding.swift */; };
+		92BFC33821F6E58500BE4FEE /* URLParameterEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33721F6E58500BE4FEE /* URLParameterEncoder.swift */; };
+		92BFC33A21F6E82800BE4FEE /* JSONParameterEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33921F6E82800BE4FEE /* JSONParameterEncoder.swift */; };
+		92BFC33E21F6EA4D00BE4FEE /* Router.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33D21F6EA4D00BE4FEE /* Router.swift */; };
+		92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC34021F6ED7B00BE4FEE /* NetworkLogger.swift */; };
+		92BFC34421F6EDB400BE4FEE /* NetworkEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC34321F6EDB400BE4FEE /* NetworkEnvironment.swift */; };
+		92BFC34621F6EFDA00BE4FEE /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC34521F6EFDA00BE4FEE /* NetworkManager.swift */; };
 		92D605BC21F6B3DF006916EE /* DrawCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D605BB21F6B3DF006916EE /* DrawCode.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,11 +37,20 @@
 		92758D5121F2C63B00E06465 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		92758D5D21F2C97A00E06465 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		92758D6121F2D01A00E06465 /* ModelPlaceholderFile */ = {isa = PBXFileReference; lastKnownFileType = text; path = ModelPlaceholderFile; sourceTree = "<group>"; };
-		92758D6321F2D02F00E06465 /* NetworkingPlaceholderFile */ = {isa = PBXFileReference; lastKnownFileType = text; path = NetworkingPlaceholderFile; sourceTree = "<group>"; };
 		92758D6521F2E82A00E06465 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		92758D6721F2E8B800E06465 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTableViewCell.swift; sourceTree = "<group>"; };
 		92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPlaceholderView.swift; sourceTree = "<group>"; };
+		92BFC32E21F6E33100BE4FEE /* EndPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };
+		92BFC33021F6E38D00BE4FEE /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
+		92BFC33221F6E3D600BE4FEE /* HTTPTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTask.swift; sourceTree = "<group>"; };
+		92BFC33521F6E4C300BE4FEE /* ParameterEncoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParameterEncoding.swift; sourceTree = "<group>"; };
+		92BFC33721F6E58500BE4FEE /* URLParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLParameterEncoder.swift; sourceTree = "<group>"; };
+		92BFC33921F6E82800BE4FEE /* JSONParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONParameterEncoder.swift; sourceTree = "<group>"; };
+		92BFC33D21F6EA4D00BE4FEE /* Router.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Router.swift; sourceTree = "<group>"; };
+		92BFC34021F6ED7B00BE4FEE /* NetworkLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkLogger.swift; sourceTree = "<group>"; };
+		92BFC34321F6EDB400BE4FEE /* NetworkEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkEnvironment.swift; sourceTree = "<group>"; };
+		92BFC34521F6EFDA00BE4FEE /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		92D605BB21F6B3DF006916EE /* DrawCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawCode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -117,7 +135,10 @@
 		92758D5C21F2C96200E06465 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				92758D6321F2D02F00E06465 /* NetworkingPlaceholderFile */,
+				92BFC34221F6ED9100BE4FEE /* EndPoint */,
+				92BFC33F21F6ED6E00BE4FEE /* Manager */,
+				92BFC33421F6E4AD00BE4FEE /* Encoding */,
+				92BFC32D21F6E31E00BE4FEE /* Service */,
 			);
 			path = Networking;
 			sourceTree = "<group>";
@@ -136,6 +157,44 @@
 				92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */,
 			);
 			path = Placeholders;
+			sourceTree = "<group>";
+		};
+		92BFC32D21F6E31E00BE4FEE /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				92BFC32E21F6E33100BE4FEE /* EndPointType.swift */,
+				92BFC33D21F6EA4D00BE4FEE /* Router.swift */,
+				92BFC33021F6E38D00BE4FEE /* HTTPMethod.swift */,
+				92BFC33221F6E3D600BE4FEE /* HTTPTask.swift */,
+				92BFC34021F6ED7B00BE4FEE /* NetworkLogger.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		92BFC33421F6E4AD00BE4FEE /* Encoding */ = {
+			isa = PBXGroup;
+			children = (
+				92BFC33521F6E4C300BE4FEE /* ParameterEncoding.swift */,
+				92BFC33721F6E58500BE4FEE /* URLParameterEncoder.swift */,
+				92BFC33921F6E82800BE4FEE /* JSONParameterEncoder.swift */,
+			);
+			path = Encoding;
+			sourceTree = "<group>";
+		};
+		92BFC33F21F6ED6E00BE4FEE /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				92BFC34521F6EFDA00BE4FEE /* NetworkManager.swift */,
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		92BFC34221F6ED9100BE4FEE /* EndPoint */ = {
+			isa = PBXGroup;
+			children = (
+				92BFC34321F6EDB400BE4FEE /* NetworkEnvironment.swift */,
+			);
+			path = EndPoint;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,7 +256,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				92758D6221F2D01A00E06465 /* ModelPlaceholderFile in Resources */,
-				92758D6421F2D02F00E06465 /* NetworkingPlaceholderFile in Resources */,
 				92758D5021F2C63B00E06465 /* LaunchScreen.storyboard in Resources */,
 				92758D4D21F2C63B00E06465 /* Assets.xcassets in Resources */,
 			);
@@ -210,10 +268,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
+				92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */,
+				92BFC34421F6EDB400BE4FEE /* NetworkEnvironment.swift in Sources */,
 				92758D6621F2E82A00E06465 /* CalendarViewController.swift in Sources */,
 				92D605BC21F6B3DF006916EE /* DrawCode.swift in Sources */,
 				92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */,
+				92BFC33A21F6E82800BE4FEE /* JSONParameterEncoder.swift in Sources */,
 				92758D5E21F2C97A00E06465 /* BaseViewController.swift in Sources */,
+				92BFC33621F6E4C300BE4FEE /* ParameterEncoding.swift in Sources */,
+				92BFC33E21F6EA4D00BE4FEE /* Router.swift in Sources */,
+				92BFC34621F6EFDA00BE4FEE /* NetworkManager.swift in Sources */,
+				92BFC33121F6E38D00BE4FEE /* HTTPMethod.swift in Sources */,
+				92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */,
+				92BFC33821F6E58500BE4FEE /* URLParameterEncoder.swift in Sources */,
 				92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */,
 				92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */,
 				92758D6821F2E8B800E06465 /* EventView.swift in Sources */,
