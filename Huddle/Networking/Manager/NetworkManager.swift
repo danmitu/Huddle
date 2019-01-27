@@ -29,7 +29,7 @@ struct NetworkManager {
 
     static let environment : NetworkEnvironment = .production
     static let MovieAPIKey = ""
-    let router = Router<HuddleApi>()
+//    let router = Router<HuddleApi>()
     
     fileprivate func handleNetworkResponse(_ response: HTTPURLResponse) -> Result<String>{
         switch response.statusCode {
