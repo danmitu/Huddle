@@ -15,3 +15,38 @@ enum NetworkEnvironment {
     case production
     case staging
 }
+
+enum HuddleApi {
+    case login(email: String, password: String)
+}
+
+extension HuddleApi: EndPointType {
+    
+    var baseURL: URL {
+        return URL(string: "http://debug1-env.m7bhnnyn8p.us-west-2.elasticbeanstalk.com/")!
+    }
+    
+    var path: String {
+        switch self {
+        case .login: return "members/login"
+        }
+        
+    }
+    
+    var httpMethod: HTTPMethod {
+        switch self {
+        case .login: return .get
+        }
+    }
+    
+    var task: HTTPTask {
+        switch self {
+        case .login(email: let email, password: let password):
+            return .requestParameters(bodyParameters: nil,
+                                      bodyEncoding: .urlEncoding,
+                                      urlParameters: ["email":email, "password":password])
+        }
+    }
+
+}
+

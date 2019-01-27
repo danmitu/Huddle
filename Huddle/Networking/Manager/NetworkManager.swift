@@ -29,7 +29,24 @@ struct NetworkManager {
 
     static let environment : NetworkEnvironment = .production
     static let MovieAPIKey = ""
-//    let router = Router<HuddleApi>()
+    let router = Router<HuddleApi>()
+    
+    func login(email: String, password: String, completion: @escaping (_ error: String?)->()) {
+        router.request(.login(email: email, password: password)) { data, response, error in
+            guard error == nil else {
+                completion("Please check your network connection.")
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let networkFailureError):
+                completion(networkFailureError)
+            }
+        }
+    }
     
     fileprivate func handleNetworkResponse(_ response: HTTPURLResponse) -> Result<String>{
         switch response.statusCode {
