@@ -73,8 +73,7 @@ class BaseViewController: UITabBarController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        let isLoggedIn = false
-        if !isLoggedIn {
+        if !UserDefaults.standard.isLoggedIn {
             let loginViewController = LoginViewController()
             present(loginViewController, animated: false)
         }

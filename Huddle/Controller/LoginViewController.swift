@@ -12,6 +12,8 @@ class LoginViewController: UIViewController {
     
     // MARK: - Properties
     
+    private let networkManager = NetworkManager()
+    
     private let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
@@ -82,12 +84,21 @@ class LoginViewController: UIViewController {
     }
     
     @objc func attemptLogin(sender: UIButton) {
-        var isValidCredentials: Bool = false
-        if (emailTextField.text == "test" && passwordTextField.text == "123") {
-            isValidCredentials = true
-        }
-        if (isValidCredentials) {
-            dismiss(animated: true, completion: nil)
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        
+        networkManager.login(email: email, password: password) { error in
+            guard error == nil else {
+                print(error!) // TODO: Alert??
+                UserDefaults.standard.isLoggedIn = false
+                return
+            }
+            
+            UserDefaults.standard.isLoggedIn = true
+            
+            DispatchQueue.main.async {
+                self.dismiss(animated: true, completion: nil)
+            }
+            
         }
     }
     
