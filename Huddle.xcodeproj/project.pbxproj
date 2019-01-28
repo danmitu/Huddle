@@ -10,6 +10,9 @@
 		9238827521FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827221FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift */; };
 		9238827621FE929E00F3AD29 /* ConfirmationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827321FE929E00F3AD29 /* ConfirmationPresenter.swift */; };
 		9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827421FE929E00F3AD29 /* OkPresenter.swift */; };
+		9238827921FE96B500F3AD29 /* UIColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827821FE96B500F3AD29 /* UIColorExtension.swift */; };
+		9238827B21FE9B0100F3AD29 /* FilledButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827A21FE9B0100F3AD29 /* FilledButton.swift */; };
+		9238827D21FEA1C800F3AD29 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827C21FEA1C800F3AD29 /* Utility.swift */; };
 		92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D4521F2C63A00E06465 /* AppDelegate.swift */; };
 		92758D4D21F2C63B00E06465 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92758D4C21F2C63B00E06465 /* Assets.xcassets */; };
 		92758D5021F2C63B00E06465 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 92758D4E21F2C63B00E06465 /* LaunchScreen.storyboard */; };
@@ -41,6 +44,9 @@
 		9238827221FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestructiveConfirmationPresenter.swift; sourceTree = "<group>"; };
 		9238827321FE929E00F3AD29 /* ConfirmationPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfirmationPresenter.swift; sourceTree = "<group>"; };
 		9238827421FE929E00F3AD29 /* OkPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OkPresenter.swift; sourceTree = "<group>"; };
+		9238827821FE96B500F3AD29 /* UIColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColorExtension.swift; sourceTree = "<group>"; };
+		9238827A21FE9B0100F3AD29 /* FilledButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilledButton.swift; sourceTree = "<group>"; };
+		9238827C21FEA1C800F3AD29 /* Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		92758D4221F2C63A00E06465 /* Huddle.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Huddle.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92758D4521F2C63A00E06465 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		92758D4C21F2C63B00E06465 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -127,6 +133,7 @@
 				92758D4E21F2C63B00E06465 /* LaunchScreen.storyboard */,
 				92758D4521F2C63A00E06465 /* AppDelegate.swift */,
 				92BCA3E321FE8548003DB8A5 /* UserDefaultsExtension.swift */,
+				9238827C21FEA1C800F3AD29 /* Utility.swift */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -155,9 +162,11 @@
 		92758D5B21F2C94500E06465 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				9238827821FE96B500F3AD29 /* UIColorExtension.swift */,
 				92D605BB21F6B3DF006916EE /* DrawCode.swift */,
 				92BCA40521FE90E8003DB8A5 /* PleaseWaitView.swift */,
 				92758D6721F2E8B800E06465 /* EventView.swift */,
+				9238827A21FE9B0100F3AD29 /* FilledButton.swift */,
 				92758D8A21F2F8B300E06465 /* Placeholders */,
 				92758D8721F2F52200E06465 /* TableViewCells */,
 			);
@@ -300,6 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9238827D21FEA1C800F3AD29 /* Utility.swift in Sources */,
 				9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */,
 				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
 				92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */,
@@ -311,6 +321,7 @@
 				92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */,
 				92BCA40621FE90E8003DB8A5 /* PleaseWaitView.swift in Sources */,
 				92BFC33A21F6E82800BE4FEE /* JSONParameterEncoder.swift in Sources */,
+				9238827B21FE9B0100F3AD29 /* FilledButton.swift in Sources */,
 				92BFC33621F6E4C300BE4FEE /* ParameterEncoding.swift in Sources */,
 				92BFC33E21F6EA4D00BE4FEE /* Router.swift in Sources */,
 				92D9A1B621FD6D0400B3E499 /* RegisterViewController.swift in Sources */,
@@ -319,6 +330,7 @@
 				9238827621FE929E00F3AD29 /* ConfirmationPresenter.swift in Sources */,
 				92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */,
 				92BFC33821F6E58500BE4FEE /* URLParameterEncoder.swift in Sources */,
+				9238827921FE96B500F3AD29 /* UIColorExtension.swift in Sources */,
 				92D9A1B421FD6D0400B3E499 /* LoginViewController.swift in Sources */,
 				92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */,
 				92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */,

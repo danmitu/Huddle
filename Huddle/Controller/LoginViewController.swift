@@ -32,12 +32,18 @@ class LoginViewController: UIViewController {
         return textField
     }()
     
-    private let loginButton: UIButton = {
-        let button = UIButton()
+    private let loginButton: FilledButton = {
+        let button = FilledButton()
         button.setTitle("Login", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.white, for: .highlighted)
         button.addTarget(self, action: #selector(attemptLogin), for: .touchUpInside)
+        button.backgroundColor = UIColor.preferredTeal
+        button.normalBackgroundColor = UIColor.preferredTeal
+        button.disabledBackgroundColor = UIColor.disabledGrey
+        button.highlightedBackgroundColor = UIColor.preferredTealHighlighted
+        button.isEnabled = false
+        button.layer.cornerRadius = 5
         return button
     }()
     
@@ -69,6 +75,13 @@ class LoginViewController: UIViewController {
         return stack
     }()
     
+    var fieldsAreValid: Bool {
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return false }
+        guard isValidEmail(testStr: email) else { return false }
+        guard password.count > 0 else { return false }
+        return true
+    }
+    
     @objc func showRegisterController() {
         let registerController = RegisterViewController()
         present(registerController, animated: true, completion: {
@@ -84,11 +97,9 @@ class LoginViewController: UIViewController {
     }
     
     @objc func attemptLogin(sender: UIButton) {
-        guard let email = emailTextField.text, let password = passwordTextField.text else {
-            return
-        }
+        guard fieldsAreValid else { return }
         
-        networkManager.login(email: email, password: password) { error in
+        networkManager.login(email: emailTextField.text!, password: passwordTextField.text!) { error in
             guard error == nil else {
                 DispatchQueue.main.async {
                     OkPresenter(title: "Login Failed",
@@ -115,6 +126,10 @@ class LoginViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.view.backgroundColor = .white
         
+        [emailTextField, passwordTextField].forEach {
+            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        }
+        
         loginItems.addArrangedSubview(emailTextField)
         loginItems.addArrangedSubview(passwordTextField)
         loginItems.addArrangedSubview(loginButton)
@@ -122,11 +137,11 @@ class LoginViewController: UIViewController {
         loginItems.addArrangedSubview(recoverButton)
         self.view.addSubview(loginItems)
         
-        
         NSLayoutConstraint.activate([
             loginItems.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
             emailTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             passwordTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
+            loginButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginItems.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
             loginItems.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
             ])
@@ -136,9 +151,10 @@ class LoginViewController: UIViewController {
         fatalError("init(coder:) not supported")
     }
     
-    // MARK: - View Lifecycle
+    // MARK: - Methods
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    @objc func textFieldDidChange() {
+        loginButton.isEnabled = fieldsAreValid
     }
+    
 }
