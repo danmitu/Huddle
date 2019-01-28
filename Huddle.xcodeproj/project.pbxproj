@@ -14,6 +14,7 @@
 		92758D6821F2E8B800E06465 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D6721F2E8B800E06465 /* EventView.swift */; };
 		92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */; };
 		92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */; };
+		92BCA3E421FE8548003DB8A5 /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BCA3E321FE8548003DB8A5 /* UserDefaultsExtension.swift */; };
 		92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC32E21F6E33100BE4FEE /* EndPointType.swift */; };
 		92BFC33121F6E38D00BE4FEE /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33021F6E38D00BE4FEE /* HTTPMethod.swift */; };
 		92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC33221F6E3D600BE4FEE /* HTTPTask.swift */; };
@@ -42,6 +43,7 @@
 		92758D6721F2E8B800E06465 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTableViewCell.swift; sourceTree = "<group>"; };
 		92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPlaceholderView.swift; sourceTree = "<group>"; };
+		92BCA3E321FE8548003DB8A5 /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
 		92BFC32E21F6E33100BE4FEE /* EndPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };
 		92BFC33021F6E38D00BE4FEE /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
 		92BFC33221F6E3D600BE4FEE /* HTTPTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPTask.swift; sourceTree = "<group>"; };
@@ -106,6 +108,7 @@
 				92758D5121F2C63B00E06465 /* Info.plist */,
 				92758D4E21F2C63B00E06465 /* LaunchScreen.storyboard */,
 				92758D4521F2C63A00E06465 /* AppDelegate.swift */,
+				92BCA3E321FE8548003DB8A5 /* UserDefaultsExtension.swift */,
 			);
 			path = Application;
 			sourceTree = "<group>";
@@ -296,6 +299,7 @@
 				92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */,
 				92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */,
 				92D9A1B821FD6D0400B3E499 /* RecoverPasswordViewController.swift in Sources */,
+				92BCA3E421FE8548003DB8A5 /* UserDefaultsExtension.swift in Sources */,
 				92758D6821F2E8B800E06465 /* EventView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
