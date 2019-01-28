@@ -84,11 +84,18 @@ class LoginViewController: UIViewController {
     }
     
     @objc func attemptLogin(sender: UIButton) {
-        guard let email = emailTextField.text, let password = passwordTextField.text else { return }
+        guard let email = emailTextField.text, let password = passwordTextField.text else {
+            return
+        }
         
         networkManager.login(email: email, password: password) { error in
             guard error == nil else {
-                print(error!) // TODO: Alert??
+                DispatchQueue.main.async {
+                    OkPresenter(title: "Login Failed",
+                                message: "\(error!)",
+                                handler: {}
+                        ).present(in: self)
+                }
                 UserDefaults.standard.isLoggedIn = false
                 return
             }
