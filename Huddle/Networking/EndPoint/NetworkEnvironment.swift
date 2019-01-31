@@ -18,6 +18,8 @@ enum NetworkEnvironment {
 
 enum HuddleApi {
     case login(email: String, password: String)
+    case create(email: String, password: String, fullName: String)
+    case update(email: String, password: String)
 }
 
 extension HuddleApi: EndPointType {
@@ -29,6 +31,8 @@ extension HuddleApi: EndPointType {
     var path: String {
         switch self {
         case .login: return "members/login"
+        case .create: return "members/create"
+        case .update: return "members/update"
         }
         
     }
@@ -36,6 +40,8 @@ extension HuddleApi: EndPointType {
     var httpMethod: HTTPMethod {
         switch self {
         case .login: return .get
+        case .create: return .post
+        case .update: return .put
         }
     }
     
@@ -45,6 +51,14 @@ extension HuddleApi: EndPointType {
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["email":email, "password":password])
+        case .create(email: let email, password: let password, fullName: let fullName):
+            return .requestParameters(bodyParameters: ["email": email, "password":password, "name":fullName],
+                                      bodyEncoding: .jsonEncoding,
+                                      urlParameters: nil)
+        case .update(email: let email, password: let password):
+            return .requestParameters(bodyParameters: ["email": email, "password":password],
+                                      bodyEncoding: .jsonEncoding,
+                                      urlParameters: nil)
         }
     }
 

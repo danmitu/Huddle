@@ -48,6 +48,41 @@ struct NetworkManager {
         }
     }
     
+    
+    func create(email: String, password: String, fullName: String,  completion: @escaping (_ error: String?)->()) {
+        router.request(.create(email: email, password: password, fullName: fullName)) { data, response, error in
+            guard error == nil else {
+                completion("Please check your network connection.")
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let networkFailureError):
+                completion(networkFailureError)
+            }
+        }
+    }
+    
+    func update(email: String, password: String, completion: @escaping (_ error: String?)->()) {
+        router.request(.update(email: email, password: password)) { data, response, error in
+            guard error == nil else {
+                completion("Please check your network connection.")
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let networkFailureError):
+                completion(networkFailureError)
+            }
+        }
+    }
+    
     fileprivate func handleNetworkResponse(_ response: HTTPURLResponse) -> Result<String>{
         switch response.statusCode {
         case 200...299: return .success
