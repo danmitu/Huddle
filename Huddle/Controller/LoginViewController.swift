@@ -47,12 +47,18 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private let createAccountButton: UIButton = {
-        let button = UIButton()
+    private let createAccountButton: FilledButton = {
+        let button = FilledButton()
         button.setTitle("Create New Account", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.white, for: .highlighted)
         button.addTarget(self, action: #selector(showRegisterController), for: .touchUpInside)
+        button.backgroundColor = UIColor.preferredTeal
+        button.normalBackgroundColor = UIColor.preferredTeal
+        button.disabledBackgroundColor = UIColor.disabledGrey
+        button.highlightedBackgroundColor = UIColor.preferredTealHighlighted
+        button.isEnabled = true
+        button.layer.cornerRadius = 5
         return button
     }()
     
@@ -90,7 +96,7 @@ class LoginViewController: UIViewController {
     }
     
     @objc func showRecoverController() {
-        let recoverController = RecoverPasswordViewController()
+        let recoverController = ResetPasswordViewController()
         present(recoverController, animated: true, completion: {
             //perhaps we'll do something here later
         })
@@ -134,7 +140,9 @@ class LoginViewController: UIViewController {
         loginItems.addArrangedSubview(passwordTextField)
         loginItems.addArrangedSubview(loginButton)
         loginItems.addArrangedSubview(createAccountButton)
-        loginItems.addArrangedSubview(recoverButton)
+        // Slack discussion on Jan 30th...
+        // We are removing the recover password option for now!
+//        loginItems.addArrangedSubview(recoverButton)
         self.view.addSubview(loginItems)
         
         NSLayoutConstraint.activate([
@@ -142,6 +150,7 @@ class LoginViewController: UIViewController {
             emailTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             passwordTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
+            createAccountButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginItems.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
             loginItems.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
             ])
