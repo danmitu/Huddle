@@ -62,12 +62,19 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private let recoverButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Recover Password", for: .normal)
-        button.setTitleColor(.blue, for: .normal)
-        button.setTitleColor(.gray, for: .highlighted)
-        button.addTarget(self, action: #selector(showRecoverController), for: .touchUpInside)
+    private let resetButton: UIButton = {
+        
+        let button = FilledButton()
+        button.setTitle("Reset Password", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.white, for: .highlighted)
+        button.addTarget(self, action: #selector(showResetController), for: .touchUpInside)
+        button.backgroundColor = UIColor.preferredTeal
+        button.normalBackgroundColor = UIColor.preferredTeal
+        button.disabledBackgroundColor = UIColor.disabledGrey
+        button.highlightedBackgroundColor = UIColor.preferredTealHighlighted
+        button.isEnabled = true
+        button.layer.cornerRadius = 5
         return button
     }()
     
@@ -95,7 +102,7 @@ class LoginViewController: UIViewController {
         })
     }
     
-    @objc func showRecoverController() {
+    @objc func showResetController() {
         let recoverController = ResetPasswordViewController()
         present(recoverController, animated: true, completion: {
             //perhaps we'll do something here later
@@ -142,7 +149,7 @@ class LoginViewController: UIViewController {
         loginItems.addArrangedSubview(createAccountButton)
         // Slack discussion on Jan 30th...
         // We are removing the recover password option for now!
-//        loginItems.addArrangedSubview(recoverButton)
+//        loginItems.addArrangedSubview(resetButton)
         self.view.addSubview(loginItems)
         
         NSLayoutConstraint.activate([
@@ -151,6 +158,9 @@ class LoginViewController: UIViewController {
             passwordTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             createAccountButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
+            // Slack discussion on Jan 30th...
+            // We are removing the recover password option for now!
+//            resetButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginItems.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
             loginItems.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
             ])
