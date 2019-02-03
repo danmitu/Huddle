@@ -10,22 +10,21 @@ import UIKit
 
 class CalendarViewController: UITableViewController {
     
-    // Temporary Test Data
+    // TODO: delete me
     private var eventData = [
         Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Date(), location: "Ferry Point Park"),
         Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!, location: "Ferry Point Park"),
         Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 2, to: Date())!, location: "Ferry Point Park")
     ]
     
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(CalendarTableViewCell.self, forCellReuseIdentifier: "CalendarTableViewCell")
     }
     
-    // MARK: - Table view data source
-    // Do we need this since the default is 1?
-//    override func numberOfSections(in tableView: UITableView) -> Int { return 1 }
+    // MARK: - Table View Datasource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return eventData.count
@@ -42,8 +41,7 @@ class CalendarViewController: UITableViewController {
     
 }
 
-// MARK: - Temporary
-
+// TODO: delete me
 fileprivate struct Event {
     let name: String
     let groupName: String

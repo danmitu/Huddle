@@ -29,8 +29,8 @@ class BaseViewController: UITabBarController {
         return vc
     }()
     
-    private let userViewController: UIViewController = {
-        let vc = UIViewController()
+    private let profileViewController: ProfileViewController = {
+        let vc = ProfileViewController(style: .grouped)
         vc.tabBarItem = UITabBarItem(title: "Profile",
                                      image: DrawCode.imageOfUserTabIcon(isSelected: false),
                                      selectedImage: DrawCode.imageOfUserTabIcon(isSelected: true))
@@ -43,7 +43,7 @@ class BaseViewController: UITabBarController {
         super.init(nibName: nil, bundle: nil)
         
         // set the order for the view controllers, but wrap them in a navigation controller
-        self.viewControllers = [exploreViewController, calendarViewController, userViewController].map {
+        self.viewControllers = [exploreViewController, calendarViewController, profileViewController].map {
             return UINavigationController(rootViewController: $0)
         }
         

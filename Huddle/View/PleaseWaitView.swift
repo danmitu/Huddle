@@ -11,28 +11,32 @@ import UIKit
 /// Blocks the screen with semi-transparently and shows a spinning activity indicator.
 class PleaseWaitView: UIView {
     
+    // MARK: - Initialization
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        addSubview(activityIndicator)
+        addSubview(activityIndicatorView)
         NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor),
-            activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor)
+            activityIndicatorView.centerXAnchor.constraint(equalTo: self.centerXAnchor),
+            activityIndicatorView.centerYAnchor.constraint(equalTo: self.centerYAnchor)
             ])
         
         // make the background black and halfway transparent
         self.backgroundColor = UIColor(red: 0.000, green: 0.000, blue: 0.000, alpha: 0.5)
-        activityIndicator.startAnimating()
+        activityIndicatorView.startAnimating()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) is not supported.")
     }
     
-    let activityIndicator: UIActivityIndicatorView = {
-        let v = UIActivityIndicatorView(style: .whiteLarge)
-        v.translatesAutoresizingMaskIntoConstraints = false
-        return v
+    // MARK: - Subviews
+    
+    let activityIndicatorView: UIActivityIndicatorView = {
+        let view = UIActivityIndicatorView(style: .whiteLarge)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
 }

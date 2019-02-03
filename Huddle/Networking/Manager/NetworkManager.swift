@@ -27,9 +27,13 @@ enum Result<String>{
 
 struct NetworkManager {
 
+    // MARK: - Properties
+    
     static let environment : NetworkEnvironment = .production
-    static let MovieAPIKey = ""
+
     let router = Router<HuddleApi>()
+    
+    // MARK: - Methods
     
     func login(email: String, password: String, completion: @escaping (_ error: String?)->()) {
         router.request(.login(email: email, password: password)) { data, response, error in
@@ -47,8 +51,7 @@ struct NetworkManager {
             }
         }
     }
-    
-    
+        
     func create(email: String, password: String, fullName: String,  completion: @escaping (_ error: String?)->()) {
         router.request(.create(email: email, password: password, fullName: fullName)) { data, response, error in
             guard error == nil else {

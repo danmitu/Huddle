@@ -12,32 +12,36 @@ import UIKit
 // Has three lines (in order): group name, event name, date at location.
 class EventView: UIStackView {
 
+    // MARK: - Initialization
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.axis = .vertical
-        addArrangedSubview(groupName)
-        addArrangedSubview(eventName)
-        addArrangedSubview(locationAndDate)
+        addArrangedSubview(groupNameLabel)
+        addArrangedSubview(eventNameLabel)
+        addArrangedSubview(locationAndDateLabel)
     }
     
     required init(coder: NSCoder) {
         fatalError("init(coder:) is not supported")
     }
     
-    private let groupName: UILabel = {
+    // MARK: - Subviews
+    
+    private let groupNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = .lightGray
         label.font = UIFont(name: "Avenir-Black", size: 12)
         return label
     }()
     
-    private let eventName: UILabel = {
+    private let eventNameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
         return label
     }()
     
-    private let locationAndDate: UILabel = {
+    private let locationAndDateLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "HelveticaNeue-Thin", size: 18)
         return label
@@ -61,9 +65,9 @@ class EventView: UIStackView {
             dateString = dateFormatter.string(from: date)
         }
         
-        locationAndDate.text = "\(dateString) at \(location)"
-        self.groupName.text = groupName.uppercased()
-        self.eventName.text = eventName
+        locationAndDateLabel.text = "\(dateString) at \(location)"
+        self.groupNameLabel.text = groupName.uppercased()
+        self.eventNameLabel.text = eventName
     }
 
 }

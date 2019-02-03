@@ -14,6 +14,15 @@ class LoginViewController: UIViewController {
     
     private let networkManager = NetworkManager()
     
+    var fieldsAreValid: Bool {
+        guard let email = emailTextField.text, let password = passwordTextField.text else { return false }
+        guard isValidEmail(testStr: email) else { return false }
+        guard password.count > 0 else { return false }
+        return true
+    }
+    
+    // MARK: - Subviews
+    
     private let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
@@ -63,7 +72,6 @@ class LoginViewController: UIViewController {
     }()
     
     private let resetButton: UIButton = {
-        
         let button = FilledButton()
         button.setTitle("Reset Password", for: .normal)
         button.setTitleColor(.white, for: .normal)
@@ -78,7 +86,7 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private let loginItems: UIStackView = {
+    private let loginItemsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -88,11 +96,47 @@ class LoginViewController: UIViewController {
         return stack
     }()
     
-    var fieldsAreValid: Bool {
-        guard let email = emailTextField.text, let password = passwordTextField.text else { return false }
-        guard isValidEmail(testStr: email) else { return false }
-        guard password.count > 0 else { return false }
-        return true
+    // MARK: - Initialization
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        self.view.backgroundColor = .white
+        
+        [emailTextField, passwordTextField].forEach {
+            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        }
+        
+        loginItemsStackView.addArrangedSubview(emailTextField)
+        loginItemsStackView.addArrangedSubview(passwordTextField)
+        loginItemsStackView.addArrangedSubview(loginButton)
+        loginItemsStackView.addArrangedSubview(createAccountButton)
+        // Slack discussion on Jan 30th...
+        // We are removing the recover password option for now!
+//        loginItems.addArrangedSubview(resetButton)
+        self.view.addSubview(loginItemsStackView)
+        
+        NSLayoutConstraint.activate([
+            loginItemsStackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
+            emailTextField.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
+            passwordTextField.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
+            loginButton.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
+            createAccountButton.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
+            // Slack discussion on Jan 30th...
+            // We are removing the recover password option for now!
+//            resetButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
+            loginItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
+            loginItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            ])
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) not supported")
+    }
+    
+    // MARK: - Methods
+    
+    @objc func textFieldDidChange() {
+        loginButton.isEnabled = fieldsAreValid
     }
     
     @objc func showRegisterController() {
@@ -117,7 +161,7 @@ class LoginViewController: UIViewController {
                 DispatchQueue.main.async {
                     OkPresenter(title: "Login Failed",
                                 message: "\(error!)",
-                                handler: {}
+                        handler: {}
                         ).present(in: self)
                 }
                 UserDefaults.standard.isLoggedIn = false
@@ -131,49 +175,6 @@ class LoginViewController: UIViewController {
             }
             
         }
-    }
-    
-    // MARK: - Initialization
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = .white
-        
-        [emailTextField, passwordTextField].forEach {
-            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        }
-        
-        loginItems.addArrangedSubview(emailTextField)
-        loginItems.addArrangedSubview(passwordTextField)
-        loginItems.addArrangedSubview(loginButton)
-        loginItems.addArrangedSubview(createAccountButton)
-        // Slack discussion on Jan 30th...
-        // We are removing the recover password option for now!
-//        loginItems.addArrangedSubview(resetButton)
-        self.view.addSubview(loginItems)
-        
-        NSLayoutConstraint.activate([
-            loginItems.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
-            emailTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
-            passwordTextField.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
-            loginButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
-            createAccountButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
-            // Slack discussion on Jan 30th...
-            // We are removing the recover password option for now!
-//            resetButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
-            loginItems.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
-            loginItems.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
-            ])
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) not supported")
-    }
-    
-    // MARK: - Methods
-    
-    @objc func textFieldDidChange() {
-        loginButton.isEnabled = fieldsAreValid
     }
     
 }

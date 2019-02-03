@@ -14,6 +14,19 @@ class ResetPasswordViewController: UIViewController {
     
     private let networkManager = NetworkManager()
     
+    var fieldsAreValid: Bool {
+        guard let email = emailTextField.text,
+            let password = passwordTextField.text,
+            let passwordConfirm = passwordConfirmTextField.text
+            else { return false }
+        guard isValidEmail(testStr: email) else { return false }
+        guard password.count > 0 && passwordConfirm.count > 0 else { return false }
+        guard password == passwordConfirm else { return false }
+        return true
+    }
+    
+    // MARK: - Subviews
+    
     private let emailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email"
@@ -71,7 +84,7 @@ class ResetPasswordViewController: UIViewController {
         return button
     }()
     
-    private let recoverItems: UIStackView = {
+    private let recoverItemsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -81,15 +94,54 @@ class ResetPasswordViewController: UIViewController {
         return stack
     }()
     
-    var fieldsAreValid: Bool {
-        guard let email = emailTextField.text,
-            let password = passwordTextField.text,
-            let passwordConfirm = passwordConfirmTextField.text
-            else { return false }
-        guard isValidEmail(testStr: email) else { return false }
-        guard password.count > 0 && passwordConfirm.count > 0 else { return false }
-        guard password == passwordConfirm else { return false }
-        return true
+    // MARK: - Initialization
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        self.view.backgroundColor = .white
+        
+        [emailTextField, passwordTextField, passwordConfirmTextField].forEach {
+            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        }
+        
+        recoverItemsStackView.addArrangedSubview(emailTextField)
+        recoverItemsStackView.addArrangedSubview(passwordTextField)
+        recoverItemsStackView.addArrangedSubview(passwordConfirmTextField)
+        recoverItemsStackView.addArrangedSubview(recoverButton)
+        recoverItemsStackView.addArrangedSubview(cancelButton)
+        self.view.addSubview(recoverItemsStackView)
+        
+        
+        NSLayoutConstraint.activate([
+            recoverItemsStackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
+            emailTextField.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
+            passwordTextField.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
+            passwordConfirmTextField.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
+            recoverButton.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
+            cancelButton.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
+            recoverItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
+            recoverItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            ])
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) not supported")
+    }
+    
+    // MARK: - View Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    // MARK: - Methods
+    
+    @objc func textFieldDidChange() {
+        recoverButton.isEnabled = fieldsAreValid
+    }
+    
+    @objc func goback(sender: UIButton) {
+        self.dismiss(animated: true, completion: {})
     }
     
     @objc func attemptRecover(sender: UIButton) {
@@ -119,55 +171,5 @@ class ResetPasswordViewController: UIViewController {
             }
         })
     }
-    
-    @objc func goback(sender: UIButton) {
-        self.dismiss(animated: true, completion: {})
-    }
-    
-    // MARK: - Initialization
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = .white
-        
-        [emailTextField, passwordTextField, passwordConfirmTextField].forEach {
-            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        }
-        
-        recoverItems.addArrangedSubview(emailTextField)
-        recoverItems.addArrangedSubview(passwordTextField)
-        recoverItems.addArrangedSubview(passwordConfirmTextField)
-        recoverItems.addArrangedSubview(recoverButton)
-        recoverItems.addArrangedSubview(cancelButton)
-        self.view.addSubview(recoverItems)
-        
-        
-        NSLayoutConstraint.activate([
-//            cancelButton.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
-//            cancelButton.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
-//            cancelButton.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor),
-            recoverItems.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
-            emailTextField.widthAnchor.constraint(equalTo: recoverItems.widthAnchor),
-            passwordTextField.widthAnchor.constraint(equalTo: recoverItems.widthAnchor),
-            passwordConfirmTextField.widthAnchor.constraint(equalTo: recoverItems.widthAnchor),
-            recoverButton.widthAnchor.constraint(equalTo: recoverItems.widthAnchor),
-            cancelButton.widthAnchor.constraint(equalTo: recoverItems.widthAnchor),
-            recoverItems.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
-            recoverItems.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
-            ])
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) not supported")
-    }
-    
-    // MARK: - View Lifecycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    @objc func textFieldDidChange() {
-        recoverButton.isEnabled = fieldsAreValid
-    }
+
 }

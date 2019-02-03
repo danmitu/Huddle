@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		92233104220299E300302E77 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92233103220299E300302E77 /* ProfileViewController.swift */; };
+		9223310C2202AC4A00302E77 /* ProfileAboutTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9223310B2202AC4A00302E77 /* ProfileAboutTableViewCell.swift */; };
+		922E80282203AD0400B797A2 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 922E80272203AD0400B797A2 /* TextViewController.swift */; };
+		922E802A2203B38200B797A2 /* ChooseLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 922E80292203B38200B797A2 /* ChooseLocationViewController.swift */; };
 		9238827521FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827221FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift */; };
 		9238827621FE929E00F3AD29 /* ConfirmationPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827321FE929E00F3AD29 /* ConfirmationPresenter.swift */; };
 		9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9238827421FE929E00F3AD29 /* OkPresenter.swift */; };
@@ -20,6 +24,12 @@
 		92758D6821F2E8B800E06465 /* EventView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D6721F2E8B800E06465 /* EventView.swift */; };
 		92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */; };
 		92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */; };
+		927A231A2205431C00CA9041 /* ProfilePhotoEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927A23192205431C00CA9041 /* ProfilePhotoEditorView.swift */; };
+		927A233C2205705200CA9041 /* UIImageViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927A233B2205705200CA9041 /* UIImageViewExtension.swift */; };
+		927A2348220590DF00CA9041 /* ImageOptionsGiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 927A2347220590DF00CA9041 /* ImageOptionsGiver.swift */; };
+		92AFFCED2202DCD00076F575 /* ProfileEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFFCEC2202DCD00076F575 /* ProfileEditorViewController.swift */; };
+		92AFFCEF2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AFFCEE2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift */; };
+		92AFFCF9220396AD0076F575 /* ProfilePhotoEditorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 92AFFCF8220396AD0076F575 /* ProfilePhotoEditorView.xib */; };
 		92BCA3E421FE8548003DB8A5 /* UserDefaultsExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BCA3E321FE8548003DB8A5 /* UserDefaultsExtension.swift */; };
 		92BCA40621FE90E8003DB8A5 /* PleaseWaitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BCA40521FE90E8003DB8A5 /* PleaseWaitView.swift */; };
 		92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC32E21F6E33100BE4FEE /* EndPointType.swift */; };
@@ -33,6 +43,8 @@
 		92BFC34421F6EDB400BE4FEE /* NetworkEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC34321F6EDB400BE4FEE /* NetworkEnvironment.swift */; };
 		92BFC34621F6EFDA00BE4FEE /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BFC34521F6EFDA00BE4FEE /* NetworkManager.swift */; };
 		92D605BC21F6B3DF006916EE /* DrawCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D605BB21F6B3DF006916EE /* DrawCode.swift */; };
+		92D6944A22069A6500A9013E /* DetailedProfilePhotoView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 92D6944922069A6500A9013E /* DetailedProfilePhotoView.xib */; };
+		92D6944C22069A8300A9013E /* DetailedProfilePhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D6944B22069A8300A9013E /* DetailedProfilePhotoView.swift */; };
 		92D9A1B421FD6D0400B3E499 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9A1AF21FD6D0400B3E499 /* LoginViewController.swift */; };
 		92D9A1B521FD6D0400B3E499 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9A1B021FD6D0400B3E499 /* CalendarViewController.swift */; };
 		92D9A1B621FD6D0400B3E499 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9A1B121FD6D0400B3E499 /* RegisterViewController.swift */; };
@@ -41,6 +53,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		92233103220299E300302E77 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		9223310B2202AC4A00302E77 /* ProfileAboutTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileAboutTableViewCell.swift; sourceTree = "<group>"; };
+		922E80272203AD0400B797A2 /* TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewController.swift; sourceTree = "<group>"; };
+		922E80292203B38200B797A2 /* ChooseLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLocationViewController.swift; sourceTree = "<group>"; };
 		9238827221FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DestructiveConfirmationPresenter.swift; sourceTree = "<group>"; };
 		9238827321FE929E00F3AD29 /* ConfirmationPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfirmationPresenter.swift; sourceTree = "<group>"; };
 		9238827421FE929E00F3AD29 /* OkPresenter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OkPresenter.swift; sourceTree = "<group>"; };
@@ -56,6 +72,12 @@
 		92758D6721F2E8B800E06465 /* EventView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventView.swift; sourceTree = "<group>"; };
 		92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarTableViewCell.swift; sourceTree = "<group>"; };
 		92758D8B21F2F8D600E06465 /* TextPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextPlaceholderView.swift; sourceTree = "<group>"; };
+		927A23192205431C00CA9041 /* ProfilePhotoEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePhotoEditorView.swift; sourceTree = "<group>"; };
+		927A233B2205705200CA9041 /* UIImageViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageViewExtension.swift; sourceTree = "<group>"; };
+		927A2347220590DF00CA9041 /* ImageOptionsGiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOptionsGiver.swift; sourceTree = "<group>"; };
+		92AFFCEC2202DCD00076F575 /* ProfileEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorViewController.swift; sourceTree = "<group>"; };
+		92AFFCEE2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitledTextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		92AFFCF8220396AD0076F575 /* ProfilePhotoEditorView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ProfilePhotoEditorView.xib; path = Huddle/View/ProfilePhotoEditorView.xib; sourceTree = SOURCE_ROOT; };
 		92BCA3E321FE8548003DB8A5 /* UserDefaultsExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsExtension.swift; sourceTree = "<group>"; };
 		92BCA40521FE90E8003DB8A5 /* PleaseWaitView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PleaseWaitView.swift; sourceTree = "<group>"; };
 		92BFC32E21F6E33100BE4FEE /* EndPointType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPointType.swift; sourceTree = "<group>"; };
@@ -69,6 +91,8 @@
 		92BFC34321F6EDB400BE4FEE /* NetworkEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkEnvironment.swift; sourceTree = "<group>"; };
 		92BFC34521F6EFDA00BE4FEE /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		92D605BB21F6B3DF006916EE /* DrawCode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawCode.swift; sourceTree = "<group>"; };
+		92D6944922069A6500A9013E /* DetailedProfilePhotoView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DetailedProfilePhotoView.xib; sourceTree = "<group>"; };
+		92D6944B22069A8300A9013E /* DetailedProfilePhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedProfilePhotoView.swift; sourceTree = "<group>"; };
 		92D9A1AF21FD6D0400B3E499 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		92D9A1B021FD6D0400B3E499 /* CalendarViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
 		92D9A1B121FD6D0400B3E499 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -144,9 +168,14 @@
 				9238827121FE929E00F3AD29 /* Alert Presenters */,
 				92D9A1B221FD6D0400B3E499 /* BaseViewController.swift */,
 				92D9A1B021FD6D0400B3E499 /* CalendarViewController.swift */,
+				92233103220299E300302E77 /* ProfileViewController.swift */,
+				92AFFCEC2202DCD00076F575 /* ProfileEditorViewController.swift */,
 				92D9A1AF21FD6D0400B3E499 /* LoginViewController.swift */,
 				92D9A1B321FD6D0400B3E499 /* ResetPasswordViewController.swift */,
 				92D9A1B121FD6D0400B3E499 /* RegisterViewController.swift */,
+				922E80272203AD0400B797A2 /* TextViewController.swift */,
+				922E80292203B38200B797A2 /* ChooseLocationViewController.swift */,
+				927A2347220590DF00CA9041 /* ImageOptionsGiver.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -162,8 +191,13 @@
 		92758D5B21F2C94500E06465 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				9238827821FE96B500F3AD29 /* UIColorExtension.swift */,
 				92D605BB21F6B3DF006916EE /* DrawCode.swift */,
+				9238827821FE96B500F3AD29 /* UIColorExtension.swift */,
+				927A233B2205705200CA9041 /* UIImageViewExtension.swift */,
+				92D6944B22069A8300A9013E /* DetailedProfilePhotoView.swift */,
+				92D6944922069A6500A9013E /* DetailedProfilePhotoView.xib */,
+				927A23192205431C00CA9041 /* ProfilePhotoEditorView.swift */,
+				92AFFCF8220396AD0076F575 /* ProfilePhotoEditorView.xib */,
 				92BCA40521FE90E8003DB8A5 /* PleaseWaitView.swift */,
 				92758D6721F2E8B800E06465 /* EventView.swift */,
 				9238827A21FE9B0100F3AD29 /* FilledButton.swift */,
@@ -188,6 +222,8 @@
 			isa = PBXGroup;
 			children = (
 				92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */,
+				92AFFCEE2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift */,
+				9223310B2202AC4A00302E77 /* ProfileAboutTableViewCell.swift */,
 			);
 			path = TableViewCells;
 			sourceTree = "<group>";
@@ -296,6 +332,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92D6944A22069A6500A9013E /* DetailedProfilePhotoView.xib in Resources */,
+				92AFFCF9220396AD0076F575 /* ProfilePhotoEditorView.xib in Resources */,
 				92758D6221F2D01A00E06465 /* ModelPlaceholderFile in Resources */,
 				92758D5021F2C63B00E06465 /* LaunchScreen.storyboard in Resources */,
 				92758D4D21F2C63B00E06465 /* Assets.xcassets in Resources */,
@@ -313,6 +351,8 @@
 				9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */,
 				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
 				92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */,
+				92AFFCEF2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift in Sources */,
+				922E80282203AD0400B797A2 /* TextViewController.swift in Sources */,
 				92D9A1B521FD6D0400B3E499 /* CalendarViewController.swift in Sources */,
 				92BFC34421F6EDB400BE4FEE /* NetworkEnvironment.swift in Sources */,
 				92D9A1B721FD6D0400B3E499 /* BaseViewController.swift in Sources */,
@@ -322,17 +362,25 @@
 				92BCA40621FE90E8003DB8A5 /* PleaseWaitView.swift in Sources */,
 				92BFC33A21F6E82800BE4FEE /* JSONParameterEncoder.swift in Sources */,
 				9238827B21FE9B0100F3AD29 /* FilledButton.swift in Sources */,
+				92233104220299E300302E77 /* ProfileViewController.swift in Sources */,
 				92BFC33621F6E4C300BE4FEE /* ParameterEncoding.swift in Sources */,
+				9223310C2202AC4A00302E77 /* ProfileAboutTableViewCell.swift in Sources */,
 				92BFC33E21F6EA4D00BE4FEE /* Router.swift in Sources */,
 				92D9A1B621FD6D0400B3E499 /* RegisterViewController.swift in Sources */,
+				927A2348220590DF00CA9041 /* ImageOptionsGiver.swift in Sources */,
+				927A231A2205431C00CA9041 /* ProfilePhotoEditorView.swift in Sources */,
+				927A233C2205705200CA9041 /* UIImageViewExtension.swift in Sources */,
 				92BFC34621F6EFDA00BE4FEE /* NetworkManager.swift in Sources */,
 				92BFC33121F6E38D00BE4FEE /* HTTPMethod.swift in Sources */,
 				9238827621FE929E00F3AD29 /* ConfirmationPresenter.swift in Sources */,
+				92D6944C22069A8300A9013E /* DetailedProfilePhotoView.swift in Sources */,
 				92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */,
 				92BFC33821F6E58500BE4FEE /* URLParameterEncoder.swift in Sources */,
 				9238827921FE96B500F3AD29 /* UIColorExtension.swift in Sources */,
 				92D9A1B421FD6D0400B3E499 /* LoginViewController.swift in Sources */,
+				92AFFCED2202DCD00076F575 /* ProfileEditorViewController.swift in Sources */,
 				92758D8C21F2F8D600E06465 /* TextPlaceholderView.swift in Sources */,
+				922E802A2203B38200B797A2 /* ChooseLocationViewController.swift in Sources */,
 				92758D8921F2F54C00E06465 /* CalendarTableViewCell.swift in Sources */,
 				92D9A1B821FD6D0400B3E499 /* ResetPasswordViewController.swift in Sources */,
 				92BCA3E421FE8548003DB8A5 /* UserDefaultsExtension.swift in Sources */,

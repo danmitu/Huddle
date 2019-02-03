@@ -14,6 +14,21 @@ class RegisterViewController: UIViewController {
     
     private let networkManager = NetworkManager()
     
+    var fieldsAreValid: Bool {
+        guard let email = emailTextField.text,
+            let password = passwordTextField.text,
+            let passwordConfirm = passwordConfirmTextField.text,
+            let fullName = fullNameTextField.text
+            else { return false }
+        guard isValidEmail(testStr: email) else { return false }
+        guard password.count > 0 && passwordConfirm.count > 0 else { return false }
+        guard fullName.count > 0 else { return false }
+        guard password == passwordConfirm else { return false }
+        return true
+    }
+    
+    // MARK: - Subviews
+    
     private let fullNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Full Name"
@@ -79,7 +94,7 @@ class RegisterViewController: UIViewController {
         return button
     }()
     
-    private let registerItems: UIStackView = {
+    private let registerItemsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -89,17 +104,52 @@ class RegisterViewController: UIViewController {
         return stack
     }()
     
-    var fieldsAreValid: Bool {
-        guard let email = emailTextField.text,
-            let password = passwordTextField.text,
-            let passwordConfirm = passwordConfirmTextField.text,
-            let fullName = fullNameTextField.text
-            else { return false }
-        guard isValidEmail(testStr: email) else { return false }
-        guard password.count > 0 && passwordConfirm.count > 0 else { return false }
-        guard fullName.count > 0 else { return false }
-        guard password == passwordConfirm else { return false }
-        return true
+    // MARK: - Initialization
+    
+    init() {
+        super.init(nibName: nil, bundle: nil)
+        self.view.backgroundColor = .white
+        
+        [emailTextField, passwordTextField, passwordConfirmTextField, fullNameTextField].forEach {
+            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        }
+        
+        registerItemsStackView.addArrangedSubview(fullNameTextField)
+        registerItemsStackView.addArrangedSubview(emailTextField)
+        registerItemsStackView.addArrangedSubview(passwordTextField)
+        registerItemsStackView.addArrangedSubview(passwordConfirmTextField)
+        registerItemsStackView.addArrangedSubview(registerButton)
+        registerItemsStackView.addArrangedSubview(cancelButton)
+        self.view.addSubview(registerItemsStackView)
+        
+        
+        NSLayoutConstraint.activate([
+            registerItemsStackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
+            fullNameTextField.widthAnchor.constraint(equalTo: registerItemsStackView.widthAnchor),
+            emailTextField.widthAnchor.constraint(equalTo: registerItemsStackView.widthAnchor),
+            passwordTextField.widthAnchor.constraint(equalTo: registerItemsStackView.widthAnchor),
+            passwordConfirmTextField.widthAnchor.constraint(equalTo: registerItemsStackView.widthAnchor),
+            registerButton.widthAnchor.constraint(equalTo: registerItemsStackView.widthAnchor),
+            cancelButton.widthAnchor.constraint(equalTo: registerItemsStackView.widthAnchor),
+            registerItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
+            registerItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            ])
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) not supported")
+    }
+    
+    // MARK: - View Lifecycle
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    // MARK: - Methods
+    
+    @objc func textFieldDidChange(){
+        registerButton.isEnabled = fieldsAreValid
     }
     
     @objc func attemptCreation(sender: UIButton) {
@@ -132,51 +182,5 @@ class RegisterViewController: UIViewController {
     
     @objc func goback(sender: UIButton) {
         self.dismiss(animated: true, completion: {})
-    }
-    
-    // MARK: - Initialization
-    
-    init() {
-        super.init(nibName: nil, bundle: nil)
-        self.view.backgroundColor = .white
-        
-        [emailTextField, passwordTextField, passwordConfirmTextField, fullNameTextField].forEach {
-            $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
-        }
-        
-        registerItems.addArrangedSubview(fullNameTextField)
-        registerItems.addArrangedSubview(emailTextField)
-        registerItems.addArrangedSubview(passwordTextField)
-        registerItems.addArrangedSubview(passwordConfirmTextField)
-        registerItems.addArrangedSubview(registerButton)
-        registerItems.addArrangedSubview(cancelButton)
-        self.view.addSubview(registerItems)
-        
-        
-        NSLayoutConstraint.activate([
-            registerItems.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
-            fullNameTextField.widthAnchor.constraint(equalTo: registerItems.widthAnchor),
-            emailTextField.widthAnchor.constraint(equalTo: registerItems.widthAnchor),
-            passwordTextField.widthAnchor.constraint(equalTo: registerItems.widthAnchor),
-            passwordConfirmTextField.widthAnchor.constraint(equalTo: registerItems.widthAnchor),
-            registerButton.widthAnchor.constraint(equalTo: registerItems.widthAnchor),
-            cancelButton.widthAnchor.constraint(equalTo: registerItems.widthAnchor),
-            registerItems.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
-            registerItems.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
-            ])
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) not supported")
-    }
-    
-    // MARK: - View Lifecycle
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
-    @objc func textFieldDidChange(){
-        registerButton.isEnabled = fieldsAreValid
     }
 }
