@@ -26,9 +26,6 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
     /// The currently selected location.
     private var selectedLocationAnnotation: MKPointAnnotation?
     
-    /// The user's location when the view first appears.
-    private var currentCoordinates: CLLocationCoordinate2D?
-    
     /// Called when the user has selected a location.
     var whenDoneSelecting: ((CLPlacemark)->())?
     
@@ -43,7 +40,6 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
         longPressRecognizer.delegate = self
         longPressRecognizer.minimumPressDuration = 0.5
         self.view.addGestureRecognizer(longPressRecognizer)
-
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -55,6 +51,16 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
             locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
             locationManager.startUpdatingLocation()
         }
+        
+        if let userLocation = locationManager.location?.coordinate {
+            let viewRegion = MKCoordinateRegion(center: userLocation, latitudinalMeters: 200, longitudinalMeters: 200)
+            mapView.setRegion(viewRegion, animated: false)
+        }
+        
+        DispatchQueue.main.async {
+            self.locationManager.startUpdatingLocation()
+        }
+        
     }
     
     // MARK: - Methods
@@ -79,16 +85,8 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
         mapView.addAnnotation(annotation)
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let coordinates: CLLocationCoordinate2D = manager.location?.coordinate else { return }
-        let center = CLLocationCoordinate2D(latitude: coordinates.latitude, longitude: coordinates.longitude)
-        let region = MKCoordinateRegion(center: center, span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01))
-        self.mapView.setRegion(region, animated: true)
-        currentCoordinates = coordinates
-    }
-
     @objc private func selectionLocationButtonPressed() {
-        guard let selectedCoordinates = selectedLocationAnnotation?.coordinate ?? currentCoordinates else {
+        guard let selectedCoordinates = selectedLocationAnnotation?.coordinate ?? locationManager.location?.coordinate else {
             OkPresenter.init(title: "Error Selecting Location", message: "You must either select a location by tapping on the map, or share your current location.", handler: {}).present(in: self)
             return
         }
