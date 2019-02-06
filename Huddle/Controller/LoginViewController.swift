@@ -112,7 +112,7 @@ class LoginViewController: UIViewController {
         loginItemsStackView.addArrangedSubview(createAccountButton)
         // Slack discussion on Jan 30th...
         // We are removing the recover password option for now!
-//        loginItems.addArrangedSubview(resetButton)
+        //        loginItems.addArrangedSubview(resetButton)
         self.view.addSubview(loginItemsStackView)
         
         NSLayoutConstraint.activate([
@@ -123,7 +123,7 @@ class LoginViewController: UIViewController {
             createAccountButton.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
             // Slack discussion on Jan 30th...
             // We are removing the recover password option for now!
-//            resetButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
+            //            resetButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
             loginItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
             ])
@@ -158,22 +158,13 @@ class LoginViewController: UIViewController {
         
         networkManager.login(email: emailTextField.text!, password: passwordTextField.text!) { error in
             guard error == nil else {
-                DispatchQueue.main.async {
-                    OkPresenter(title: "Login Failed",
-                                message: "\(error!)",
-                        handler: {}
-                        ).present(in: self)
-                }
-                UserDefaults.standard.isLoggedIn = false
+                OkPresenter(title: "Login Failed",
+                            message: "\(error!)",
+                    handler: {}
+                    ).present(in: self)
                 return
             }
-            
-            UserDefaults.standard.isLoggedIn = true
-            
-            DispatchQueue.main.async {
-                self.dismiss(animated: true, completion: nil)
-            }
-            
+            self.dismiss(animated: true, completion: nil)
         }
     }
     

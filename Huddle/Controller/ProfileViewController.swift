@@ -10,6 +10,17 @@ import UIKit
 
 class ProfileViewController: UITableViewController {
     
+    private let networkManager = NetworkManager()
+    
+    private var member: Member? {
+        didSet {
+            guard member != nil else { return }
+            detailedProfilePhotoView.profileNameLabel.text = member!.name
+            detailedProfilePhotoView.locationNameLabel.text = ""
+            aboutTableViewCell.textLabel?.text = member!.bio
+        }
+    }
+    
     private enum Section: Int, CaseIterable {
         case about
         case groups
@@ -33,6 +44,14 @@ class ProfileViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
         tableView.backgroundColor = .white
         tableView.tableHeaderView = detailedProfilePhotoView
+        
+        networkManager.readProfile() { [weak self] member, error in
+            guard error == nil else {
+                print(error! as String)
+                return
+            }
+            self?.member = member
+        }
     }
     
     // MARK: - Other Views
@@ -49,7 +68,12 @@ class ProfileViewController: UITableViewController {
     
     // MARK: - Static Cells
     
-    private let aboutTableViewCell = ProfileAboutTableViewCell()
+    private let aboutTableViewCell: UITableViewCell = {
+        let cell = UITableViewCell()
+        cell.textLabel?.numberOfLines = 0
+        cell.textLabel?.lineBreakMode = .byWordWrapping
+        return cell
+    }()
     
     // MARK: - Table View Data Source
     

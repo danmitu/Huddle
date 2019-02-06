@@ -12,13 +12,13 @@ import UIKit
 struct OkPresenter {
     let title: String?
     let message: String?
-    let handler: ()->Void
+    let handler: (()->Void)?
     
     func present(in viewController: UIViewController) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let acceptAction = UIAlertAction(title: "OK", style: .default) { _ in
-            self.handler()
+            self.handler?()
         }
         alertController.addAction(acceptAction)
         viewController.present(alertController, animated: true)

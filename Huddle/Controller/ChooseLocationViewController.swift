@@ -12,7 +12,7 @@ import CoreLocation
 
 /// Allows the user to select a location on a map. They make a location by tapping on the screen for 0.5 seconds. This will drop a placemark for the selection. If no location is selected then the user's current location will be used. If there is no selection and the user hasn't provided their location, pressing the "Select" button will display a `UIAlert` error. Upon tapping "Select", `whenDoneSelecting` will be called passing in the selected location.
 class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegate, CLLocationManagerDelegate {
-
+    
     // MARK: - Properties
     
     private let mapView: MKMapView = {
@@ -35,7 +35,7 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
         super.viewDidLoad()
         self.navigationItem.setRightBarButton(UIBarButtonItem(title: "Select", style: .plain, target: self, action: #selector(selectionLocationButtonPressed)), animated: false)
         self.view = mapView
-
+        
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress))
         longPressRecognizer.delegate = self
         longPressRecognizer.minimumPressDuration = 0.5
@@ -57,9 +57,7 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
             mapView.setRegion(viewRegion, animated: false)
         }
         
-        DispatchQueue.main.async {
-            self.locationManager.startUpdatingLocation()
-        }
+        self.locationManager.startUpdatingLocation()
         
     }
     
@@ -84,7 +82,7 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
         selectedLocationAnnotation = annotation
         mapView.addAnnotation(annotation)
     }
-
+    
     @objc private func selectionLocationButtonPressed() {
         guard let selectedCoordinates = selectedLocationAnnotation?.coordinate ?? locationManager.location?.coordinate else {
             OkPresenter.init(title: "Error Selecting Location", message: "You must either select a location by tapping on the map, or share your current location.", handler: {}).present(in: self)

@@ -13,6 +13,8 @@ class BaseViewController: UITabBarController {
     
     // MARK: - Properties
     
+    let networkManager = NetworkManager()
+    
     private let exploreViewController: UIViewController = {
         let vc = UIViewController()
         vc.tabBarItem = UITabBarItem(title: "Explore",
@@ -36,7 +38,7 @@ class BaseViewController: UITabBarController {
                                      selectedImage: DrawCode.imageOfUserTabIcon(isSelected: true))
         return vc
     }()
-        
+    
     // MARK: - Initialization
     
     init() {
@@ -60,12 +62,17 @@ class BaseViewController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if !UserDefaults.standard.isLoggedIn {
-            let loginViewController = LoginViewController()
-            present(loginViewController, animated: false)
+        networkManager.isLoggedIn() { result in
+            guard let isLoggedIn = result else {
+                OkPresenter(title: "Network Error", message: "Please check your network settings.", handler: nil).present(in: self)
+                return
+            }
+            if !isLoggedIn {
+                self.present(LoginViewController(), animated: true)
+            }
         }
     }
 }

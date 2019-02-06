@@ -147,29 +147,21 @@ class ResetPasswordViewController: UIViewController {
     @objc func attemptRecover(sender: UIButton) {
         guard fieldsAreValid else { return }
         
-        networkManager.update(email: emailTextField.text!, password: passwordTextField.text!, completion: {
-            error in
+        networkManager.update(email: emailTextField.text!, password: passwordTextField.text!, completion: { error in
             guard error == nil else {
                 // If there is an error, tell the user.
-                DispatchQueue.main.async {
-                    OkPresenter(title: "Update Failed",
-                                message: "\(error!)",
-                        handler: {}).present(in: self)
-                }
-                UserDefaults.standard.isLoggedIn = false
+                OkPresenter(title: "Update Failed",
+                            message: "\(error!)",
+                    handler: {}).present(in: self)
                 return
             }
             // If an error didn't occur, Tell the user that the account was created and that they now need to log in.
-            DispatchQueue.main.async {
-                OkPresenter(title: "Password reset succeeded.", message: "Please Log In.", handler: {
-                    self.dismiss(animated: true, completion: {
-                        DispatchQueue.main.async {
-                            self.dismiss(animated: true, completion: nil)
-                        }
-                    })
-                }).present(in: self)
-            }
+            OkPresenter(title: "Password reset succeeded.", message: "Please Log In.", handler: {
+                self.dismiss(animated: true, completion: {
+                    self.dismiss(animated: true, completion: nil)
+                })
+            }).present(in: self)
         })
     }
-
+    
 }
