@@ -15,48 +15,47 @@ class ResetPasswordViewController: UIViewController {
     private let networkManager = NetworkManager()
     
     var fieldsAreValid: Bool {
-        guard let email = emailTextField.text,
-            let password = passwordTextField.text,
-            let passwordConfirm = passwordConfirmTextField.text
+        guard let oldPassword = oldPasswordTextField.text,
+            let password = newPasswordTextField.text,
+            let passwordConfirm = newPasswordConfirmTextField.text
             else { return false }
-        guard isValidEmail(testStr: email) else { return false }
-        guard password.count > 0 && passwordConfirm.count > 0 else { return false }
+        guard password.count > 0 && passwordConfirm.count > 0 && oldPassword.count > 0 else { return false }
         guard password == passwordConfirm else { return false }
         return true
     }
     
     // MARK: - Subviews
     
-    private let emailTextField: UITextField = {
+    private let oldPasswordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Email"
-        textField.borderStyle = .roundedRect
-        textField.autocapitalizationType = .none
-        textField.clearButtonMode = .whileEditing
-        return textField
-    }()
-    
-    private let passwordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
+        textField.placeholder = "Current Password"
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         textField.clearButtonMode = .whileEditing
         return textField
     }()
     
-    private let passwordConfirmTextField: UITextField = {
+    private let newPasswordTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Confirm Password"
+        textField.placeholder = "New Password"
         textField.borderStyle = .roundedRect
         textField.isSecureTextEntry = true
         textField.clearButtonMode = .whileEditing
         return textField
     }()
     
-    private let recoverButton: FilledButton = {
+    private let newPasswordConfirmTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Confirm New Password"
+        textField.borderStyle = .roundedRect
+        textField.isSecureTextEntry = true
+        textField.clearButtonMode = .whileEditing
+        return textField
+    }()
+    
+    private let resetButton: FilledButton = {
         let button = FilledButton()
-        button.setTitle("Recover", for: .normal)
+        button.setTitle("Change Password", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.white, for: .highlighted)
         button.addTarget(self, action: #selector(attemptRecover), for: .touchUpInside)
@@ -69,22 +68,7 @@ class ResetPasswordViewController: UIViewController {
         return button
     }()
     
-    private let cancelButton: FilledButton = {
-        let button = FilledButton()
-        button.setTitle("Cancel", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.setTitleColor(.white, for: .highlighted)
-        button.addTarget(self, action: #selector(goback), for: .touchUpInside)
-        button.backgroundColor = UIColor.preferredTeal
-        button.normalBackgroundColor = UIColor.preferredTeal
-        button.disabledBackgroundColor = UIColor.disabledGrey
-        button.highlightedBackgroundColor = UIColor.preferredTealHighlighted
-        button.isEnabled = true
-        button.layer.cornerRadius = 5
-        return button
-    }()
-    
-    private let recoverItemsStackView: UIStackView = {
+    private let resetItemsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .vertical
         stack.distribution = .fill
@@ -100,27 +84,25 @@ class ResetPasswordViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         self.view.backgroundColor = .white
         
-        [emailTextField, passwordTextField, passwordConfirmTextField].forEach {
+        [oldPasswordTextField ,newPasswordTextField, newPasswordConfirmTextField].forEach {
             $0.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         }
         
-        recoverItemsStackView.addArrangedSubview(emailTextField)
-        recoverItemsStackView.addArrangedSubview(passwordTextField)
-        recoverItemsStackView.addArrangedSubview(passwordConfirmTextField)
-        recoverItemsStackView.addArrangedSubview(recoverButton)
-        recoverItemsStackView.addArrangedSubview(cancelButton)
-        self.view.addSubview(recoverItemsStackView)
+        resetItemsStackView.addArrangedSubview(oldPasswordTextField)
+        resetItemsStackView.addArrangedSubview(newPasswordTextField)
+        resetItemsStackView.addArrangedSubview(newPasswordConfirmTextField)
+        resetItemsStackView.addArrangedSubview(resetButton)
+        self.view.addSubview(resetItemsStackView)
         
         
         NSLayoutConstraint.activate([
-            recoverItemsStackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
-            emailTextField.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
-            passwordTextField.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
-            passwordConfirmTextField.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
-            recoverButton.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
-            cancelButton.widthAnchor.constraint(equalTo: recoverItemsStackView.widthAnchor),
-            recoverItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
-            recoverItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            resetItemsStackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
+            oldPasswordTextField.widthAnchor.constraint(equalTo: resetItemsStackView.widthAnchor),
+            newPasswordTextField.widthAnchor.constraint(equalTo: resetItemsStackView.widthAnchor),
+            newPasswordConfirmTextField.widthAnchor.constraint(equalTo: resetItemsStackView.widthAnchor),
+            resetButton.widthAnchor.constraint(equalTo: resetItemsStackView.widthAnchor),
+            resetItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
+            resetItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
             ])
     }
     
@@ -137,7 +119,7 @@ class ResetPasswordViewController: UIViewController {
     // MARK: - Methods
     
     @objc func textFieldDidChange() {
-        recoverButton.isEnabled = fieldsAreValid
+        resetButton.isEnabled = fieldsAreValid
     }
     
     @objc func goback(sender: UIButton) {
@@ -147,21 +129,21 @@ class ResetPasswordViewController: UIViewController {
     @objc func attemptRecover(sender: UIButton) {
         guard fieldsAreValid else { return }
         
-        networkManager.update(email: emailTextField.text!, password: passwordTextField.text!, completion: {
+        networkManager.updatePassword(oldPassword: oldPasswordTextField.text!, newPassword: newPasswordTextField.text!, completion: {
             error in
             guard error == nil else {
                 // If there is an error, tell the user.
                 DispatchQueue.main.async {
-                    OkPresenter(title: "Update Failed",
-                                message: "\(error!)",
-                        handler: {}).present(in: self)
+                    OkPresenter(title: "Password Update Failed",
+//                                message: "\(error!)",
+                                message: "Your old password was incorrect",
+                                handler: {}).present(in: self)
                 }
-                UserDefaults.standard.isLoggedIn = false
                 return
             }
             // If an error didn't occur, Tell the user that the account was created and that they now need to log in.
             DispatchQueue.main.async {
-                OkPresenter(title: "Password reset succeeded.", message: "Please Log In.", handler: {
+                OkPresenter(title: "Password reset succeeded.", message: "", handler: {
                     self.dismiss(animated: true, completion: {
                         DispatchQueue.main.async {
                             self.dismiss(animated: true, completion: nil)
