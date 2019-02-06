@@ -26,14 +26,53 @@ enum Result<String>{
 }
 
 struct NetworkManager {
-
+    
     // MARK: - Properties
     
     static let environment : NetworkEnvironment = .production
-
+    
     let router = Router<HuddleApi>()
     
     // MARK: - Methods
+    
+    func readProfile(completion: @escaping (_ member: Member?, _ error: String?)->()) {
+        router.request(.readMember) { data, response, error in
+            guard error == nil else {
+                completion(nil, "Please check your network connection.")
+                return
+            }
+            guard let jsonData = data else {
+                completion(nil, NetworkResponse.noData.rawValue)
+                return
+            }
+            
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                let member = try! JSONDecoder().decode(Member.self, from: jsonData)
+                completion(member, nil)
+            case .failure(let networkFailureError):
+                completion(nil, networkFailureError)
+            }
+            
+        }
+    }
+    
+    func isLoggedIn(completion: @escaping (_ result: Bool?)->()) {
+        router.request(.readMember) { _, response, error in
+            guard error == nil else {
+                completion(nil)
+                return
+            }
+            let response = response as! HTTPURLResponse
+            switch response.statusCode {
+            case 200...299: completion(true)
+            case 401...500: completion(false)
+            default: completion(nil)
+            }
+        }
+    }
     
     func login(email: String, password: String, completion: @escaping (_ error: String?)->()) {
         router.request(.login(email: email, password: password)) { data, response, error in
@@ -51,7 +90,7 @@ struct NetworkManager {
             }
         }
     }
-        
+    
     func create(email: String, password: String, fullName: String,  completion: @escaping (_ error: String?)->()) {
         router.request(.create(email: email, password: password, fullName: fullName)) { data, response, error in
             guard error == nil else {

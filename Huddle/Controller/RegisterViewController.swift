@@ -159,24 +159,17 @@ class RegisterViewController: UIViewController {
             error in
             guard error == nil else {
                 // If there is an error, tell the user.
-                DispatchQueue.main.async {
-                    OkPresenter(title: "Creation Failed",
-                                message: "\(error!)",
-                        handler: {}).present(in: self)
-                }
-                UserDefaults.standard.isLoggedIn = false
+                OkPresenter(title: "Creation Failed",
+                            message: "\(error!)",
+                    handler: {}).present(in: self)
                 return
             }
             // If an error didn't occur, Tell the user that the account was created and that they now need to log in.
-            DispatchQueue.main.async {
-                OkPresenter(title: "Account creation succeeded.", message: "Please Log In.", handler: {
-                    self.dismiss(animated: true, completion: {
-                        DispatchQueue.main.async {
-                            self.dismiss(animated: true, completion: nil)
-                        }
-                    })
-                }).present(in: self)
-            }
+            OkPresenter(title: "Account creation succeeded.", message: "Please Log In.", handler: {
+                self.dismiss(animated: true, completion: {
+                    self.dismiss(animated: true, completion: nil)
+                })
+            }).present(in: self)
         })
     }
     
