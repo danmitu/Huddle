@@ -24,6 +24,7 @@ class ProfileViewController: UITableViewController {
     private enum Section: Int, CaseIterable {
         case about
         case groups
+        case logout
     }
     
     // TODO: delete me
@@ -75,6 +76,13 @@ class ProfileViewController: UITableViewController {
         return cell
     }()
     
+    private let logoutTableViewCell: UITableViewCell = {
+        let cell = UITableViewCell()
+        cell.textLabel?.text = "Click to Logout"
+        cell.selectionStyle = .none
+        return cell
+    }()
+    
     // MARK: - Table View Data Source
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -85,6 +93,7 @@ class ProfileViewController: UITableViewController {
         switch Section(rawValue: section)! {
         case .about: return 1
         case .groups: return sampleGroupData.count
+        case .logout: return 1
         }
     }
     
@@ -97,6 +106,8 @@ class ProfileViewController: UITableViewController {
         case .groups:
             cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "TableViewCell")
             cell.textLabel?.text = sampleGroupData[indexPath.row]
+        case .logout:
+            cell = logoutTableViewCell
         }
         
         return cell
@@ -106,10 +117,34 @@ class ProfileViewController: UITableViewController {
         switch Section(rawValue: section)! {
         case .about: return "About"
         case .groups: return "Groups"
+        case .logout: return "Logout"
         }
     }
     
     // MARK: Table View Delegate
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch Section(rawValue: indexPath.section)! {
+        case .logout:
+            switch indexPath.row {
+            case 0: // Logout Cell
+                // Remove ALL cookies and then launch the LoginView. This will need to change if we plan on saving any others that shouldn't be removed at log out (which I doubt).
+                HTTPCookieStorage.shared.removeCookies(since: Date(timeIntervalSince1970: 0))
+                networkManager.isLoggedIn() { result in
+                    guard let isLoggedIn = result else {
+                        OkPresenter(title: "Network Error", message: "Please check your network settings.", handler: nil).present(in: self)
+                        return
+                    }
+                    if !isLoggedIn {
+                        self.present(LoginViewController(), animated: true)
+                    }
+                }
+            default: break
+            }
+        default: break
+        }
+        
+    }
 
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let headerView = view as! UITableViewHeaderFooterView
