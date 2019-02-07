@@ -77,6 +77,13 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         return cell
     }()
     
+    private let passwordResetCell: UITableViewCell = {
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+        cell.textLabel!.text = "Reset Password"
+        cell.accessoryType = .disclosureIndicator
+        return cell
+    }()
+    
     // MARK: Privacy Section
     
     private let displayGroupsCell: UITableViewCell = {
@@ -107,7 +114,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .details: return 3
+        case .details: return 4
         case .privacy: return 2
         case .groups: return sampleGroupData.count
         }
@@ -120,6 +127,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
             case 0: return nameCell
             case 1: return locationCell
             case 2: return aboutCell
+            case 3: return passwordResetCell
             default: fatalError("Unreachable")
             }
         case .privacy:
@@ -185,6 +193,10 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
                     print("received = \(text)")
                 }
                 navigationController?.pushViewController(textViewController, animated: true)
+            case 3: // Reset Password Cell
+                let passwordResetController = ResetPasswordViewController()
+                passwordResetController.navigationItem.title = "Reset Password"
+                navigationController?.pushViewController(passwordResetController, animated: true)
             default: break
             }
         default: break
@@ -215,6 +227,13 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     
     @objc func changeProfileImageButtonPressed() {
         presentImageOptions()
+    }
+    
+    @objc func showPasswordReset() {
+        let registerController = ResetPasswordViewController()
+        present(registerController, animated: true, completion: {
+            //perhaps we'll do something here later
+        })
     }
 
     // MARK: - Image Picker Controller Delegate

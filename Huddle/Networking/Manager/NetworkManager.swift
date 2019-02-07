@@ -108,8 +108,8 @@ struct NetworkManager {
         }
     }
     
-    func update(email: String, password: String, completion: @escaping (_ error: String?)->()) {
-        router.request(.update(email: email, password: password)) { data, response, error in
+    func updatePassword(oldPassword: String, newPassword: String, completion: @escaping (_ error: String?)->()) {
+        router.request(.updatePassword(oldPassword: oldPassword, newPassword: newPassword)) { data, response, error in
             guard error == nil else {
                 completion("Please check your network connection.")
                 return
