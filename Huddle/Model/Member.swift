@@ -13,8 +13,8 @@ struct Member: Decodable {
     var name: String?
     var email: String?
     var bio: String?
-    var publicGroup: Int
-    var publicLocation: Int
+    var publicGroup: Bool
+    var publicLocation: Bool
     
     enum CodingKeys: String, CodingKey {
         case id

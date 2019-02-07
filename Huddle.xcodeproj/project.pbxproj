@@ -49,6 +49,7 @@
 		92D9A1B621FD6D0400B3E499 /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9A1B121FD6D0400B3E499 /* RegisterViewController.swift */; };
 		92D9A1B721FD6D0400B3E499 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9A1B221FD6D0400B3E499 /* BaseViewController.swift */; };
 		92D9A1B821FD6D0400B3E499 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D9A1B321FD6D0400B3E499 /* ResetPasswordViewController.swift */; };
+		E5FE13BA220BDA530040C592 /* ButtonFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5FE13B9220BDA530040C592 /* ButtonFieldTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -96,6 +97,7 @@
 		92D9A1B121FD6D0400B3E499 /* RegisterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		92D9A1B221FD6D0400B3E499 /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		92D9A1B321FD6D0400B3E499 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
+		E5FE13B9220BDA530040C592 /* ButtonFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonFieldTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -221,6 +223,7 @@
 			children = (
 				92758D8821F2F54C00E06465 /* CalendarTableViewCell.swift */,
 				92AFFCEE2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift */,
+				E5FE13B9220BDA530040C592 /* ButtonFieldTableViewCell.swift */,
 			);
 			path = TableViewCells;
 			sourceTree = "<group>";
@@ -344,6 +347,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5FE13BA220BDA530040C592 /* ButtonFieldTableViewCell.swift in Sources */,
 				9238827D21FEA1C800F3AD29 /* Utility.swift in Sources */,
 				9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */,
 				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
