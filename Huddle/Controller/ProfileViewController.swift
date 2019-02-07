@@ -14,10 +14,9 @@ class ProfileViewController: UITableViewController {
     
     private var member: Member? {
         didSet {
-            guard member != nil else { return }
-            detailedProfilePhotoView.profileNameLabel.text = member!.name
-            detailedProfilePhotoView.locationNameLabel.text = ""
-            aboutTableViewCell.textLabel?.text = member!.bio
+            detailedProfilePhotoView.profileNameLabel.text = member?.name
+            detailedProfilePhotoView.locationNameLabel.text = "Location"
+            aboutTableViewCell.textLabel?.text = member?.bio
         }
     }
     
