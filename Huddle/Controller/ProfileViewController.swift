@@ -10,12 +10,27 @@ import UIKit
 
 class ProfileViewController: UITableViewController {
     
+    // MARK: - Properties
     private let networkManager = NetworkManager()
+    
+    var memberID: Int?
+    
+    private var isPersonalProfile: Bool {
+       return memberID == nil
+    }
+    
+    private var showGroups : Bool {
+        return isPersonalProfile || member?.publicGroup ?? false
+    }
+    
+    private var showLocation : Bool {
+        return isPersonalProfile || member?.publicLocation ?? false
+    }
     
     private var member: Member? {
         didSet {
             detailedProfilePhotoView.profileNameLabel.text = member?.name
-            detailedProfilePhotoView.locationNameLabel.text = "Location"
+            detailedProfilePhotoView.locationNameLabel.text = showLocation ? "Location" : ""
             aboutTableViewCell.textLabel?.text = member?.bio
         }
     }
@@ -38,14 +53,14 @@ class ProfileViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Profile"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped))
+        navigationItem.rightBarButtonItem = isPersonalProfile ? UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped)) : nil
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 600
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
         tableView.backgroundColor = .white
         tableView.tableHeaderView = detailedProfilePhotoView
         
-        networkManager.readProfile() { [weak self] member, error in
+        networkManager.readProfile(id: memberID) { [weak self] member, error in
             guard error == nil else {
                 print(error! as String)
                 return
@@ -91,9 +106,12 @@ class ProfileViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch Section(rawValue: section)! {
-        case .about: return 1
-        case .groups: return sampleGroupData.count
-        case .logout: return 1
+        case .about:
+            return 1
+        case .groups:
+            return showGroups ? sampleGroupData.count : 0
+        case .logout:
+            return isPersonalProfile ? 1 : 0
         }
     }
     
@@ -116,7 +134,7 @@ class ProfileViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
         case .about: return "About"
-        case .groups: return "Groups"
+        case .groups: return showGroups ? "Groups" : ""
         case .logout: return ""
         }
     }

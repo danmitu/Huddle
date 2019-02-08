@@ -39,13 +39,24 @@ class BaseViewController: UITabBarController {
         return vc
     }()
     
+    // Temporary View for testing a different users profile page
+    private let testOutsideProfileViewController: ProfileViewController = {
+        let vc = ProfileViewController(style: .grouped)
+        vc.tabBarItem = UITabBarItem(title: "Test Profile",
+                                     image: DrawCode.imageOfUserTabIcon(isSelected: false),
+                                     selectedImage: DrawCode.imageOfUserTabIcon(isSelected: true))
+        // The view is NOT a personal profile and is harded coded to user #2.
+        vc.memberID = 2
+        return vc
+    }()
+    
     // MARK: - Initialization
     
     init() {
         super.init(nibName: nil, bundle: nil)
         
         // set the order for the view controllers, but wrap them in a navigation controller
-        self.viewControllers = [exploreViewController, calendarViewController, profileViewController].map {
+        self.viewControllers = [exploreViewController, calendarViewController, profileViewController, testOutsideProfileViewController].map {
             return UINavigationController(rootViewController: $0)
         }
         

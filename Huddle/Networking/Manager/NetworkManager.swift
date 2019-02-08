@@ -35,8 +35,9 @@ struct NetworkManager {
     
     // MARK: - Methods
     
-    func readProfile(completion: @escaping (_ member: Member?, _ error: String?)->()) {
-        router.request(.readMember) { data, response, error in
+    func readProfile(id: Int?, completion: @escaping (_ member: Member?, _ error: String?)->()) {
+        let routeToCall: HuddleApi = id == nil ? .readMember : .readUser(id: id!)
+        router.request(routeToCall) { data, response, error in
             guard error == nil else {
                 completion(nil, "Please check your network connection.")
                 return
