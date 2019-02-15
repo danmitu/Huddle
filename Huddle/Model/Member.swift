@@ -7,22 +7,64 @@
 //
 
 import Foundation
+import MapKit
+
+struct RawMember: Decodable {
+    let id: Int
+    let email: String
+    let name: String?
+    let bio: String?
+    let locationid: Int?
+    let location: String?
+    let latitude: Float?
+    let longitude: Float?
+    let publiclocation: Bool
+    let publicgroup: Bool
+    let joindate: String
+}
 
 struct Member: Decodable {
     var id: Int
+    var email: String
     var name: String?
-    var email: String?
     var bio: String?
+    var homeLocation: NamedLocation?
     var publicGroup: Bool
     var publicLocation: Bool
+    var joindate: Date
+    var profilePhoto: UIImage?
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case name
-        case email
-        case bio
-        case publicGroup = "publicgroup"
-        case publicLocation = "publiclocation"
+    init(from decoder: Decoder) throws {
+        let rawMember = try RawMember(from: decoder)
+        self.id = rawMember.id
+        self.email = rawMember.email
+        self.name = rawMember.name
+        self.bio = rawMember.bio
+        self.publicGroup = rawMember.publicgroup
+        self.publicLocation = rawMember.publiclocation
+        
+        if let rawLocationName = rawMember.location,
+            let rawLatitude = rawMember.latitude,
+            let rawLongitude = rawMember.longitude,
+            let rawLocationId = rawMember.locationid {
+            let location = CLLocation(latitude: CLLocationDegrees(rawLatitude), longitude: CLLocationDegrees(rawLongitude))
+            self.homeLocation = NamedLocation(id: rawLocationId, name: rawLocationName, location: location)
+        } else {
+            self.homeLocation = nil
+        }
+        
+        self.joindate = rawMember.joindate.toDate()!
     }
-    
 }
+
+extension String {
+    
+    func toDate(withFormat format: String = "yyyy-MM-dd")-> Date?{
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        let date = dateFormatter.date(from: self)
+        return date
+    }
+}
+

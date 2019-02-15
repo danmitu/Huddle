@@ -17,11 +17,17 @@ enum NetworkEnvironment {
 }
 
 enum HuddleApi {
-    case readUser(id: Int)
-    case readMember
-    case login(email: String, password: String)
-    case create(email: String, password: String, fullName: String)
-    case updatePassword(oldPassword: String, newPassword: String)
+    case membersReadUser(id: Int)
+    case membersRead
+    case membersUpdate(member: Member)
+    case membersLogin(email: String, password: String)
+    case membersLogout
+    case membersCreateAccount(email: String, password: String, fullName: String)
+    case membersUpdatePassword(oldPassword: String, newPassword: String)
+    case membersProfileImage
+    case membersProfileImageUpload(media: Media)
+    case groupsMine
+    case groupsRemoveMe(groupId: Int)
 }
 
 extension HuddleApi: EndPointType {
@@ -32,45 +38,93 @@ extension HuddleApi: EndPointType {
     
     var path: String {
         switch self {
-        case .readUser: return "members/readuser"
-        case .readMember: return "members/read"
-        case .login: return "members/login"
-        case .create: return "members/create"
-        case .updatePassword: return "members/changepassword"
+        case .membersReadUser: return "members/readuser"
+        case .membersRead: return "members/read"
+        case .membersUpdate: return "members/update"
+        case .membersLogin: return "members/login"
+        case .membersLogout: return "members/logout"
+        case .membersCreateAccount: return "members/create"
+        case .membersUpdatePassword: return "members/changepassword"
+        case .membersProfileImage: return "members/profile/download"
+        case .membersProfileImageUpload: return "members/profile/upload"
+        case .groupsMine: return "groups/mygroups"
+        case .groupsRemoveMe: return "groups/removeme"
         }
-        
     }
     
     var httpMethod: HTTPMethod {
         switch self {
-        case .readUser: return .get
-        case .readMember: return .get
-        case .login: return .get
-        case .create: return .post
-        case .updatePassword: return .post
+        case .membersReadUser: return .get
+        case .membersRead: return .get
+        case .membersUpdate: return .put
+        case .membersLogin: return .get
+        case .membersLogout: return .get
+        case .membersCreateAccount: return .post
+        case .membersUpdatePassword: return .post
+        case .membersProfileImage: return .get
+        case .membersProfileImageUpload: return .post
+        case .groupsMine: return .get
+        case .groupsRemoveMe: return .delete
         }
     }
     
     var task: HTTPTask {
         switch self {
-        case .readUser(id: let id):
+            
+        case .membersReadUser(id: let id):
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["id":id])
-        case .readMember:
+            
+        case .membersRead:
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: nil)
-        case .login(email: let email, password: let password):
+            
+        case .membersUpdate(member: let member):
+            return .requestParameters(bodyParameters: ["Name":member.name ?? "",
+                                                       "Email":member.email,
+                                                       "Bio":member.bio ?? "",
+                                                       "Location":member.homeLocation?.name ?? "",
+                                                       "Latitude":member.homeLocation?.location.coordinate.latitude ?? "",
+                                                       "Longitude":member.homeLocation?.location.coordinate.longitude ?? "",
+                                                       "PublicLocation": member.publicLocation,
+                                                       "PublicGroup": member.publicGroup
+                                                       ],
+                                      bodyEncoding: .jsonEncoding,
+                                      urlParameters: nil)
+            
+        case .membersLogin(email: let email, password: let password):
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["email":email, "password":password])
-        case .create(email: let email, password: let password, fullName: let fullName):
+            
+        case .membersLogout:
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: nil)
+            
+        case .membersCreateAccount(email: let email, password: let password, fullName: let fullName):
             return .requestParameters(bodyParameters: ["email": email, "password":password, "name":fullName],
                                       bodyEncoding: .jsonEncoding,
                                       urlParameters: nil)
-        case .updatePassword(oldPassword: let oldPassword, newPassword: let newPassword):
+            
+        case .membersUpdatePassword(oldPassword: let oldPassword, newPassword: let newPassword):
             return .requestParameters(bodyParameters: ["password":oldPassword, "newPassword":newPassword],
+                                      bodyEncoding: .jsonEncoding,
+                                      urlParameters: nil)
+            
+        case .membersProfileImage:
+            return .request
+        
+        case .membersProfileImageUpload(media: let media):
+            return .requestParameters(bodyParameters: ["profileImage":media],
+                                      bodyEncoding: .formDataEncoding,
+                                      urlParameters: nil)
+            
+        case .groupsMine:
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: nil)
+            
+        case .groupsRemoveMe(groupId: let id):
+            return .requestParameters(bodyParameters: ["ID":id],
                                       bodyEncoding: .jsonEncoding,
                                       urlParameters: nil)
         }

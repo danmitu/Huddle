@@ -46,8 +46,11 @@ extension ImageOptionsGiver where Self: UIViewController {
             }
         })
         
+        let cancelOption = UIAlertAction(title: "Cancel", style: .cancel)
+        
         imageOptionsSheet.addAction(cameraOption)
         imageOptionsSheet.addAction(photoLibraryOption)
+        imageOptionsSheet.addAction(cancelOption)
         
         present(imageOptionsSheet, animated: true)
     }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ButtonFieldTableViewCell: UITableViewCell {
+class FilledButtonTableViewCell: UITableViewCell {
     
     // MARK: - Properties
     

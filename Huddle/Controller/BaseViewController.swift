@@ -46,7 +46,7 @@ class BaseViewController: UITabBarController {
                                      image: DrawCode.imageOfUserTabIcon(isSelected: false),
                                      selectedImage: DrawCode.imageOfUserTabIcon(isSelected: true))
         // The view is NOT a personal profile and is harded coded to user #2.
-        vc.memberID = 2
+        vc.publicMemberId = 2
         return vc
     }()
     

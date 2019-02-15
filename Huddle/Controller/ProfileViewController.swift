@@ -13,25 +13,32 @@ class ProfileViewController: UITableViewController {
     // MARK: - Properties
     private let networkManager = NetworkManager()
     
-    var memberID: Int?
+    var publicMemberId: Int?
     
     private var isPersonalProfile: Bool {
-       return memberID == nil
+       return publicMemberId == nil
     }
     
     private var showGroups : Bool {
-        return isPersonalProfile || member?.publicGroup ?? false
+        return isPersonalProfile && member?.publicGroup ?? false
     }
     
     private var showLocation : Bool {
-        return isPersonalProfile || member?.publicLocation ?? false
+        return isPersonalProfile && member?.publicLocation ?? false
     }
     
     private var member: Member? {
         didSet {
             detailedProfilePhotoView.profileNameLabel.text = member?.name
-            detailedProfilePhotoView.locationNameLabel.text = showLocation ? "Location" : ""
+            detailedProfilePhotoView.locationNameLabel.text = showLocation ? member?.homeLocation?.name : ""
             aboutTableViewCell.textLabel?.text = member?.bio
+            detailedProfilePhotoView.profilePhotoImageView.image = member?.profilePhoto
+        }
+    }
+
+    private var joinedGroups = [Group]() {
+        didSet {
+            self.tableView.reloadSections(IndexSet(integer: Section.groups.rawValue), with: UITableView.RowAnimation.automatic)
         }
     }
     
@@ -39,33 +46,28 @@ class ProfileViewController: UITableViewController {
         case about
         case groups
         case logout
-    }
-    
-    // TODO: delete me
-    let sampleGroupData = [
-        "Group Name 1",
-        "Group Name 2",
-        "Group Name 3"
-    ]
+    }    
     
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.title = "Profile"
+        refreshControl = UIRefreshControl()
         navigationItem.rightBarButtonItem = isPersonalProfile ? UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped)) : nil
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 600
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
         tableView.backgroundColor = .white
         tableView.tableHeaderView = detailedProfilePhotoView
-        
-        networkManager.readProfile(id: memberID) { [weak self] member, error in
-            guard error == nil else {
-                print(error! as String)
-                return
-            }
-            self?.member = member
+        tableView.refreshControl = refreshControl
+        refreshControl!.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        performNetworkRequest()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !self.isBeingPresented {
+            performNetworkRequest()
         }
     }
     
@@ -87,14 +89,15 @@ class ProfileViewController: UITableViewController {
         let cell = UITableViewCell()
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
+        cell.selectionStyle = .none
         return cell
     }()
     
-    private let logoutButtonCell: ButtonFieldTableViewCell = {
-        let cell = ButtonFieldTableViewCell(reuseIdentifier: "ButtonFieldTableViewCell", showSeparators: false)
+    private let logoutButtonCell: FilledButtonTableViewCell = {
+        let cell = FilledButtonTableViewCell(reuseIdentifier: "ButtonFieldTableViewCell", showSeparators: false)
         cell.button.setTitle("Logout", for: .normal)
-//        cell.button.setTitleColor(UIColor.preferredTeal, for: .normal)
         cell.button.addTarget(self, action: #selector(logout), for: .touchUpInside)
+        cell.selectionStyle = .none
         return cell
     }()
     
@@ -109,7 +112,7 @@ class ProfileViewController: UITableViewController {
         case .about:
             return 1
         case .groups:
-            return showGroups ? sampleGroupData.count : 0
+            return showGroups ? joinedGroups.count : 0
         case .logout:
             return isPersonalProfile ? 1 : 0
         }
@@ -123,7 +126,8 @@ class ProfileViewController: UITableViewController {
             cell = aboutTableViewCell
         case .groups:
             cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "TableViewCell")
-            cell.textLabel?.text = sampleGroupData[indexPath.row]
+            cell.textLabel?.text = joinedGroups[indexPath.row].title
+            cell.selectionStyle = .none
         case .logout:
             cell = logoutButtonCell
         }
@@ -151,21 +155,67 @@ class ProfileViewController: UITableViewController {
     
     @objc private func editButtonWasTapped() {
         let editorViewController = ProfileEditorViewController(style: .grouped)
+        editorViewController.member = self.member
+        editorViewController.joinedGroups = self.joinedGroups
         let navigationController = UINavigationController(rootViewController: editorViewController)
         present(navigationController, animated: true)
     }
     
     @objc func logout(sender: UIButton) {
-        HTTPCookieStorage.shared.removeCookies(since: Date(timeIntervalSince1970: 0))
-        networkManager.isLoggedIn() { result in
-            guard let isLoggedIn = result else {
-                OkPresenter(title: "Network Error", message: "Please check your network settings.", handler: nil).present(in: self)
+        networkManager.logout() { [weak self] error in
+            guard error == nil else {
+                if self != nil {
+                    OkPresenter(title: "Network Error", message: error, handler: nil).present(in: self!)
+                }
                 return
             }
-            if !isLoggedIn {
-                self.present(LoginViewController(), animated: true)
-            }
+            HTTPCookieStorage.shared.removeCookies(since: Date(timeIntervalSince1970: 0))
+            self?.present(LoginViewController(), animated: true)
         }
+    }
+    
+    @objc private func refresh() {
+        performNetworkRequest() { [weak self] in
+            self?.refreshControl!.endRefreshing()
+        }
+    }
+
+    
+    // MARK: - Methods
+    
+    private func performNetworkRequest(completion: (()->())? = nil) {
+        let dispatchGroup = DispatchGroup()
+        
+        dispatchGroup.enter()
+        networkManager.readProfile(id: publicMemberId) { [weak self] member, error in
+            guard error == nil else {
+                print(error! as String)
+                return
+            }
+            self?.member = member
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        networkManager.getMyGroups(completion: { [weak self] groups, error in
+            guard error == nil else {
+                print(error! as String)
+                return
+            }
+            self?.joinedGroups = groups ?? [Group]()
+            dispatchGroup.leave()
+        })
+        
+        dispatchGroup.enter()
+        networkManager.getMemberProfileImage(completion: { [weak self] image, error in
+            self?.member?.profilePhoto = image
+            dispatchGroup.leave()
+        })
+        
+        dispatchGroup.notify(queue: .main) {
+            completion?()
+        }
+        
     }
     
     

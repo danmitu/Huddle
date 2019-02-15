@@ -12,35 +12,54 @@ import CoreLocation
 
 class ProfileEditorViewController: UITableViewController, UINavigationControllerDelegate, UITextFieldDelegate, ImageOptionsGiver {
     
+    private let networkManager = NetworkManager()
+    
+    var member: Member?
+    
+    var joinedGroups = [Group]()
+    
+    private var groupsToLeave = Set<Group>()
+    
     private enum Section: Int, CaseIterable {
         case details
         case privacy
         case groups
     }
     
-    // TODO: delete me
-    var sampleGroupData = [
-        "Group Name 1",
-        "Group Name 2",
-        "Group Name 3"
-    ]
-    
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableHeaderView = profilePhotoEditorView
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(doneButtonWasPressed))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(cancelButtonWasPressed))
+        navigationItem.rightBarButtonItem = doneBarButton
+        navigationItem.leftBarButtonItem = cancelBarButton
         self.tableView.isEditing = true
         self.tableView.allowsSelectionDuringEditing = true
+        self.navigationItem.title = "Update Profile"
         self.nameCell.textField.delegate = self
+        self.nameCell.textField.text = member?.name
+        (self.displayGroupsCell.accessoryView as! UISwitch).isOn = member?.publicGroup ?? false
+        (self.displayLocationCell.accessoryView as! UISwitch).isOn = member?.publicLocation ?? false
+        locationCell.detailTextLabel!.text = member?.homeLocation?.name ?? ""
+        profilePhotoEditorView.userProfileImageView.image = member?.profilePhoto
+        
+        // cannot be done at initialization 😢
+        doneBarButton.target = self
+        doneBarButton.action = #selector(doneButtonWasPressed)
+        cancelBarButton.target = self
+        cancelBarButton.action = #selector(cancelButtonWasPressed)
     }
     
     // MARK: - Other Views
     
+    private let doneBarButton = UIBarButtonItem(barButtonSystemItem: .done, target: nil, action: nil)
+    
+    private lazy var cancelBarButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
+    
+    private let activityIndicatorBarItem = UIBarButtonItem(customView: UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20)))
+    
     let profilePhotoEditorView: ProfilePhotoEditorView = {
-       let view = Bundle.main.loadNibNamed("ProfilePhotoEditorView", owner: self, options: nil)![0] as! ProfilePhotoEditorView
+        let view = Bundle.main.loadNibNamed("ProfilePhotoEditorView", owner: self, options: nil)![0] as! ProfilePhotoEditorView
         view.autoresizingMask = .flexibleWidth
         view.translatesAutoresizingMaskIntoConstraints = true
         view.changeProfileButton.addTarget(self, action: #selector(changeProfileImageButtonPressed), for: .touchUpInside)
@@ -57,16 +76,18 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     private let nameCell: TitledTextFieldTableViewCell = {
         let cell = TitledTextFieldTableViewCell(reuseIdentifier: "TitledTextFieldTableViewCell")
         cell.titleLabel.text = "Name"
-        cell.textField.placeholder = "Name"
+        cell.textField.placeholder = "enter name"
         cell.textField.returnKeyType = .done
+        cell.selectionStyle = .none
         return cell
     }()
+
     
     private let locationCell: UITableViewCell = {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
         cell.textLabel!.text = "Location"
         cell.accessoryType = .disclosureIndicator
-        cell.detailTextLabel!.text = "Portland"
+        cell.selectionStyle = .none
         return cell
     }()
     
@@ -74,16 +95,18 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
         cell.textLabel!.text = "About Me"
         cell.accessoryType = .disclosureIndicator
+        cell.selectionStyle = .none
         return cell
     }()
     
-    private let passwordResetCell: UITableViewCell = {
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
-        cell.textLabel!.text = "Reset Password"
-        cell.accessoryType = .disclosureIndicator
+    private let changePasswordCell: ButtonTableViewCell = {
+        let cell = ButtonTableViewCell()
+        cell.button.setTitle("Change Password", for: .normal)
+        cell.selectionStyle = .none
+        cell.button.addTarget(self, action: #selector(passwordButtonWasPressed), for: .touchUpInside)
         return cell
     }()
-    
+        
     // MARK: Privacy Section
     
     private let displayGroupsCell: UITableViewCell = {
@@ -93,6 +116,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         switchView.addTarget(self, action: #selector(groupPrivacySwitchDidChange), for: .valueChanged)
         cell.accessoryView = switchView
         cell.textLabel?.text = "Display Groups"
+        cell.selectionStyle = .none
         return cell
     }()
     
@@ -103,6 +127,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         switchView.addTarget(self, action: #selector(locationPrivacySwitchDidChange), for: .valueChanged)
         cell.accessoryView = switchView
         cell.textLabel?.text = "Display Location"
+        cell.selectionStyle = .none
         return cell
     }()
     
@@ -116,7 +141,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         switch Section(rawValue: section)! {
         case .details: return 4
         case .privacy: return 2
-        case .groups: return sampleGroupData.count
+        case .groups: return joinedGroups.count
         }
     }
     
@@ -127,7 +152,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
             case 0: return nameCell
             case 1: return locationCell
             case 2: return aboutCell
-            case 3: return passwordResetCell
+            case 3: return changePasswordCell
             default: fatalError("Unreachable")
             }
         case .privacy:
@@ -138,7 +163,8 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
             }
         case .groups:
             let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell") ?? UITableViewCell(style: .default, reuseIdentifier: "TableViewCell")
-            cell.textLabel?.text = sampleGroupData[indexPath.row]
+            cell.textLabel?.text = joinedGroups[indexPath.row].title
+            cell.selectionStyle = .none
             return cell
         }
     }
@@ -150,7 +176,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         default: return nil
         }
     }
-
+    
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         switch Section(rawValue: indexPath.section)! {
         case .groups:
@@ -163,8 +189,10 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         switch Section(rawValue: indexPath.section)! {
         case .groups:
-            sampleGroupData.remove(at: indexPath.row)
+            groupsToLeave.insert(joinedGroups[indexPath.row])
+            joinedGroups.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+            
         default:
             return
         }
@@ -181,22 +209,19 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
                 mapViewController.navigationItem.title = "Location"
                 mapViewController.whenDoneSelecting = { [weak self] placemark in
                     self?.locationCell.detailTextLabel?.text = placemark.locality
+                    self?.member?.homeLocation?.name = placemark.locality ?? ""
+                    self?.member?.homeLocation?.location = placemark.location!
                     self?.navigationController?.popViewController(animated: true)
                 }
                 navigationController?.pushViewController(mapViewController, animated: true)
             case 2: // About Me Cell
                 let textViewController = TextViewController()
                 textViewController.navigationItem.title = "About Me"
-                textViewController.setInitialText("This is the about me section.")
+                textViewController.setInitialText(member?.bio ?? "")
                 textViewController.whenDoneEditing = { [weak self] text in
-                    // TODO: Store the text somewhere.
-                    print("received = \(text)")
+                    self?.member?.bio = text
                 }
                 navigationController?.pushViewController(textViewController, animated: true)
-            case 3: // Reset Password Cell
-                let passwordResetController = ResetPasswordViewController()
-                passwordResetController.navigationItem.title = "Reset Password"
-                navigationController?.pushViewController(passwordResetController, animated: true)
             default: break
             }
         default: break
@@ -214,36 +239,49 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     // MARK: - Actions
     
     @objc func doneButtonWasPressed() {
-        self.dismiss(animated: true)
+        sendUpdates()
     }
     
     @objc func cancelButtonWasPressed() {
         self.dismiss(animated: true)
     }
     
-    @objc func groupPrivacySwitchDidChange(_ sender: UISwitch) { }
+    @objc func groupPrivacySwitchDidChange(_ sender: UISwitch) {
+        member?.publicGroup = sender.isOn
+    }
     
-    @objc func locationPrivacySwitchDidChange(_ sender: UISwitch) { }
+    @objc func locationPrivacySwitchDidChange(_ sender: UISwitch) {
+        member?.publicLocation = sender.isOn
+    }
     
     @objc func changeProfileImageButtonPressed() {
         presentImageOptions()
     }
     
-    @objc func showPasswordReset() {
-        let registerController = ResetPasswordViewController()
-        present(registerController, animated: true, completion: {
-            //perhaps we'll do something here later
-        })
+    @objc func passwordButtonWasPressed() {
+        let passwordResetViewController = ResetPasswordViewController(style: .grouped)
+        let navigationViewController = UINavigationController(rootViewController: passwordResetViewController)
+        present(navigationViewController, animated: true)
     }
-
+    
+    @objc func switchValueDidChange(sender:UISwitch!) {
+        if displayGroupsCell.accessoryView == sender {
+            member?.publicGroup = sender.isOn
+        } else if displayLocationCell.accessoryView == sender {
+            member?.publicLocation = sender.isOn
+        }
+    }
+    
     // MARK: - Image Picker Controller Delegate
-
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true) {
             if let editedImage = info[.editedImage] as? UIImage {
                 self.profilePhotoEditorView.userProfileImageView.maskCircle(withImage: editedImage)
+                self.member?.profilePhoto = editedImage
             } else if let originalImage = info[.originalImage] as? UIImage {
                 self.profilePhotoEditorView.userProfileImageView.maskCircle(withImage: originalImage)
+                self.member?.profilePhoto = originalImage
             }
         }
     }
@@ -254,5 +292,75 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         self.view.endEditing(true)
         return false
     }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField == nameCell.textField {
+            member?.name = nameCell.textField.text
+        }
+    }
+    
+    // MARK: - Other Methods
+    
+    func sendUpdates() {
+        guard let member = member else { return }
+        setButtons(for: .submitting)
+        
+        let dispatchGroup = DispatchGroup()
+        
+        dispatchGroup.enter()
+        networkManager.updateMember(member: member) { _ in
+            dispatchGroup.leave()
+        }
+        
+        groupsToLeave.forEach {
+            dispatchGroup.enter()
+            networkManager.removeMeFromGroup(id: $0.id) { _ in
+                dispatchGroup.leave()
+            }
+        }
+        
+        if let profilePhoto = member.profilePhoto {
+            dispatchGroup.enter()
+            networkManager.uploadMemberProfileImage(image: profilePhoto) { error in
+                print(error)
+                dispatchGroup.leave()
+            }
+        }
+        
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.setButtons(for: .waitingForInput)
+            self?.dismiss(animated: true)
+        }
+        
+        
+        
+//        networkManager.updateMember(member: member) { [weak self] error in
+//            guard self != nil else { return }
+//            self?.setButtons(for: .waitingForInput)
+//            guard error == nil else {
+//                OkPresenter(title: "Error updating your profile.",
+//                            message: "There was an error updating your profile. Try again later.",
+//                            handler: {}).present(in: self!)
+//                return
+//            }
+//            self?.dismiss(animated: true)
+//        }
 
+    }
+    
+    private func setButtons(for status: SubmissionStatus) {
+        switch status {
+        case .waitingForInput:
+            cancelBarButton.isEnabled = true
+            doneBarButton.isEnabled = true
+            navigationItem.setRightBarButton(cancelBarButton, animated: true)
+            (activityIndicatorBarItem.customView as! UIActivityIndicatorView).stopAnimating()
+        case .submitting:
+            cancelBarButton.isEnabled = false
+            navigationItem.setRightBarButton(activityIndicatorBarItem, animated: true)
+            (activityIndicatorBarItem.customView as! UIActivityIndicatorView).startAnimating()
+        default: break
+        }
+    }
+    
 }

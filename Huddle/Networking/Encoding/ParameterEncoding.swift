@@ -27,6 +27,7 @@ public enum ParameterEncoding {
     case urlEncoding
     case jsonEncoding
     case urlAndJsonEncoding
+    case formDataEncoding
     
     public func encode(urlRequest: inout URLRequest,
                        bodyParameters: Parameters?,
@@ -46,6 +47,10 @@ public enum ParameterEncoding {
                     let urlParameters = urlParameters else { return }
                 try URLParameterEncoder().encode(urlRequest: &urlRequest, with: urlParameters)
                 try JSONParameterEncoder().encode(urlRequest: &urlRequest, with: bodyParameters)
+
+            case .formDataEncoding:
+                guard let bodyParameters = bodyParameters else { return }
+                try FormParameterEncoder().encode(urlRequest: &urlRequest, with: bodyParameters)
             }
         }catch {
             throw error

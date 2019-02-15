@@ -96,6 +96,19 @@ class LoginViewController: UIViewController {
         return stack
     }()
     
+    private let logoImageViewContainer: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    private let logoImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "Logo"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+    
     // MARK: - Initialization
     
     init() {
@@ -114,6 +127,8 @@ class LoginViewController: UIViewController {
         // We are removing the recover password option for now!
         //        loginItems.addArrangedSubview(resetButton)
         self.view.addSubview(loginItemsStackView)
+        logoImageViewContainer.addSubview(logoImageView)
+        self.view.addSubview(logoImageViewContainer)
         
         NSLayoutConstraint.activate([
             loginItemsStackView.widthAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.widthAnchor, multiplier: 0.75),
@@ -121,11 +136,15 @@ class LoginViewController: UIViewController {
             passwordTextField.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
             loginButton.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
             createAccountButton.widthAnchor.constraint(equalTo: loginItemsStackView.widthAnchor),
-            // Slack discussion on Jan 30th...
-            // We are removing the recover password option for now!
-            //            resetButton.widthAnchor.constraint(equalTo: loginItems.widthAnchor),
             loginItemsStackView.centerXAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerXAnchor),
             loginItemsStackView.centerYAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.centerYAnchor),
+            logoImageViewContainer.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor),
+            logoImageViewContainer.bottomAnchor.constraint(equalTo: loginItemsStackView.topAnchor),
+            logoImageViewContainer.leadingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leadingAnchor),
+            logoImageViewContainer.trailingAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.trailingAnchor),
+            logoImageView.centerXAnchor.constraint(equalTo: logoImageViewContainer.centerXAnchor),
+            logoImageView.centerYAnchor.constraint(equalTo: logoImageViewContainer.centerYAnchor),
+            logoImageView.heightAnchor.constraint(equalToConstant: 150)
             ])
     }
     
