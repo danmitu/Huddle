@@ -34,6 +34,16 @@ struct Group: Decodable, Hashable {
     var ownerName: String?
     var location: NamedLocation?
     
+    // TODO: delete me
+    // For Testing. This needs to be removed
+    init(id: Int, title: String, description: String, ownerID: Int, locationName: String) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.ownerId = ownerID
+        self.location = NamedLocation(id: 1, name: locationName, location: CLLocation(latitude: CLLocationDegrees(1), longitude: CLLocationDegrees(1)))
+    }
+    
     init(from decoder: Decoder) throws {
         let rawGroup = try RawGroup(from: decoder)
         self.id = rawGroup.id

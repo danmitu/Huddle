@@ -27,6 +27,7 @@ enum HuddleApi {
     case membersProfileImage
     case membersProfileImageUpload(media: Media)
     case groupsMine
+    case groupsOther(id: Int)
     case groupsRemoveMe(groupId: Int)
 }
 
@@ -49,6 +50,7 @@ extension HuddleApi: EndPointType {
         case .membersProfileImageUpload: return "members/profile/upload"
         case .groupsMine: return "groups/mygroups"
         case .groupsRemoveMe: return "groups/removeme"
+        case .groupsOther: return "groups/membergroups"
         }
     }
     
@@ -64,6 +66,7 @@ extension HuddleApi: EndPointType {
         case .membersProfileImage: return .get
         case .membersProfileImageUpload: return .post
         case .groupsMine: return .get
+        case .groupsOther: return .get
         case .groupsRemoveMe: return .delete
         }
     }
@@ -122,6 +125,11 @@ extension HuddleApi: EndPointType {
             
         case .groupsMine:
             return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: nil)
+            
+        case .groupsOther(id: let id):
+            return .requestParameters(bodyParameters: nil,
+                                      bodyEncoding: .urlEncoding,
+                                      urlParameters: ["memberid":id])
             
         case .groupsRemoveMe(groupId: let id):
             return .requestParameters(bodyParameters: ["ID":id],

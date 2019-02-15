@@ -199,8 +199,9 @@ struct NetworkManager {
         }
     }
     
-    func getMyGroups(completion: @escaping (_ groups: [Group]?, _ error: String?)->()) {
-        router.request(.groupsMine, completion: { data, response, error in
+    func getMyGroups(id: Int?, completion: @escaping (_ groups: [Group]?, _ error: String?)->()) {
+        let routeToCall: HuddleApi = id == nil ? .groupsMine : .groupsOther(id: id!)
+        router.request(routeToCall, completion: { data, response, error in
             guard error == nil else {
                 completion(nil, "Please check your network connection.")
                 return

@@ -20,11 +20,11 @@ class ProfileViewController: UITableViewController {
     }
     
     private var showGroups : Bool {
-        return isPersonalProfile && member?.publicGroup ?? false
+        return isPersonalProfile || (member?.publicGroup ?? false && joinedGroups.count > 0)
     }
     
     private var showLocation : Bool {
-        return isPersonalProfile && member?.publicLocation ?? false
+        return isPersonalProfile || member?.publicLocation ?? false
     }
     
     private var member: Member? {
@@ -52,6 +52,7 @@ class ProfileViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        performNetworkRequest()
         refreshControl = UIRefreshControl()
         navigationItem.rightBarButtonItem = isPersonalProfile ? UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped)) : nil
         tableView.rowHeight = UITableView.automaticDimension
@@ -61,7 +62,6 @@ class ProfileViewController: UITableViewController {
         tableView.tableHeaderView = detailedProfilePhotoView
         tableView.refreshControl = refreshControl
         refreshControl!.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        performNetworkRequest()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -127,6 +127,7 @@ class ProfileViewController: UITableViewController {
         case .groups:
             cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCell") ?? UITableViewCell(style: .value1, reuseIdentifier: "TableViewCell")
             cell.textLabel?.text = joinedGroups[indexPath.row].title
+            cell.accessoryType = .disclosureIndicator
             cell.selectionStyle = .none
         case .logout:
             cell = logoutButtonCell
@@ -149,6 +150,14 @@ class ProfileViewController: UITableViewController {
         let headerView = view as! UITableViewHeaderFooterView
         headerView.textLabel?.font = UIFont(name: "HelveticaNeue-Bold", size: 15)!
         headerView.textLabel?.textColor = UIColor.lightGray
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if Section(rawValue: indexPath.section) == .groups {
+            let groupViewController = GroupViewController(style: .grouped)
+            groupViewController.set(groupToSet: joinedGroups[indexPath.row])
+            navigationController?.pushViewController(groupViewController, animated: true)
+        }
     }
     
     // MARK: - Actions
@@ -197,14 +206,14 @@ class ProfileViewController: UITableViewController {
         }
         
         dispatchGroup.enter()
-        networkManager.getMyGroups(completion: { [weak self] groups, error in
+        networkManager.getMyGroups(id: publicMemberId) { [weak self] groups, error in
             guard error == nil else {
                 print(error! as String)
                 return
             }
             self?.joinedGroups = groups ?? [Group]()
             dispatchGroup.leave()
-        })
+        }
         
         dispatchGroup.enter()
         networkManager.getMemberProfileImage(completion: { [weak self] image, error in

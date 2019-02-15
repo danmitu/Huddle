@@ -56,6 +56,11 @@
 		92F8E291220D3F3C009BC667 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F8E290220D3F3C009BC667 /* ResetPasswordViewController.swift */; };
 		92F8E293220D4025009BC667 /* ButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F8E292220D4025009BC667 /* ButtonTableViewCell.swift */; };
 		92F8E295220D46B6009BC667 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F8E294220D46B6009BC667 /* TextFieldTableViewCell.swift */; };
+		E59EA8E52216758000A6F027 /* GroupHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E32216757F00A6F027 /* GroupHeaderView.swift */; };
+		E59EA8E62216758000A6F027 /* GroupHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E59EA8E42216758000A6F027 /* GroupHeaderView.xib */; };
+		E59EA8E9221675B000A6F027 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E7221675B000A6F027 /* GroupViewController.swift */; };
+		E59EA8EA221675B000A6F027 /* GroupMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */; };
+		E59EA8EC2216762700A6F027 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8EB2216762700A6F027 /* Event.swift */; };
 		E5FE13BA220BDA530040C592 /* FilledButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5FE13B9220BDA530040C592 /* FilledButtonTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -111,6 +116,11 @@
 		92F8E290220D3F3C009BC667 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		92F8E292220D4025009BC667 /* ButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTableViewCell.swift; sourceTree = "<group>"; };
 		92F8E294220D46B6009BC667 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		E59EA8E32216757F00A6F027 /* GroupHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupHeaderView.swift; sourceTree = "<group>"; };
+		E59EA8E42216758000A6F027 /* GroupHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GroupHeaderView.xib; sourceTree = "<group>"; };
+		E59EA8E7221675B000A6F027 /* GroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
+		E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupMembersViewController.swift; sourceTree = "<group>"; };
+		E59EA8EB2216762700A6F027 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		E5FE13B9220BDA530040C592 /* FilledButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilledButtonTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -178,6 +188,8 @@
 		92758D5821F2C86000E06465 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */,
+				E59EA8E7221675B000A6F027 /* GroupViewController.swift */,
 				9238827121FE929E00F3AD29 /* Alert Presenters */,
 				92D9A1B221FD6D0400B3E499 /* BaseViewController.swift */,
 				92D9A1B021FD6D0400B3E499 /* CalendarViewController.swift */,
@@ -196,6 +208,7 @@
 		92758D5A21F2C93C00E06465 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E59EA8EB2216762700A6F027 /* Event.swift */,
 				92758D6121F2D01A00E06465 /* ModelPlaceholderFile */,
 				92D6946D220AC3EA00A9013E /* Member.swift */,
 				920D55892215005E005A839D /* Group.swift */,
@@ -208,6 +221,8 @@
 		92758D5B21F2C94500E06465 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				E59EA8E32216757F00A6F027 /* GroupHeaderView.swift */,
+				E59EA8E42216758000A6F027 /* GroupHeaderView.xib */,
 				92D605BB21F6B3DF006916EE /* DrawCode.swift */,
 				9238827821FE96B500F3AD29 /* UIColorExtension.swift */,
 				927A233B2205705200CA9041 /* UIImageViewExtension.swift */,
@@ -358,6 +373,7 @@
 				92758D6221F2D01A00E06465 /* ModelPlaceholderFile in Resources */,
 				92758D5021F2C63B00E06465 /* LaunchScreen.storyboard in Resources */,
 				92758D4D21F2C63B00E06465 /* Assets.xcassets in Resources */,
+				E59EA8E62216758000A6F027 /* GroupHeaderView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -372,6 +388,7 @@
 				92F8E291220D3F3C009BC667 /* ResetPasswordViewController.swift in Sources */,
 				9238827D21FEA1C800F3AD29 /* Utility.swift in Sources */,
 				9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */,
+				E59EA8EA221675B000A6F027 /* GroupMembersViewController.swift in Sources */,
 				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
 				92BFC32F21F6E33100BE4FEE /* EndPointType.swift in Sources */,
 				92AFFCEF2202E5EB0076F575 /* TitledTextFieldTableViewCell.swift in Sources */,
@@ -383,6 +400,7 @@
 				92D605BC21F6B3DF006916EE /* DrawCode.swift in Sources */,
 				9238827521FE929E00F3AD29 /* DestructiveConfirmationPresenter.swift in Sources */,
 				920D559522155432005A839D /* Media.swift in Sources */,
+				E59EA8E52216758000A6F027 /* GroupHeaderView.swift in Sources */,
 				920D55882214F843005A839D /* NamedLocation.swift in Sources */,
 				92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */,
 				92BCA40621FE90E8003DB8A5 /* PleaseWaitView.swift in Sources */,
@@ -392,6 +410,7 @@
 				92BFC33621F6E4C300BE4FEE /* ParameterEncoding.swift in Sources */,
 				920D558A2215005E005A839D /* Group.swift in Sources */,
 				92D6946E220AC3EA00A9013E /* Member.swift in Sources */,
+				E59EA8E9221675B000A6F027 /* GroupViewController.swift in Sources */,
 				92BFC33E21F6EA4D00BE4FEE /* Router.swift in Sources */,
 				92D9A1B621FD6D0400B3E499 /* RegisterViewController.swift in Sources */,
 				927A2348220590DF00CA9041 /* ImageOptionsGiver.swift in Sources */,
@@ -405,6 +424,7 @@
 				92D6944C22069A8300A9013E /* DetailedProfilePhotoView.swift in Sources */,
 				92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */,
 				92BFC33821F6E58500BE4FEE /* URLParameterEncoder.swift in Sources */,
+				E59EA8EC2216762700A6F027 /* Event.swift in Sources */,
 				9238827921FE96B500F3AD29 /* UIColorExtension.swift in Sources */,
 				92D9A1B421FD6D0400B3E499 /* LoginViewController.swift in Sources */,
 				92AFFCED2202DCD00076F575 /* ProfileEditorViewController.swift in Sources */,

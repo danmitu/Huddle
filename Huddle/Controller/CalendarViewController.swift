@@ -40,11 +40,3 @@ class CalendarViewController: UITableViewController {
      }
     
 }
-
-// TODO: delete me
-fileprivate struct Event {
-    let name: String
-    let groupName: String
-    let date: Date
-    let location: String
-}
