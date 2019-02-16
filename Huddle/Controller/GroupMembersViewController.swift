@@ -48,8 +48,7 @@ class GroupMembersViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let profileViewController = ProfileViewController(style: .grouped)
-        profileViewController.publicMemberId = memberIDs[indexPath.row]
+        let profileViewController = ProfileViewController(profileOwnerId: memberIDs[indexPath.row])
         navigationController?.pushViewController(profileViewController, animated: true)
     }
 }

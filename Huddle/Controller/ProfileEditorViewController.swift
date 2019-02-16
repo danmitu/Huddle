@@ -308,21 +308,23 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         let dispatchGroup = DispatchGroup()
         
         dispatchGroup.enter()
-        networkManager.updateMember(member: member) { _ in
+        networkManager.update(member: member) { error in
+            if let error = error { print(error) }
             dispatchGroup.leave()
         }
         
         groupsToLeave.forEach {
             dispatchGroup.enter()
-            networkManager.removeMeFromGroup(id: $0.id) { _ in
+            networkManager.removeSelf(fromGroup: $0.id) { error in
+                if let error = error { print(error) }
                 dispatchGroup.leave()
             }
         }
         
         if let profilePhoto = member.profilePhoto {
             dispatchGroup.enter()
-            networkManager.uploadMemberProfileImage(image: profilePhoto) { error in
-                print(error)
+            networkManager.upload(memberProfileImage: profilePhoto) { error in
+                if let error = error { print(error) }
                 dispatchGroup.leave()
             }
         }
@@ -331,20 +333,6 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
             self?.setButtons(for: .waitingForInput)
             self?.dismiss(animated: true)
         }
-        
-        
-        
-//        networkManager.updateMember(member: member) { [weak self] error in
-//            guard self != nil else { return }
-//            self?.setButtons(for: .waitingForInput)
-//            guard error == nil else {
-//                OkPresenter(title: "Error updating your profile.",
-//                            message: "There was an error updating your profile. Try again later.",
-//                            handler: {}).present(in: self!)
-//                return
-//            }
-//            self?.dismiss(animated: true)
-//        }
 
     }
     

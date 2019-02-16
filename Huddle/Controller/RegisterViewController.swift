@@ -155,7 +155,7 @@ class RegisterViewController: UIViewController {
     @objc func attemptCreation(sender: UIButton) {
         guard fieldsAreValid else { return }
         
-        networkManager.create(email: emailTextField.text!, password: passwordTextField.text!, fullName: fullNameTextField.text!, completion: {
+        networkManager.createMember(email: emailTextField.text!, password: passwordTextField.text!, fullName: fullNameTextField.text!, completion: {
             error in
             guard error == nil else {
                 // If there is an error, tell the user.

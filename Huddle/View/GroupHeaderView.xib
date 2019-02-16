@@ -13,29 +13,29 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="GroupHeaderView" customModule="Huddle" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="345" height="127"/>
+            <rect key="frame" x="0.0" y="0.0" width="345" height="90"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="LJ6-AW-5Gc">
-                    <rect key="frame" x="8" y="8" width="329" height="111"/>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="LJ6-AW-5Gc">
+                    <rect key="frame" x="8" y="8" width="329" height="74"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gMM-SO-pUX">
-                            <rect key="frame" x="70" y="0.0" width="189.5" height="55.5"/>
+                            <rect key="frame" x="0.0" y="0.0" width="189.5" height="37"/>
                             <fontDescription key="fontDescription" type="system" pointSize="35"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <stackView opaque="NO" contentMode="scaleToFill" spacing="50" translatesAutoresizingMaskIntoConstraints="NO" id="ymL-Ya-EMX">
-                            <rect key="frame" x="54.5" y="55.5" width="220.5" height="55.5"/>
+                        <stackView opaque="NO" contentMode="scaleToFill" spacing="20" translatesAutoresizingMaskIntoConstraints="NO" id="ymL-Ya-EMX">
+                            <rect key="frame" x="0.0" y="37" width="190.5" height="37"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Location" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0hk-9t-CXc">
-                                    <rect key="frame" x="0.0" y="0.0" width="87" height="55.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="87" height="37"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Group Category" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sf3-QA-nuh">
-                                    <rect key="frame" x="137" y="0.0" width="83.5" height="55.5"/>
+                                    <rect key="frame" x="107" y="0.0" width="83.5" height="37"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
@@ -62,7 +62,7 @@
                 <outlet property="groupLocationLabel" destination="0hk-9t-CXc" id="OFg-lW-ofA"/>
                 <outlet property="groupNameLabel" destination="gMM-SO-pUX" id="VNg-xJ-GAm"/>
             </connections>
-            <point key="canvasLocation" x="-60" y="282.90854572713647"/>
+            <point key="canvasLocation" x="-65" y="271"/>
         </view>
     </objects>
 </document>

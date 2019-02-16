@@ -32,7 +32,7 @@ class BaseViewController: UITabBarController {
     }()
     
     private let profileViewController: ProfileViewController = {
-        let vc = ProfileViewController(style: .grouped)
+        let vc = ProfileViewController()
         vc.tabBarItem = UITabBarItem(title: "Profile",
                                      image: DrawCode.imageOfUserTabIcon(isSelected: false),
                                      selectedImage: DrawCode.imageOfUserTabIcon(isSelected: true))
@@ -41,12 +41,10 @@ class BaseViewController: UITabBarController {
     
     // Temporary View for testing a different users profile page
     private let testOutsideProfileViewController: ProfileViewController = {
-        let vc = ProfileViewController(style: .grouped)
+        let vc = ProfileViewController(profileOwnerId: 2)
         vc.tabBarItem = UITabBarItem(title: "Test Profile",
                                      image: DrawCode.imageOfUserTabIcon(isSelected: false),
                                      selectedImage: DrawCode.imageOfUserTabIcon(isSelected: true))
-        // The view is NOT a personal profile and is harded coded to user #2.
-        vc.publicMemberId = 2
         return vc
     }()
     
@@ -76,7 +74,7 @@ class BaseViewController: UITabBarController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        networkManager.isLoggedIn() { result in
+        networkManager.checkLogin() { result in
             guard let isLoggedIn = result else {
                 OkPresenter(title: "Network Error", message: "Please check your network settings.", handler: nil).present(in: self)
                 return

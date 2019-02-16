@@ -10,29 +10,39 @@ import UIKit
 
 class ProfileViewController: UITableViewController {
     
+    /// - Parameter profileOwnerId: Needed if this represents a public profile. `nil` by default meaning this is the user's profile.
+    init(profileOwnerId: Int? = nil) {
+        
+        if let profileOwnerId = profileOwnerId {
+            self.owner = Owner.publicProfile(id: profileOwnerId)
+        } else {
+            self.owner = Owner.personalProfile
+        }
+        
+        super.init(style: .grouped)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) is not supported")
+    }
+    
     // MARK: - Properties
+    
     private let networkManager = NetworkManager()
     
-    var publicMemberId: Int?
-    
-    private var isPersonalProfile: Bool {
-       return publicMemberId == nil
+    private enum Owner {
+        case personalProfile
+        case publicProfile(id: Int)
     }
     
-    private var showGroups : Bool {
-        return isPersonalProfile || (member?.publicGroup ?? false && joinedGroups.count > 0)
-    }
-    
-    private var showLocation : Bool {
-        return isPersonalProfile || member?.publicLocation ?? false
-    }
-    
+    private let owner: Owner
+        
     private var member: Member? {
         didSet {
             detailedProfilePhotoView.profileNameLabel.text = member?.name
-            detailedProfilePhotoView.locationNameLabel.text = showLocation ? member?.homeLocation?.name : ""
+            detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation?.name ?? ""
             aboutTableViewCell.textLabel?.text = member?.bio
-            detailedProfilePhotoView.profilePhotoImageView.image = member?.profilePhoto
+            detailedProfilePhotoView.profilePhotoImageView.image = member?.profilePhoto ?? UIImage(named: "User Profile Placeholder")!
         }
     }
 
@@ -53,15 +63,23 @@ class ProfileViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         performNetworkRequest()
+        
         refreshControl = UIRefreshControl()
-        navigationItem.rightBarButtonItem = isPersonalProfile ? UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped)) : nil
+        refreshControl!.addTarget(self, action: #selector(refresh), for: .valueChanged)
+
+        switch owner {
+        case .personalProfile:
+            navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped))
+        case .publicProfile:
+            break
+        }
+        
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 600
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
         tableView.backgroundColor = .white
         tableView.tableHeaderView = detailedProfilePhotoView
         tableView.refreshControl = refreshControl
-        refreshControl!.addTarget(self, action: #selector(refresh), for: .valueChanged)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -73,7 +91,7 @@ class ProfileViewController: UITableViewController {
     
     // MARK: - Other Views
     
-    let detailedProfilePhotoView: DetailedProfilePhotoView = {
+    private let detailedProfilePhotoView: DetailedProfilePhotoView = {
         let view = Bundle.main.loadNibNamed("DetailedProfilePhotoView", owner: self, options: nil)![0] as! DetailedProfilePhotoView
         view.autoresizingMask = .flexibleWidth
         view.translatesAutoresizingMaskIntoConstraints = true
@@ -112,9 +130,12 @@ class ProfileViewController: UITableViewController {
         case .about:
             return 1
         case .groups:
-            return showGroups ? joinedGroups.count : 0
+            return joinedGroups.count
         case .logout:
-            return isPersonalProfile ? 1 : 0
+            switch owner {
+            case .personalProfile: return 1
+            case .publicProfile: return 0
+            }
         }
     }
     
@@ -139,7 +160,7 @@ class ProfileViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
         case .about: return "About"
-        case .groups: return showGroups ? "Groups" : ""
+        case .groups: return "Groups"
         case .logout: return ""
         }
     }
@@ -154,8 +175,7 @@ class ProfileViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if Section(rawValue: indexPath.section) == .groups {
-            let groupViewController = GroupViewController(style: .grouped)
-            groupViewController.set(groupToSet: joinedGroups[indexPath.row])
+            let groupViewController = GroupViewController(groupId: joinedGroups[indexPath.row].id)
             navigationController?.pushViewController(groupViewController, animated: true)
         }
     }
@@ -188,44 +208,46 @@ class ProfileViewController: UITableViewController {
             self?.refreshControl!.endRefreshing()
         }
     }
-
     
     // MARK: - Methods
     
     private func performNetworkRequest(completion: (()->())? = nil) {
+        guard case .personalProfile = owner else { return }
+        
+        let id: Int?
+        switch owner {
+        case .personalProfile: id = nil
+        case .publicProfile(id: let publicId): id = publicId
+        }
+        
         let dispatchGroup = DispatchGroup()
         
         dispatchGroup.enter()
-        networkManager.readProfile(id: publicMemberId) { [weak self] member, error in
-            guard error == nil else {
-                print(error! as String)
-                return
-            }
-            self?.member = member
+        networkManager.read(profile: id) { member, error in
+            if let error = error { print(error) }
+            self.member = member
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        networkManager.getMyGroups(id: publicMemberId) { [weak self] groups, error in
-            guard error == nil else {
-                print(error! as String)
-                return
-            }
-            self?.joinedGroups = groups ?? [Group]()
+        networkManager.getGroups(forMember: id) { groups, error in
+            if let error = error { print(error) }
+            self.joinedGroups = groups ?? [Group]()
             dispatchGroup.leave()
         }
         
         dispatchGroup.enter()
-        networkManager.getMemberProfileImage(completion: { [weak self] image, error in
+        networkManager.get(profileImageForMember: id) { [weak self] image, error in
+            if let error = error { print(error) }
             self?.member?.profilePhoto = image
             dispatchGroup.leave()
-        })
+        }
         
         dispatchGroup.notify(queue: .main) {
             completion?()
         }
-        
     }
+    
     
     
 }

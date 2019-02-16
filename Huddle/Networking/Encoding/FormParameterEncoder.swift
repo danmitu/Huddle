@@ -32,7 +32,7 @@ public struct FormParameterEncoder: ParameterEncoder {
         let boundary = "Boundary-\(UUID().uuidString)"
         urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
-        for (key, value) in parameters {
+        for (_, _) in parameters {
             body.append("--\(boundary + lineBreak)".utf8Data)
 //            switch value {
 //            case let stringValue as String:

@@ -72,3 +72,18 @@ func getCameraPermissionIfNeeded(from viewController: UIViewController, then com
         }
     }
 }
+
+extension String {
+    var bool: Bool? {
+        let lowercaseSelf = self.lowercased()
+        
+        switch lowercaseSelf {
+        case "true", "yes", "1":
+            return true
+        case "false", "no", "0":
+            return false
+        default:
+            return nil
+        }
+    }
+}

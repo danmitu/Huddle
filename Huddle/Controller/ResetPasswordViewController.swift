@@ -120,7 +120,7 @@ class ResetPasswordViewController: UITableViewController, UITextFieldDelegate {
         
         setButtons(for: .submitting)
         
-        networkManager.updatePassword(oldPassword: oldPasswordCell.textField.text!, newPassword: newPasswordCell.textField.text!, completion: { [weak self] error in
+        networkManager.updateMemberCredentials(oldPassword: oldPasswordCell.textField.text!, newPassword: newPasswordCell.textField.text!, completion: { [weak self] error in
             guard self != nil else { return }
             self!.setButtons(for: .waitingForInput)
             guard error == nil else {

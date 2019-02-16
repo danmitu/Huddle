@@ -10,16 +10,50 @@ import UIKit
 
 class GroupViewController: UITableViewController {
     
+    // MARK: - Temporary Placeholders
+    
+    // TODO: Delete Me
+    
+    private var eventData = [
+        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Date(), location: "Ferry Point Park"),
+        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!, location: "Ferry Point Park"),
+        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 2, to: Date())!, location: "Ferry Point Park")
+    ]
+    
+    // TODO: Delete Me
+    
+    private var memberIDData = [1,2,3,4,5]
+    
+    
+    // MARK: - Initialization
+    
+    init(groupId: Int) {
+        self.targetGroupId = groupId
+        super.init(style: .grouped)
+        performNetworkRequest()
+    }
+    
+    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) is not supported") }
+    
     // MARK: - Properties
+    
     private let networkManager = NetworkManager()
+    
+    let targetGroupId: Int
     
     private var group: Group? {
         didSet {
-//            navigationItem.title = group?.title
             groupHeaderView.groupNameLabel.text = group?.title
             groupHeaderView.groupLocationLabel.text = group?.location?.name
             groupHeaderView.groupCategoryLabel.text = "Category"
             aboutTableViewCell.textLabel?.text = group?.description
+        }
+    }
+    
+    private var isMember: Bool = false {
+        didSet {
+            let buttonTitle = isMember ? "Leave Group" : "Join Group"
+            joinButtonCell.button.setTitle(buttonTitle, for: .normal)
         }
     }
     
@@ -30,28 +64,10 @@ class GroupViewController: UITableViewController {
         case events
     }
     
-    // TODO: delete me
-//    fileprivate struct Event {
-//        let name: String
-//        let groupName: String
-//        let date: Date
-//        let location: String
-//    }
-    
-    // TODO: delete me
-    private var eventData = [
-        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Date(), location: "Ferry Point Park"),
-        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!, location: "Ferry Point Park"),
-        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 2, to: Date())!, location: "Ferry Point Park")
-    ]
-    
-    private var memberIDData = [1,2,3,4,5]
-    
     // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        navigationItem.title = "Test Group"
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped))
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 600
@@ -59,17 +75,7 @@ class GroupViewController: UITableViewController {
         tableView.backgroundColor = .white
         tableView.tableHeaderView = groupHeaderView
         tableView.register(CalendarTableViewCell.self, forCellReuseIdentifier: "CalendarTableViewCell")
-        joinButtonCell.button.addTarget(self, action: #selector(join), for: .touchUpInside)
-        
-        
-//        self.group = testGroup
-//        networkManager.readProfile(id: memberID) { [weak self] member, error in
-//            guard error == nil else {
-//                print(error! as String)
-//                return
-//            }
-//            self?.member = member
-//        }
+        joinButtonCell.button.addTarget(self, action: #selector(joinButtonWasPressed), for: .touchUpInside)
     }
     
     // MARK: - Static Cells
@@ -102,13 +108,7 @@ class GroupViewController: UITableViewController {
     }()
     
     private let joinButtonCell: FilledButtonTableViewCell = {
-//        let cell = ButtonFieldTableViewCell(reuseIdentifier: "ButtonFieldTableViewCell", showSeparators: false)
         let cell = FilledButtonTableViewCell(reuseIdentifier: "button", showSeparators: false)
-        cell.button.setTitle("Join", for: .normal)
-        cell.button.setTitle("Joined", for: .disabled)
-        //        cell.button.setTitleColor(UIColor.preferredTeal, for: .normal)
-//        cell.button.addTarget(self, action: #selector(join), for: .touchUpInside)
-//        cell.button.isEnabled = true
         return cell
     }()
     
@@ -157,17 +157,21 @@ class GroupViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         switch Section(rawValue: section)! {
         case .about: return "About"
-        case .events: return "Events"
-        case .join: return " "
-        case .members: return "Members"
+        case .events: return "Upcoming Events"
+        case .join: return nil
+        case .members: return nil
         }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if Section(rawValue: section)! == .members || Section(rawValue: section)! == .join {
+        switch Section(rawValue: section)! {
+        case .members, .join:
             return CGFloat.leastNonzeroMagnitude
+        case .about:
+            return 30
+        default:
+            return UITableView.automaticDimension
         }
-        return UITableView.automaticDimension
     }
     
     // MARK: Table View Delegate
@@ -185,10 +189,6 @@ class GroupViewController: UITableViewController {
         }
     }
     
-    func set(groupToSet: Group) {
-        group = Group(id: 1, title: "Test Group Name", description: "Test Group", ownerID: 1, locationName: "Test Location")
-    }
-    
     // MARK: - Actions
     
     @objc private func editButtonWasTapped() {
@@ -198,9 +198,49 @@ class GroupViewController: UITableViewController {
         present(navigationController, animated: true)
     }
     
-    @objc func join(sender: UIButton) {
-        if (joinButtonCell.button.isEnabled) {
-            joinButtonCell.button.isEnabled = false;
+    @objc func joinButtonWasPressed(sender: UIButton) {
+        joinButtonCell.button.isEnabled = false
+        if isMember {
+            networkManager.removeSelf(fromGroup: targetGroupId, completion: { [weak self] error in
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
+                guard let _self = self else { return }
+                _self.isMember = false
+                _self.joinButtonCell.button.isEnabled = true
+            })
+        } else {
+            networkManager.join(group: targetGroupId, completion: { [weak self] error in
+                guard error == nil else {
+                    print(error!)
+                    return
+                }
+                guard let _self = self else { return }
+                _self.isMember = true
+                _self.joinButtonCell.button.isEnabled = true
+            })
+        }
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func performNetworkRequest() {
+        networkManager.read(group: targetGroupId) { [weak self] group, error in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            self?.group = group
+        }
+        
+        networkManager.checkSelfIsMember(withinGroup: targetGroupId) { [weak self] value, error in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            guard let isMember = value else { return }
+            self?.isMember = isMember
         }
     }
     

@@ -12,6 +12,7 @@
 		920D559122150E06005A839D /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920D559022150E06005A839D /* Category.swift */; };
 		920D559322154CE0005A839D /* FormParameterEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920D559222154CE0005A839D /* FormParameterEncoder.swift */; };
 		920D559522155432005A839D /* Media.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920D559422155432005A839D /* Media.swift */; };
+		920D55992217A29E005A839D /* UIViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 920D55982217A29E005A839D /* UIViewExtension.swift */; };
 		92233104220299E300302E77 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92233103220299E300302E77 /* ProfileViewController.swift */; };
 		922E80282203AD0400B797A2 /* TextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 922E80272203AD0400B797A2 /* TextViewController.swift */; };
 		922E802A2203B38200B797A2 /* ChooseLocationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 922E80292203B38200B797A2 /* ChooseLocationViewController.swift */; };
@@ -70,6 +71,7 @@
 		920D559022150E06005A839D /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 		920D559222154CE0005A839D /* FormParameterEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormParameterEncoder.swift; sourceTree = "<group>"; };
 		920D559422155432005A839D /* Media.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Media.swift; sourceTree = "<group>"; };
+		920D55982217A29E005A839D /* UIViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewExtension.swift; sourceTree = "<group>"; };
 		92233103220299E300302E77 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		922E80272203AD0400B797A2 /* TextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextViewController.swift; sourceTree = "<group>"; };
 		922E80292203B38200B797A2 /* ChooseLocationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseLocationViewController.swift; sourceTree = "<group>"; };
@@ -188,10 +190,10 @@
 		92758D5821F2C86000E06465 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */,
-				E59EA8E7221675B000A6F027 /* GroupViewController.swift */,
 				9238827121FE929E00F3AD29 /* Alert Presenters */,
 				92D9A1B221FD6D0400B3E499 /* BaseViewController.swift */,
+				E59EA8E7221675B000A6F027 /* GroupViewController.swift */,
+				E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */,
 				92D9A1B021FD6D0400B3E499 /* CalendarViewController.swift */,
 				92233103220299E300302E77 /* ProfileViewController.swift */,
 				92AFFCEC2202DCD00076F575 /* ProfileEditorViewController.swift */,
@@ -221,6 +223,7 @@
 		92758D5B21F2C94500E06465 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				920D55982217A29E005A839D /* UIViewExtension.swift */,
 				E59EA8E32216757F00A6F027 /* GroupHeaderView.swift */,
 				E59EA8E42216758000A6F027 /* GroupHeaderView.xib */,
 				92D605BB21F6B3DF006916EE /* DrawCode.swift */,
@@ -404,6 +407,7 @@
 				920D55882214F843005A839D /* NamedLocation.swift in Sources */,
 				92758D4621F2C63A00E06465 /* AppDelegate.swift in Sources */,
 				92BCA40621FE90E8003DB8A5 /* PleaseWaitView.swift in Sources */,
+				920D55992217A29E005A839D /* UIViewExtension.swift in Sources */,
 				92BFC33A21F6E82800BE4FEE /* JSONParameterEncoder.swift in Sources */,
 				9238827B21FE9B0100F3AD29 /* FilledButton.swift in Sources */,
 				92233104220299E300302E77 /* ProfileViewController.swift in Sources */,
