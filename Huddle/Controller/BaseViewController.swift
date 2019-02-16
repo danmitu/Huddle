@@ -54,7 +54,7 @@ class BaseViewController: UITabBarController {
         super.init(nibName: nil, bundle: nil)
         
         // set the order for the view controllers, but wrap them in a navigation controller
-        self.viewControllers = [exploreViewController, calendarViewController, profileViewController, testOutsideProfileViewController].map {
+        self.viewControllers = [exploreViewController, calendarViewController, profileViewController].map {
             return UINavigationController(rootViewController: $0)
         }
         
