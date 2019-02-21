@@ -61,7 +61,7 @@ class GroupViewController: UITableViewController {
     
     private var isOwner: Bool = false {
         didSet {
-            navigationItem.rightBarButtonItem = isOwner ? UIBarButtonItem(image: DrawCode.imageOfKebabIcon(isSelected: false), style: .plain, target: self, action: #selector(kebabIconWasTapped)) : nil
+            navigationItem.rightBarButtonItem = isOwner ? UIBarButtonItem(title: "Options", style: .plain, target: self, action: #selector(optionsButtonWasPressed)) : nil
         }
     }
     
@@ -79,7 +79,7 @@ class GroupViewController: UITableViewController {
         performNetworkRequest()
         refreshControl = UIRefreshControl()
         refreshControl!.addTarget(self, action: #selector(refresh), for: .valueChanged)
-        navigationItem.rightBarButtonItem = isOwner ? UIBarButtonItem(image: DrawCode.imageOfKebabIcon(isSelected: false), style: .plain, target: self, action: #selector(kebabIconWasTapped)) : nil
+        navigationItem.rightBarButtonItem = isOwner ? UIBarButtonItem(title: "Options", style: .plain, target: self, action: #selector(optionsButtonWasPressed)) : nil
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 600
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
@@ -209,7 +209,7 @@ class GroupViewController: UITableViewController {
     
     // MARK: - Actions
     
-    @objc private func kebabIconWasTapped() {
+    @objc private func optionsButtonWasPressed() {
         let optionMenu = UIAlertController(title: nil, message: "Chose Option", preferredStyle: .actionSheet)
         
         let editAction = UIAlertAction(title: "Edit Group", style: .default, handler: {
