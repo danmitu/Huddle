@@ -59,7 +59,11 @@ class GroupViewController: UITableViewController {
         }
     }
     
-    private var isOwner: Bool = true
+    private var isOwner: Bool = false {
+        didSet {
+            navigationItem.rightBarButtonItem = isOwner ? UIBarButtonItem(image: DrawCode.imageOfKebabIcon(isSelected: false), style: .plain, target: self, action: #selector(kebabIconWasTapped)) : nil
+        }
+    }
     
     private enum Section: Int, CaseIterable {
         case about
