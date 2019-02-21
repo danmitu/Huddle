@@ -30,9 +30,11 @@ enum HuddleApi {
     case groupsRead(groupId: Int)
     case groupsMine
     case groupsIsMember(groupId: Int)
+    case groupsIsOwner(groupId: Int)
     case groupsOther(id: Int)
     case groupsJoin(groupId: Int)
     case groupsRemoveMe(groupId: Int)
+    case groupUpdate(group: Group)
 }
 
 extension HuddleApi: EndPointType {
@@ -56,9 +58,11 @@ extension HuddleApi: EndPointType {
         case .groupsRead: return "groups/read"
         case .groupsMine: return "groups/mygroups"
         case .groupsIsMember: return "groups/ismember"
+        case .groupsIsOwner: return "groups/isowner"
         case .groupsJoin: return "groups/join"
         case .groupsRemoveMe: return "groups/removeme"
         case .groupsOther: return "groups/membergroups"
+        case .groupUpdate: return "groups/update"
         }
     }
     
@@ -77,9 +81,11 @@ extension HuddleApi: EndPointType {
         case .groupsRead: return .get
         case .groupsMine: return .get
         case .groupsIsMember: return .get
+        case .groupsIsOwner: return .get
         case .groupsOther: return .get
         case .groupsJoin: return .post
         case .groupsRemoveMe: return .delete
+        case .groupUpdate: return .put
         }
     }
     
@@ -153,6 +159,11 @@ extension HuddleApi: EndPointType {
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["groupid": id])
             
+        case .groupsIsOwner(groupId: let id):
+            return .requestParameters(bodyParameters: nil,
+                                      bodyEncoding: .urlEncoding,
+                                      urlParameters: ["groupid": id])
+            
         case .groupsOther(id: let id):
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
@@ -165,6 +176,18 @@ extension HuddleApi: EndPointType {
             
         case .groupsRemoveMe(groupId: let id):
             return .requestParameters(bodyParameters: ["ID":id],
+                                      bodyEncoding: .jsonEncoding,
+                                      urlParameters: nil)
+            
+        case .groupUpdate(group: let group):
+            return .requestParameters(bodyParameters: ["ID":group.id,
+                                                       "Title":group.title ?? "",
+                                                       "Description":group.description ,
+                                                       "Location":group.location?.name ?? "",
+                                                       "Latitude":group.location?.location.coordinate.latitude ?? "",
+                                                       "Longitude":group.location?.location.coordinate.longitude ?? "",
+                                                       "CategoryID": group.category.rawValue
+                                                       ],
                                       bodyEncoding: .jsonEncoding,
                                       urlParameters: nil)
         }

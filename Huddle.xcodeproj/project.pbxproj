@@ -62,6 +62,8 @@
 		E59EA8E9221675B000A6F027 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E7221675B000A6F027 /* GroupViewController.swift */; };
 		E59EA8EA221675B000A6F027 /* GroupMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */; };
 		E59EA8EC2216762700A6F027 /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8EB2216762700A6F027 /* Event.swift */; };
+		E5F6E182221CE66100978CF5 /* GroupEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6E181221CE66100978CF5 /* GroupEditorViewController.swift */; };
+		E5F6E184221D0FBD00978CF5 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F6E183221D0FBD00978CF5 /* CategoryViewController.swift */; };
 		E5FE13BA220BDA530040C592 /* FilledButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5FE13B9220BDA530040C592 /* FilledButtonTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -123,6 +125,8 @@
 		E59EA8E7221675B000A6F027 /* GroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
 		E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupMembersViewController.swift; sourceTree = "<group>"; };
 		E59EA8EB2216762700A6F027 /* Event.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		E5F6E181221CE66100978CF5 /* GroupEditorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupEditorViewController.swift; sourceTree = "<group>"; };
+		E5F6E183221D0FBD00978CF5 /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		E5FE13B9220BDA530040C592 /* FilledButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilledButtonTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -193,6 +197,7 @@
 				9238827121FE929E00F3AD29 /* Alert Presenters */,
 				92D9A1B221FD6D0400B3E499 /* BaseViewController.swift */,
 				E59EA8E7221675B000A6F027 /* GroupViewController.swift */,
+				E5F6E181221CE66100978CF5 /* GroupEditorViewController.swift */,
 				E59EA8E8221675B000A6F027 /* GroupMembersViewController.swift */,
 				92D9A1B021FD6D0400B3E499 /* CalendarViewController.swift */,
 				92233103220299E300302E77 /* ProfileViewController.swift */,
@@ -203,6 +208,7 @@
 				922E80272203AD0400B797A2 /* TextViewController.swift */,
 				922E80292203B38200B797A2 /* ChooseLocationViewController.swift */,
 				927A2347220590DF00CA9041 /* ImageOptionsGiver.swift */,
+				E5F6E183221D0FBD00978CF5 /* CategoryViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -390,6 +396,7 @@
 				E5FE13BA220BDA530040C592 /* FilledButtonTableViewCell.swift in Sources */,
 				92F8E291220D3F3C009BC667 /* ResetPasswordViewController.swift in Sources */,
 				9238827D21FEA1C800F3AD29 /* Utility.swift in Sources */,
+				E5F6E182221CE66100978CF5 /* GroupEditorViewController.swift in Sources */,
 				9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */,
 				E59EA8EA221675B000A6F027 /* GroupMembersViewController.swift in Sources */,
 				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
@@ -422,6 +429,7 @@
 				927A233C2205705200CA9041 /* UIImageViewExtension.swift in Sources */,
 				92BFC34621F6EFDA00BE4FEE /* NetworkManager.swift in Sources */,
 				92BFC33121F6E38D00BE4FEE /* HTTPMethod.swift in Sources */,
+				E5F6E184221D0FBD00978CF5 /* CategoryViewController.swift in Sources */,
 				920D559322154CE0005A839D /* FormParameterEncoder.swift in Sources */,
 				92F8E293220D4025009BC667 /* ButtonTableViewCell.swift in Sources */,
 				9238827621FE929E00F3AD29 /* ConfirmationPresenter.swift in Sources */,

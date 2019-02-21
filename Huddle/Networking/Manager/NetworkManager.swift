@@ -80,6 +80,24 @@ struct NetworkManager {
         }
     }
     
+    func update(group: Group, completion: @escaping (_ error: String?)->()) {
+        router.request(.groupUpdate(group: group)) { _, response, error in
+            guard error == nil else {
+                print(error!)
+                completion("Please check your network connection.")
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                completion(nil)
+            case .failure(let networkFailureError):
+                completion(networkFailureError)
+            }
+        }
+    }
+    
     func checkLogin(completion: @escaping (_ result: Bool?)->()) {
         router.request(.membersRead) { _, response, error in
             guard error == nil else {
@@ -306,6 +324,27 @@ struct NetworkManager {
     
     func checkSelfIsMember(withinGroup id: Int, completion: @escaping (_ value: Bool?, _ error: String?)->()) {
         router.request(.groupsIsMember(groupId: id)) { data, response, error in
+            guard error == nil else {
+                print(error!)
+                completion(nil, "Please check your network connection.")
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                let value = String(String(bytes: data!, encoding: .utf8)!.dropLast(1)).bool!
+                completion(value, nil)
+                return
+            case .failure(let networkFailureError):
+                completion(nil, networkFailureError)
+                return
+            }
+        }
+    }
+    
+    func checkSelfIsOwner(withinGroup id: Int, completion: @escaping (_ value: Bool?, _ error: String?)->()) {
+        router.request(.groupsIsOwner(groupId: id)) { data, response, error in
             guard error == nil else {
                 print(error!)
                 completion(nil, "Please check your network connection.")

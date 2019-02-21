@@ -43,10 +43,12 @@ class GroupViewController: UITableViewController {
     
     private var group: Group? {
         didSet {
+            tableView.beginUpdates()
             groupHeaderView.groupNameLabel.text = group?.title
             groupHeaderView.groupLocationLabel.text = group?.location?.name
-            groupHeaderView.groupCategoryLabel.text = "Category"
+            groupHeaderView.groupCategoryLabel.text = group?.category.name
             aboutTableViewCell.textLabel?.text = group?.description
+            tableView.endUpdates()
         }
     }
     
@@ -56,6 +58,8 @@ class GroupViewController: UITableViewController {
             joinButtonCell.button.setTitle(buttonTitle, for: .normal)
         }
     }
+    
+    private var isOwner: Bool = true
     
     private enum Section: Int, CaseIterable {
         case about
@@ -68,7 +72,10 @@ class GroupViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(editButtonWasTapped))
+        performNetworkRequest()
+        refreshControl = UIRefreshControl()
+        refreshControl!.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        navigationItem.rightBarButtonItem = isOwner ? UIBarButtonItem(image: DrawCode.imageOfKebabIcon(isSelected: false), style: .plain, target: self, action: #selector(kebabIconWasTapped)) : nil
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 600
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
@@ -76,6 +83,14 @@ class GroupViewController: UITableViewController {
         tableView.tableHeaderView = groupHeaderView
         tableView.register(CalendarTableViewCell.self, forCellReuseIdentifier: "CalendarTableViewCell")
         joinButtonCell.button.addTarget(self, action: #selector(joinButtonWasPressed), for: .touchUpInside)
+        tableView.refreshControl = refreshControl
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !self.isBeingPresented {
+            performNetworkRequest()
+        }
     }
     
     // MARK: - Static Cells
@@ -97,12 +112,13 @@ class GroupViewController: UITableViewController {
         let cell = UITableViewCell()
         cell.textLabel?.numberOfLines = 0
         cell.textLabel?.lineBreakMode = .byWordWrapping
+        cell.selectionStyle = .none
         return cell
     }()
     
     private let membersTableViewCell: UITableViewCell = {
         let cell = UITableViewCell()
-        cell.textLabel?.text = "All Members (0))"
+        cell.textLabel?.text = "All Members (0)"
         cell.accessoryType = .disclosureIndicator
         return cell
     }()
@@ -158,17 +174,15 @@ class GroupViewController: UITableViewController {
         switch Section(rawValue: section)! {
         case .about: return "About"
         case .events: return "Upcoming Events"
-        case .join: return nil
-        case .members: return nil
+        case .join: return " "
+        case .members: return " "
         }
     }
     
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         switch Section(rawValue: section)! {
-        case .members, .join:
+        case .join, .members:
             return CGFloat.leastNonzeroMagnitude
-        case .about:
-            return 30
         default:
             return UITableView.automaticDimension
         }
@@ -191,11 +205,31 @@ class GroupViewController: UITableViewController {
     
     // MARK: - Actions
     
-    @objc private func editButtonWasTapped() {
-        // GA TODO: Change this to GroupEditorViewController
-        let editorViewController = ProfileEditorViewController(style: .grouped)
-        let navigationController = UINavigationController(rootViewController: editorViewController)
-        present(navigationController, animated: true)
+    @objc private func kebabIconWasTapped() {
+        let optionMenu = UIAlertController(title: nil, message: "Chose Option", preferredStyle: .actionSheet)
+        
+        let editAction = UIAlertAction(title: "Edit Group", style: .default, handler: {
+            action in
+            
+            let editGroupViewController = GroupEditorViewController(style: .grouped)
+            editGroupViewController.group = self.group
+            let navigationController = UINavigationController(rootViewController: editGroupViewController)
+            self.present(navigationController, animated: true)
+        })
+        
+        let createEventAction = UIAlertAction(title: "Create Event", style: .default, handler: {
+            action in
+            
+            let createEventViewController = ProfileEditorViewController(style: .grouped)
+            let navigationController = UINavigationController(rootViewController: createEventViewController)
+            self.present(navigationController, animated: true)
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        optionMenu.addAction(editAction)
+        optionMenu.addAction(createEventAction)
+        optionMenu.addAction(cancelAction)
+        present(optionMenu, animated: true, completion: nil)
     }
     
     @objc func joinButtonWasPressed(sender: UIButton) {
@@ -223,17 +257,27 @@ class GroupViewController: UITableViewController {
         }
     }
     
+    @objc private func refresh() {
+        performNetworkRequest() { [weak self] in
+            self?.refreshControl!.endRefreshing()
+        }
+    }
+    
     // MARK: - Helper Methods
     
-    private func performNetworkRequest() {
+    private func performNetworkRequest(completion: (()->())? = nil) {
+        let dispatchGroup = DispatchGroup()
+        dispatchGroup.enter()
         networkManager.read(group: targetGroupId) { [weak self] group, error in
             guard error == nil else {
                 print(error!)
                 return
             }
             self?.group = group
+            dispatchGroup.leave()
         }
         
+        dispatchGroup.enter()
         networkManager.checkSelfIsMember(withinGroup: targetGroupId) { [weak self] value, error in
             guard error == nil else {
                 print(error!)
@@ -241,6 +285,22 @@ class GroupViewController: UITableViewController {
             }
             guard let isMember = value else { return }
             self?.isMember = isMember
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.enter()
+        networkManager.checkSelfIsOwner(withinGroup: targetGroupId) { [weak self] value, error in
+            guard error == nil else {
+                print(error!)
+                return
+            }
+            guard let isOwner = value else { return }
+            self?.isOwner = isOwner
+            dispatchGroup.leave()
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            completion?()
         }
     }
     

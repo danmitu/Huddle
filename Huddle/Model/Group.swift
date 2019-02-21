@@ -12,7 +12,7 @@ import MapKit
 struct RawGroup: Decodable {
     let id: Int
     let title: String?
-    let description: String
+    let description: String?
     let ownerid: Int
     let owner: String?
     let locationid: Int?
@@ -21,27 +21,27 @@ struct RawGroup: Decodable {
     let longitude: Float?
     let memberid: Int?
     let categoryid: Int?
-    let categoryname: String?
-    let categorydescription: String?
     let distance: Int?
 }
 
 struct Group: Decodable, Hashable {
     var id: Int
     var title: String?
-    var description: String
+    var description: String?
     var ownerId: Int
     var ownerName: String?
     var location: NamedLocation?
+    var category: Category
     
     // TODO: delete me
     // For Testing. This needs to be removed
-    init(id: Int, title: String, description: String, ownerID: Int, locationName: String) {
+    init(id: Int, title: String, description: String, ownerID: Int, locationName: String, category: Int) {
         self.id = id
         self.title = title
         self.description = description
         self.ownerId = ownerID
         self.location = NamedLocation(id: 1, name: locationName, location: CLLocation(latitude: CLLocationDegrees(1), longitude: CLLocationDegrees(1)))
+        self.category = Category(rawValue: category) ?? .none
     }
     
     init(from decoder: Decoder) throws {
@@ -51,6 +51,7 @@ struct Group: Decodable, Hashable {
         self.description = rawGroup.description
         self.ownerId = rawGroup.ownerid
         self.ownerName = rawGroup.owner
+        self.category = Category(rawValue: rawGroup.categoryid ?? 0) ?? .none
         
         if let rawLocationName = rawGroup.location,
             let rawLatitude = rawGroup.latitude,

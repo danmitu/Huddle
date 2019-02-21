@@ -39,10 +39,12 @@ class ProfileViewController: UITableViewController {
         
     private var member: Member? {
         didSet {
+            tableView.beginUpdates()
             detailedProfilePhotoView.profileNameLabel.text = member?.name
             detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation?.name ?? ""
             aboutTableViewCell.textLabel?.text = member?.bio
             detailedProfilePhotoView.profilePhotoImageView.image = member?.profilePhoto ?? UIImage(named: "User Profile Placeholder")!
+            tableView.endUpdates()
         }
     }
 
