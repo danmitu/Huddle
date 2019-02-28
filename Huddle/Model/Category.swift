@@ -13,6 +13,7 @@ enum Category : Int, CaseIterable, Hashable {
     case category1 = 1
     case category2 = 2
     case category3 = 3
+    case other
     
     var description : String {
         get {
@@ -25,6 +26,8 @@ enum Category : Int, CaseIterable, Hashable {
                 return "category 2"
             case .category3:
                 return "Category is 3"
+            case .other:
+                return "Unknown"
             }
         }
     }
@@ -39,6 +42,8 @@ enum Category : Int, CaseIterable, Hashable {
                 return "Category 2"
             case .category3:
                 return "Category 3"
+            case .other:
+                return "Unknown"
             }
         }
     }

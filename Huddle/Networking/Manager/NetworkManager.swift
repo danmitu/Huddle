@@ -364,6 +364,34 @@ struct NetworkManager {
         }
     }
     
+    func searchForGroups(id: Int, radius: Int?, completion: @escaping (_ groups: [Group]?, _ error: String?)->()) {
+        router.request(.groupSearch(category: id, radius: radius), completion: { data, response, error in
+            guard error == nil else {
+                completion(nil, "Please check your network connection.")
+                return
+            }
+            guard let jsonData = data else {
+                completion(nil, NetworkResponse.noData.rawValue)
+                return
+            }
+            
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                if let groups = try? JSONDecoder().decode([Group].self, from: jsonData) {
+                    completion(groups, nil)
+                } else {
+                    completion(nil, nil)
+                }
+                return
+            case .failure(let networkFailureError):
+                completion(nil, networkFailureError)
+                return
+            }
+        })
+    }
+    
     // MARK: - Helpers
     
     fileprivate func handleNetworkResponse(_ response: HTTPURLResponse) -> Result<String>{

@@ -21,7 +21,7 @@ struct RawGroup: Decodable {
     let longitude: Float?
     let memberid: Int?
     let categoryid: Int?
-    let distance: Int?
+    let distance: Float?
 }
 
 struct Group: Decodable, Hashable {
@@ -32,16 +32,18 @@ struct Group: Decodable, Hashable {
     var ownerName: String?
     var location: NamedLocation?
     var category: Category
+    var distance: Float?
     
     // TODO: delete me
     // For Testing. This needs to be removed
-    init(id: Int, title: String, description: String, ownerID: Int, locationName: String, category: Int) {
+    init(id: Int, title: String, description: String, ownerID: Int, locationName: String, category: Int, distance: Float) {
         self.id = id
         self.title = title
         self.description = description
         self.ownerId = ownerID
         self.location = NamedLocation(id: 1, name: locationName, location: CLLocation(latitude: CLLocationDegrees(1), longitude: CLLocationDegrees(1)))
         self.category = Category(rawValue: category) ?? .none
+        self.distance = distance
     }
     
     init(from decoder: Decoder) throws {
@@ -52,6 +54,7 @@ struct Group: Decodable, Hashable {
         self.ownerId = rawGroup.ownerid
         self.ownerName = rawGroup.owner
         self.category = Category(rawValue: rawGroup.categoryid ?? 0) ?? .none
+        self.distance = rawGroup.distance
         
         if let rawLocationName = rawGroup.location,
             let rawLatitude = rawGroup.latitude,

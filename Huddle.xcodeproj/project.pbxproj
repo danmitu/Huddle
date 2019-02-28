@@ -57,6 +57,9 @@
 		92F8E291220D3F3C009BC667 /* ResetPasswordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F8E290220D3F3C009BC667 /* ResetPasswordViewController.swift */; };
 		92F8E293220D4025009BC667 /* ButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F8E292220D4025009BC667 /* ButtonTableViewCell.swift */; };
 		92F8E295220D46B6009BC667 /* TextFieldTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92F8E294220D46B6009BC667 /* TextFieldTableViewCell.swift */; };
+		E50189A122263E520020FC36 /* SearchGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50189A022263E520020FC36 /* SearchGroupViewController.swift */; };
+		E50189A322263E900020FC36 /* GroupTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50189A222263E900020FC36 /* GroupTableViewCell.swift */; };
+		E50189A5222642220020FC36 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E50189A4222642220020FC36 /* GroupView.swift */; };
 		E59EA8E52216758000A6F027 /* GroupHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E32216757F00A6F027 /* GroupHeaderView.swift */; };
 		E59EA8E62216758000A6F027 /* GroupHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = E59EA8E42216758000A6F027 /* GroupHeaderView.xib */; };
 		E59EA8E9221675B000A6F027 /* GroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59EA8E7221675B000A6F027 /* GroupViewController.swift */; };
@@ -120,6 +123,9 @@
 		92F8E290220D3F3C009BC667 /* ResetPasswordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordViewController.swift; sourceTree = "<group>"; };
 		92F8E292220D4025009BC667 /* ButtonTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTableViewCell.swift; sourceTree = "<group>"; };
 		92F8E294220D46B6009BC667 /* TextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldTableViewCell.swift; sourceTree = "<group>"; };
+		E50189A022263E520020FC36 /* SearchGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGroupViewController.swift; sourceTree = "<group>"; };
+		E50189A222263E900020FC36 /* GroupTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTableViewCell.swift; sourceTree = "<group>"; };
+		E50189A4222642220020FC36 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
 		E59EA8E32216757F00A6F027 /* GroupHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupHeaderView.swift; sourceTree = "<group>"; };
 		E59EA8E42216758000A6F027 /* GroupHeaderView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = GroupHeaderView.xib; sourceTree = "<group>"; };
 		E59EA8E7221675B000A6F027 /* GroupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupViewController.swift; sourceTree = "<group>"; };
@@ -209,6 +215,7 @@
 				922E80292203B38200B797A2 /* ChooseLocationViewController.swift */,
 				927A2347220590DF00CA9041 /* ImageOptionsGiver.swift */,
 				E5F6E183221D0FBD00978CF5 /* CategoryViewController.swift */,
+				E50189A022263E520020FC36 /* SearchGroupViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -241,6 +248,7 @@
 				92AFFCF8220396AD0076F575 /* ProfilePhotoEditorView.xib */,
 				92BCA40521FE90E8003DB8A5 /* PleaseWaitView.swift */,
 				92758D6721F2E8B800E06465 /* EventView.swift */,
+				E50189A4222642220020FC36 /* GroupView.swift */,
 				9238827A21FE9B0100F3AD29 /* FilledButton.swift */,
 				92758D8A21F2F8B300E06465 /* Placeholders */,
 				92758D8721F2F52200E06465 /* TableViewCells */,
@@ -267,6 +275,7 @@
 				E5FE13B9220BDA530040C592 /* FilledButtonTableViewCell.swift */,
 				92F8E292220D4025009BC667 /* ButtonTableViewCell.swift */,
 				92F8E294220D46B6009BC667 /* TextFieldTableViewCell.swift */,
+				E50189A222263E900020FC36 /* GroupTableViewCell.swift */,
 			);
 			path = TableViewCells;
 			sourceTree = "<group>";
@@ -397,6 +406,7 @@
 				92F8E291220D3F3C009BC667 /* ResetPasswordViewController.swift in Sources */,
 				9238827D21FEA1C800F3AD29 /* Utility.swift in Sources */,
 				E5F6E182221CE66100978CF5 /* GroupEditorViewController.swift in Sources */,
+				E50189A122263E520020FC36 /* SearchGroupViewController.swift in Sources */,
 				9238827721FE929E00F3AD29 /* OkPresenter.swift in Sources */,
 				E59EA8EA221675B000A6F027 /* GroupMembersViewController.swift in Sources */,
 				92BFC34121F6ED7B00BE4FEE /* NetworkLogger.swift in Sources */,
@@ -434,9 +444,11 @@
 				92F8E293220D4025009BC667 /* ButtonTableViewCell.swift in Sources */,
 				9238827621FE929E00F3AD29 /* ConfirmationPresenter.swift in Sources */,
 				92D6944C22069A8300A9013E /* DetailedProfilePhotoView.swift in Sources */,
+				E50189A5222642220020FC36 /* GroupView.swift in Sources */,
 				92BFC33321F6E3D600BE4FEE /* HTTPTask.swift in Sources */,
 				92BFC33821F6E58500BE4FEE /* URLParameterEncoder.swift in Sources */,
 				E59EA8EC2216762700A6F027 /* Event.swift in Sources */,
+				E50189A322263E900020FC36 /* GroupTableViewCell.swift in Sources */,
 				9238827921FE96B500F3AD29 /* UIColorExtension.swift in Sources */,
 				92D9A1B421FD6D0400B3E499 /* LoginViewController.swift in Sources */,
 				92AFFCED2202DCD00076F575 /* ProfileEditorViewController.swift in Sources */,

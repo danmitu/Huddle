@@ -35,6 +35,7 @@ enum HuddleApi {
     case groupsJoin(groupId: Int)
     case groupsRemoveMe(groupId: Int)
     case groupUpdate(group: Group)
+    case groupSearch(category: Int, radius: Int?)
 }
 
 extension HuddleApi: EndPointType {
@@ -63,6 +64,7 @@ extension HuddleApi: EndPointType {
         case .groupsRemoveMe: return "groups/removeme"
         case .groupsOther: return "groups/membergroups"
         case .groupUpdate: return "groups/update"
+        case .groupSearch: return "categories/groups"
         }
     }
     
@@ -86,6 +88,7 @@ extension HuddleApi: EndPointType {
         case .groupsJoin: return .post
         case .groupsRemoveMe: return .delete
         case .groupUpdate: return .put
+        case .groupSearch: return .get
         }
     }
     
@@ -182,7 +185,7 @@ extension HuddleApi: EndPointType {
         case .groupUpdate(group: let group):
             return .requestParameters(bodyParameters: ["ID":group.id,
                                                        "Title":group.title ?? "",
-                                                       "Description":group.description ,
+                                                       "Description":group.description ?? "",
                                                        "Location":group.location?.name ?? "",
                                                        "Latitude":group.location?.location.coordinate.latitude ?? "",
                                                        "Longitude":group.location?.location.coordinate.longitude ?? "",
@@ -190,6 +193,16 @@ extension HuddleApi: EndPointType {
                                                        ],
                                       bodyEncoding: .jsonEncoding,
                                       urlParameters: nil)
+        case .groupSearch(category: let category, radius: let radius):
+            var urlParameters: Dictionary<String, Any> = [:]
+            urlParameters["id"] = category
+            if (radius != nil) {
+                urlParameters["radius"] = radius
+            }
+            return .requestParameters(bodyParameters: nil,
+                                      bodyEncoding: .urlEncoding,
+                                      urlParameters: urlParameters)
+
         }
     }
 
