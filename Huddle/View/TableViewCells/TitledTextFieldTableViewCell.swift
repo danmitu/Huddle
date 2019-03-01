@@ -12,7 +12,7 @@ class TitledTextFieldTableViewCell: UITableViewCell {
 
     // MARK: - Initialization
     
-    init(reuseIdentifier: String) {
+    init(reuseIdentifier: String? = nil) {
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
         containerStackView.addArrangedSubview(titleLabel)
         containerStackView.addArrangedSubview(textField)

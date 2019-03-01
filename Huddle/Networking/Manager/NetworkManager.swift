@@ -363,22 +363,22 @@ struct NetworkManager {
             }
         }
     }
-    
+
     func searchForGroups(id: Int, radius: Int?, completion: @escaping (_ groups: [Group]?, _ error: String?)->()) {
         router.request(.groupSearch(category: id, radius: radius), completion: { data, response, error in
-            guard error == nil else {
-                completion(nil, "Please check your network connection.")
                 return
-            }
             guard let jsonData = data else {
                 completion(nil, NetworkResponse.noData.rawValue)
                 return
-            }
-            
+            guard let jsonData = data else {
             let response = response as! HTTPURLResponse
             let result = self.handleNetworkResponse(response)
             switch result {
-            case .success:
+                }
+                return
+            case .failure(let networkFailureError):
+                return
+            }
                 if let groups = try? JSONDecoder().decode([Group].self, from: jsonData) {
                     completion(groups, nil)
                 } else {
@@ -388,8 +388,38 @@ struct NetworkManager {
             case .failure(let networkFailureError):
                 completion(nil, networkFailureError)
                 return
-            }
         })
+
+    // MARK: - Categories
+
+    func getAllCategories(completion: @escaping (_ categories: [Int]?, _ error: String?)->()) {
+        router.request(.categoriesAll) { data, response, error in
+            guard error == nil else {
+                print(error!)
+                completion(nil, "Please check your network connection.")
+                return
+            }
+            guard let data = data else {
+                print(NetworkResponse.noData.rawValue)
+                completion(nil, NetworkResponse.noData.rawValue)
+                return
+            }
+            guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as! [[String:Int]] else {
+                print(NetworkResponse.unableToDecode.rawValue)
+                completion(nil, NetworkResponse.unableToDecode.rawValue)
+                return
+            }
+            
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            let categories = dictionary.map({ $0["id"]! })
+            switch result {
+            case .success:
+                completion(categories, nil)
+            case .failure(let errorString):
+                completion(nil, errorString)
+            }
+        }
     }
     
     // MARK: - Helpers

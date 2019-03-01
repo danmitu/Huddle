@@ -19,13 +19,10 @@ class FilledButtonTableViewCell: UITableViewCell {
     init(reuseIdentifier: String, showSeparators: Bool) {
         self.showSeparators = showSeparators
         super.init(style: .default, reuseIdentifier: reuseIdentifier)
-//        containerStackView.addArrangedSubview(button)
         contentView.addSubview(button)
         NSLayoutConstraint.activate([
-//            button.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-//            button.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 0),
-            button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: 0),
+            button.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
+            button.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
             button.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.75),
             button.centerXAnchor.constraint(equalTo: contentView.centerXAnchor)
             ])

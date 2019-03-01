@@ -15,8 +15,8 @@ class BaseViewController: UITabBarController {
     
     let networkManager = NetworkManager()
     
-    private let exploreViewController: SearchGroupViewController = {
-        let vc = SearchGroupViewController(category: 2, radius: 99999)
+    private let exploreViewController: ExploreViewController = {
+        let vc = ExploreViewController()
         vc.tabBarItem = UITabBarItem(title: "Explore",
                                      image: DrawCode.imageOfExploreTabIcon(isSelected: false),
                                      selectedImage: DrawCode.imageOfExploreTabIcon(isSelected: true))

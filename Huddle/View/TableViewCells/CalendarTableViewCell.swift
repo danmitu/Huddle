@@ -36,8 +36,8 @@ class CalendarTableViewCell: UITableViewCell {
     
     // MARK: - Subviews
     
-    private let eventView: EventView = {
-        let view = EventView()
+    private let eventView: EventSummaryView = {
+        let view = EventSummaryView()
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()

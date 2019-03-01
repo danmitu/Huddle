@@ -10,7 +10,7 @@ import UIKit
 
 // Displays basic information about an event.
 // Has three lines (in order): group name, event name, date at location.
-class EventView: UIStackView {
+class EventSummaryView: UIStackView {
 
     // MARK: - Initialization
     

@@ -85,6 +85,7 @@ class GroupViewController: UITableViewController {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "TableViewCell")
         tableView.backgroundColor = .white
         tableView.tableHeaderView = groupHeaderView
+        tableView.tableHeaderView!.frame.size = CGSize(width: tableView.frame.width, height: CGFloat(75))
         tableView.register(CalendarTableViewCell.self, forCellReuseIdentifier: "CalendarTableViewCell")
         joinButtonCell.button.addTarget(self, action: #selector(joinButtonWasPressed), for: .touchUpInside)
         tableView.refreshControl = refreshControl
@@ -201,9 +202,14 @@ class GroupViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if Section(rawValue: indexPath.section) == .members {
+        switch Section(rawValue: indexPath.section)! {
+        case .members:
             let groupMembersViewController = GroupMembersViewController(memberIDsToShow: self.memberIDData)
             navigationController?.pushViewController(groupMembersViewController, animated: true)
+        case .events:
+            let eventViewController = EventViewController(eventId: 0)
+            navigationController?.pushViewController(eventViewController, animated: true)
+        default: break
         }
     }
     

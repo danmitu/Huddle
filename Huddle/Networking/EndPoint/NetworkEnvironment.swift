@@ -36,6 +36,7 @@ enum HuddleApi {
     case groupsRemoveMe(groupId: Int)
     case groupUpdate(group: Group)
     case groupSearch(category: Int, radius: Int?)
+    case categoriesAll
 }
 
 extension HuddleApi: EndPointType {
@@ -65,6 +66,7 @@ extension HuddleApi: EndPointType {
         case .groupsOther: return "groups/membergroups"
         case .groupUpdate: return "groups/update"
         case .groupSearch: return "categories/groups"
+        case .categoriesAll: return "categories/all"
         }
     }
     
@@ -89,6 +91,7 @@ extension HuddleApi: EndPointType {
         case .groupsRemoveMe: return .delete
         case .groupUpdate: return .put
         case .groupSearch: return .get
+        case .categoriesAll: return .get
         }
     }
     
@@ -203,6 +206,9 @@ extension HuddleApi: EndPointType {
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: urlParameters)
 
+            
+        case .categoriesAll:
+            return .request
         }
     }
 
