@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-struct RawMember: Decodable {
+fileprivate struct RawMember: Decodable {
     let id: Int
     let email: String
     let name: String?
@@ -53,6 +53,6 @@ struct Member: Decodable {
             self.homeLocation = nil
         }
         
-        self.joindate = rawMember.joindate.toDate()!
+        self.joindate = rawMember.joindate.toDate() ?? Date()
     }
 }

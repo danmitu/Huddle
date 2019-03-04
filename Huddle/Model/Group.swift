@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-struct RawGroup: Decodable {
+fileprivate struct RawGroup: Decodable {
     let id: Int
     let title: String?
     let description: String?

@@ -95,6 +95,7 @@ class ChooseLocationViewController: UIViewController, UIGestureRecognizerDelegat
             guard error == nil else { return }
             guard let placemark = placemarks?.first else { return }
             self?.whenDoneSelecting?(placemark)
+            self?.navigationController?.popViewController(animated: true)
         })
     }
     

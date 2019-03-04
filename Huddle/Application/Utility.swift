@@ -8,12 +8,7 @@
 
 import UIKit
 import AVFoundation
-
-enum SubmissionStatus {
-    case waitingForInput
-    case submitting
-    case submitted
-}
+import MapKit
 
 func isValidEmail(testStr: String) -> Bool {
     let emailRegEx = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
@@ -95,3 +90,74 @@ extension String {
         return date
     }
 }
+
+enum PreferredDateFormat: String {
+    
+    /// e.g. Friday, 3/1/19 5:45 AM
+    case format0 = "EEEE, M/d/yy H:mm a"
+    
+    /// e.g. 2020-12-31 11:59:59
+    case format1 = "yyyy-MM-dd HH:mm:ss"
+    
+    /// e.g. Sun, Mar 3, 2019, 11:50 PM
+    case format2 = "EEE, MMM d, yyyy, h:mm a"
+
+    static func describe(_ date: Date, using format: PreferredDateFormat) -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format.rawValue
+        return formatter.string(from: date)
+    }
+}
+
+enum PreferredLocationFormat {
+    
+    /// e.g. ["SE 7th Ave", "Portland, OR", "97214"]
+    case address
+    
+    case shortAddress
+    
+    /// e.g. ["Southeast Warehouse District", "SE 7th Ave", "Portland", "OR", "United States", "97214"]
+    case everything
+    
+    /// e.g. ["Portland", "OR"]
+    case cityState
+    
+    static func describe(_ location: CLLocation, using format: PreferredLocationFormat, _ completion: @escaping ([[String]]?)->()) {
+        CLGeocoder().reverseGeocodeLocation(location, completionHandler: { placemarks, error in
+            guard error == nil else { completion(nil); return }
+            guard let placemarks = placemarks else { completion(nil); return }
+            completion(
+                placemarks.map { PreferredLocationFormat.describe(placemark: $0, using: format) }
+            )
+        })
+    }
+    
+    private static func describe(placemark: CLPlacemark, using format: PreferredLocationFormat) -> [String ]{
+        var buffer = [String]()
+        switch format {
+        case .address:
+            if let f = placemark.thoroughfare { buffer.append(f); }
+            if let l = placemark.locality, let a = placemark.administrativeArea {
+                buffer.append("\(l), \(a)")
+            }
+            if let p = placemark.postalCode { buffer.append(p) }
+        case .shortAddress:
+            if let f = placemark.thoroughfare { buffer.append(f); }
+            if let l = placemark.locality, let a = placemark.administrativeArea {
+                buffer.append("\(l), \(a)")
+            }
+        case .cityState:
+            if let l = placemark.locality { buffer.append(l) }
+            if let a = placemark.administrativeArea { buffer.append(a) }
+        case .everything:
+            if let s = placemark.subLocality { buffer.append(s) }
+            if let f = placemark.thoroughfare { buffer.append(f) }
+            if let l = placemark.locality { buffer.append(l) }
+            if let a = placemark.administrativeArea { buffer.append(a) }
+            if let c = placemark.country { buffer.append(c) }
+            if let p = placemark.postalCode { buffer.append(p) }
+        }
+        return buffer
+    }
+}
+

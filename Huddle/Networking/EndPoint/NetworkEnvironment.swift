@@ -16,7 +16,8 @@ enum NetworkEnvironment {
     case staging
 }
 
-enum HuddleApi {
+enum HuddleApi: EndPointType {
+    
     case membersReadUser(id: Int)
     case membersRead
     case membersUpdate(member: Member)
@@ -27,6 +28,13 @@ enum HuddleApi {
     case membersProfileImage
     case membersNotMeProfileImage(id: Int)
     case membersProfileImageUpload(media: Media)
+    case eventsRead(eventId: Int)
+    case eventsCreate(groupId: Int, title: String, description: String, location: String, latitude: Double, longitude: Double, start: String, end: String)
+    case eventsUpdate(event: Event)
+    case eventsDelete(eventId: Int)
+    case eventsRSVP(eventId: Int, status: Bool)
+    case eventsCalendar
+    case eventsForGroup(groupId: Int)
     case groupsRead(groupId: Int)
     case groupsMine
     case groupsIsMember(groupId: Int)
@@ -35,11 +43,9 @@ enum HuddleApi {
     case groupsJoin(groupId: Int)
     case groupsRemoveMe(groupId: Int)
     case groupUpdate(group: Group)
+    case groupMembers(groupId: Int)
     case groupSearch(category: Int, radius: Int?)
     case categoriesAll
-}
-
-extension HuddleApi: EndPointType {
     
     var baseURL: URL {
         return URL(string: "http://debug1-env.m7bhnnyn8p.us-west-2.elasticbeanstalk.com/")!
@@ -57,6 +63,13 @@ extension HuddleApi: EndPointType {
         case .membersProfileImage: return "members/profile/download"
         case .membersNotMeProfileImage: return "members/userprofile/download"
         case .membersProfileImageUpload: return "members/profile/upload"
+        case .eventsRead: return "events/read"
+        case .eventsCreate: return "events/create"
+        case .eventsUpdate: return "events/update"
+        case .eventsDelete: return "events/delete"
+        case .eventsRSVP: return "events/rsvp"
+        case .eventsCalendar: return "events/calendar"
+        case .eventsForGroup: return "events/readall"
         case .groupsRead: return "groups/read"
         case .groupsMine: return "groups/mygroups"
         case .groupsIsMember: return "groups/ismember"
@@ -65,6 +78,7 @@ extension HuddleApi: EndPointType {
         case .groupsRemoveMe: return "groups/removeme"
         case .groupsOther: return "groups/membergroups"
         case .groupUpdate: return "groups/update"
+        case .groupMembers: return "groups/members"
         case .groupSearch: return "categories/groups"
         case .categoriesAll: return "categories/all"
         }
@@ -82,6 +96,13 @@ extension HuddleApi: EndPointType {
         case .membersProfileImage: return .get
         case .membersNotMeProfileImage: return .get
         case .membersProfileImageUpload: return .post
+        case .eventsRead: return .get
+        case .eventsCreate: return .post
+        case .eventsUpdate: return .put
+        case .eventsDelete: return .delete
+        case .eventsRSVP: return .post
+        case .eventsCalendar: return .get
+        case .eventsForGroup: return .get
         case .groupsRead: return .get
         case .groupsMine: return .get
         case .groupsIsMember: return .get
@@ -90,6 +111,7 @@ extension HuddleApi: EndPointType {
         case .groupsJoin: return .post
         case .groupsRemoveMe: return .delete
         case .groupUpdate: return .put
+        case .groupMembers: return .get
         case .groupSearch: return .get
         case .categoriesAll: return .get
         }
@@ -151,6 +173,54 @@ extension HuddleApi: EndPointType {
             return .requestParameters(bodyParameters: ["profileImage":media],
                                       bodyEncoding: .formDataEncoding,
                                       urlParameters: nil)
+        
+        case .eventsRead(eventId: let id):
+            return .requestParameters(bodyParameters: nil,
+                                      bodyEncoding: .urlEncoding,
+                                      urlParameters: ["eventid":id])
+        
+        case .eventsCreate(groupId: let id,
+                           title: let t,
+                           description: let d,
+                           location: let l,
+                           latitude: let lat,
+                           longitude: let lng,
+                           start: let s,
+                           end: let e):
+            return .requestParameters(bodyParameters: ["GroupID":id,
+                                                       "Title":t,
+                                                       "Description":d,
+                                                       "Location":l,
+                                                       "Latitude":lat,
+                                                       "Longitude":lng,
+                                                       "Start":s,
+                                                       "End":e
+                                                       ], bodyEncoding: .jsonEncoding, urlParameters: nil)
+            
+        case .eventsUpdate(event: let e):
+            return .requestParameters(bodyParameters: ["ID": e.id,
+                                                       "Title": e.name,
+                                                       "Description": e.description,
+                                                       "Location": e.location.name,
+                                                       "Latitude": Double(e.location.location.coordinate.latitude),
+                                                       "Longitude": Double(e.location.location.coordinate.longitude),
+                                                       "Start": PreferredDateFormat.describe(e.start, using: .format1)!,
+                                                       "End": PreferredDateFormat.describe(e.end, using: .format1)!
+                                                       ], bodyEncoding: .jsonEncoding,
+                                                          urlParameters: nil)
+        case .eventsDelete(eventId: let id):
+            return .requestParameters(bodyParameters: ["ID": id], bodyEncoding: .jsonEncoding, urlParameters: nil)
+            
+        case .eventsRSVP(eventId: let id, status: let status):
+            return .requestParameters(bodyParameters: ["ID":id, "Attending":status],
+                                      bodyEncoding: .jsonEncoding,
+                                      urlParameters: nil)
+            
+        case .eventsCalendar:
+            return .request
+        
+        case .eventsForGroup(groupId: let id):
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: ["groupid":id])
             
         case .groupsRead(groupId: let id):
             return .requestParameters(bodyParameters: nil,
@@ -196,6 +266,10 @@ extension HuddleApi: EndPointType {
                                                        ],
                                       bodyEncoding: .jsonEncoding,
                                       urlParameters: nil)
+        
+        case .groupMembers(groupId: let id):
+            return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: ["id":id])
+            
         case .groupSearch(category: let category, radius: let radius):
             var urlParameters: Dictionary<String, Any> = [:]
             urlParameters["id"] = category

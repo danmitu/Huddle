@@ -37,7 +37,6 @@ class GroupEditorViewController: UITableViewController, UINavigationControllerDe
         self.titleCell.textField.text = group?.title
         locationCell.detailTextLabel!.text = group?.location?.name ?? ""
         categoryCell.detailTextLabel!.text = group?.category.name
-//        self.categoryCell.textField.text = group?.category.name
         
         // cannot be done at initialization 😢
         doneBarButton.target = self
@@ -67,20 +66,11 @@ class GroupEditorViewController: UITableViewController, UINavigationControllerDe
         return cell
     }()
     
-//    private let categoryCell: TitledTextFieldTableViewCell = {
-//        let cell = TitledTextFieldTableViewCell(reuseIdentifier: "TitledTextFieldTableViewCell")
-//        cell.titleLabel.text = "Category"
-//        cell.textField.placeholder = "chose Category"
-//        cell.textField.returnKeyType = .done
-//        cell.selectionStyle = .none
-//        return cell
-//    }()
     
     private let categoryCell: UITableViewCell = {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
         cell.textLabel!.text = "Category"
         cell.accessoryType = .disclosureIndicator
-//        cell.textField.returnKeyType = .done
         cell.selectionStyle = .none
         return cell
     }()

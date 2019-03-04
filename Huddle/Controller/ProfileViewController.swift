@@ -214,8 +214,6 @@ class ProfileViewController: UITableViewController {
     // MARK: - Methods
     
     private func performNetworkRequest(completion: (()->())? = nil) {
-        guard case .personalProfile = owner else { return }
-        
         let id: Int?
         switch owner {
         case .personalProfile: id = nil

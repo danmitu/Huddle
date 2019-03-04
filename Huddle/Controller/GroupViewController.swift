@@ -10,20 +10,7 @@ import UIKit
 
 class GroupViewController: UITableViewController {
     
-    // MARK: - Temporary Placeholders
-    
-    // TODO: Delete Me
-    
-    private var eventData = [
-        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Date(), location: "Ferry Point Park"),
-        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 1, to: Date())!, location: "Ferry Point Park"),
-        Event(name: "Monthly Demos", groupName: "BAY AREA TECH MEETUP", date: Calendar.current.date(byAdding: .day, value: 2, to: Date())!, location: "Ferry Point Park")
-    ]
-    
-    // TODO: Delete Me
-    
-    private var memberIDData = [1,2,3,4,5]
-    
+    private var eventData = [Event]()
     
     // MARK: - Initialization
     
@@ -146,7 +133,7 @@ class GroupViewController: UITableViewController {
         case .members:
             return 1
         case .events:
-            return eventData.count > 3 ? 3 : eventData.count
+            return eventData.count
         case .join:
             return 1
         }
@@ -162,14 +149,13 @@ class GroupViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarTableViewCell", for: indexPath) as! CalendarTableViewCell
             
             let event = eventData[indexPath.row]
-            cell.set(eventName: event.name, groupName: event.groupName, date: event.date, location: event.location)
-            
+            cell.set(eventName: event.name, groupName: group!.title!, date: event.start, location: event.location.name)
             return cell
         case .join:
             cell = joinButtonCell
         case .members:
             cell = membersTableViewCell
-            cell.textLabel?.text = "All Members (\(memberIDData.count))"
+            cell.textLabel?.text = "Members"
         }
         
         return cell
@@ -204,10 +190,11 @@ class GroupViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch Section(rawValue: indexPath.section)! {
         case .members:
-            let groupMembersViewController = GroupMembersViewController(memberIDsToShow: self.memberIDData)
+            let groupMembersViewController = GroupMembersViewController(groupId: group!.id)
             navigationController?.pushViewController(groupMembersViewController, animated: true)
         case .events:
-            let eventViewController = EventViewController(eventId: 0)
+            let selectedEvent = eventData[indexPath.row]
+            let eventViewController = EventViewController(eventId: selectedEvent.id)
             navigationController?.pushViewController(eventViewController, animated: true)
         default: break
         }
@@ -229,8 +216,7 @@ class GroupViewController: UITableViewController {
         
         let createEventAction = UIAlertAction(title: "Create Event", style: .default, handler: {
             action in
-            
-            let createEventViewController = ProfileEditorViewController(style: .grouped)
+            let createEventViewController = EventEditorViewController(for: .creating(groupId: self.group!.id))
             let navigationController = UINavigationController(rootViewController: createEventViewController)
             self.present(navigationController, animated: true)
         })
@@ -276,11 +262,13 @@ class GroupViewController: UITableViewController {
     // MARK: - Helper Methods
     
     private func performNetworkRequest(completion: (()->())? = nil) {
+        
         let dispatchGroup = DispatchGroup()
         dispatchGroup.enter()
         networkManager.read(group: targetGroupId) { [weak self] group, error in
             guard error == nil else {
                 print(error!)
+                dispatchGroup.leave()
                 return
             }
             self?.group = group
@@ -291,6 +279,7 @@ class GroupViewController: UITableViewController {
         networkManager.checkSelfIsMember(withinGroup: targetGroupId) { [weak self] value, error in
             guard error == nil else {
                 print(error!)
+                dispatchGroup.leave()
                 return
             }
             guard let isMember = value else { return }
@@ -302,14 +291,31 @@ class GroupViewController: UITableViewController {
         networkManager.checkSelfIsOwner(withinGroup: targetGroupId) { [weak self] value, error in
             guard error == nil else {
                 print(error!)
+                dispatchGroup.leave()
                 return
             }
             guard let isOwner = value else { return }
             self?.isOwner = isOwner
+            
+            dispatchGroup.enter()
+            self?.networkManager.getEvents(forGroup: self!.targetGroupId) { [weak self] error, events in
+                guard error == nil else {
+                    print(error!)
+                    dispatchGroup.leave()
+                    return
+                }
+                guard let events = events else { return }
+                self?.eventData = events
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.reloadSections(IndexSet(integer: Section.events.rawValue), with: .automatic)
+                }
+                dispatchGroup.leave()
+            }
             dispatchGroup.leave()
         }
-        
-        dispatchGroup.notify(queue: .main) {
+
+        dispatchGroup.notify(queue: .main) { [weak self] in
+            self?.tableView.reloadData()
             completion?()
         }
     }

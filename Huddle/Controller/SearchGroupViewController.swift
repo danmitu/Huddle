@@ -12,8 +12,8 @@ class SearchGroupViewController: UITableViewController {
     
     private let networkManager = NetworkManager()
     
-    var category:Category
-    var radius:Int
+    let category: Category
+    var radius: Int
     
     class groupData {
         var groupName: String
@@ -35,10 +35,10 @@ class SearchGroupViewController: UITableViewController {
             
         }
     }
+
+    // MARK: Initialization
     
-    // MARK: - View Lifecycle
-    
-    init(category:Int, radius: Int) {
+    init(category:Int, radius: Int = 25) {
         self.category = Category(rawValue: category) ?? .other
         self.radius = radius
         super.init(style: .plain)
@@ -48,6 +48,8 @@ class SearchGroupViewController: UITableViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         performNetworkRequest()
