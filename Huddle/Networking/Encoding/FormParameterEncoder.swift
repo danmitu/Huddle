@@ -29,11 +29,11 @@ public struct FormParameterEncoder: ParameterEncoder {
     public func encode(urlRequest: inout URLRequest, with parameters: Parameters) throws {
         let lineBreak = "\r\n"
         var body = Data()
-        let boundary = "Boundary-\(UUID().uuidString)"
-        urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        let boundary = "----\(UUID().uuidString)"
+        urlRequest.setValue("multipart/form-data; boundary=\(boundary)\r\n", forHTTPHeaderField: "Content-Type")
         
-        for (_, _) in parameters {
-            body.append("--\(boundary + lineBreak)".utf8Data)
+//        for (key, value) in parameters {
+//            body.append("--\(boundary + lineBreak)".utf8Data)
 //            switch value {
 //            case let stringValue as String:
 //                body.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak + lineBreak)".utf8Data)
@@ -43,17 +43,19 @@ public struct FormParameterEncoder: ParameterEncoder {
 //                body.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak + lineBreak)".utf8Data)
 //                body.append("\(stringValue + lineBreak)".utf8Data)
 //            case let media as Media:
+        let string = "data"
 //                body.append("--\(boundary + lineBreak)".utf8Data)
-//                body.append("Content-Disposition: form-data; name=\"\(key)\"; filename=\"\(media.filename)\"\(lineBreak)".utf8Data)
-//                body.append("Content-Type: \(media.mimeType + lineBreak + lineBreak)".utf8Data)
-//                body.append(media.data)
-//                body.append(lineBreak.utf8Data)
+                body.append("Content-Disposition: form-data; name=\"\(string)\"; filename=\"\(parameters["filename"] as! String)\"\(lineBreak)".utf8Data)
+                body.append("Content-Type: \(parameters["mimetype"] as! String + lineBreak + lineBreak)".utf8Data)
+//                let string = String(data: parameters["data"] as! Data, encoding: .utf8)
+        body.append(parameters["data"] as! Data)
+                body.append(lineBreak.utf8Data)
 //            default:
 //                throw NetworkError.encodingFailed
 //            }
             body.append("--\(boundary)--\(lineBreak)".utf8Data)
-        }
-        
+//        }
+        print(body)
         urlRequest.httpBody = body
 
     }

@@ -169,8 +169,15 @@ enum HuddleApi: EndPointType {
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["id":id])
         
+//        case .membersProfileImageUpload(media: let media):
+//            return .requestParameters(bodyParameters: ["profileImage":media],
+//                                      bodyEncoding: .formDataEncoding,
+//                                      urlParameters: nil)
+            
         case .membersProfileImageUpload(media: let media):
-            return .requestParameters(bodyParameters: ["profileImage":media],
+            return .requestParameters(bodyParameters: ["filename":media.filename,
+                                                       "data":media.data,
+                                                       "mimetype":media.mimeType],
                                       bodyEncoding: .formDataEncoding,
                                       urlParameters: nil)
         
