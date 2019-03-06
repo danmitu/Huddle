@@ -5,7 +5,7 @@
 //  Created by Dan Mitu on 2/13/19.
 //  Copyright © 2019 Dan Mitu. All rights reserved.
 //
-//  source: https://gist.github.com/nolanw/dff7cc5d5570b030d6ba385698348b7c
+//  source: https://stackoverflow.com/questions/29623187/upload-image-with-multipart-form-data-ios-in-swift
 //
 
 /* Example Request from Postman...
@@ -27,46 +27,50 @@ import Foundation
 public struct FormParameterEncoder: ParameterEncoder {
     
     public func encode(urlRequest: inout URLRequest, with parameters: Parameters) throws {
-        let lineBreak = "\r\n"
-        var body = Data()
-        let boundary = "----\(UUID().uuidString)"
-        urlRequest.setValue("multipart/form-data; boundary=\(boundary)\r\n", forHTTPHeaderField: "Content-Type")
         
-//        for (key, value) in parameters {
-//            body.append("--\(boundary + lineBreak)".utf8Data)
-//            switch value {
-//            case let stringValue as String:
-//                body.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak + lineBreak)".utf8Data)
-//                body.append("\(stringValue + lineBreak)".utf8Data)
-//            case let stringConvertible as CustomStringConvertible:
-//                let stringValue = stringConvertible.description
-//                body.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak + lineBreak)".utf8Data)
-//                body.append("\(stringValue + lineBreak)".utf8Data)
-//            case let media as Media:
-        let string = "data"
-//                body.append("--\(boundary + lineBreak)".utf8Data)
-                body.append("Content-Disposition: form-data; name=\"\(string)\"; filename=\"\(parameters["filename"] as! String)\"\(lineBreak)".utf8Data)
-                body.append("Content-Type: \(parameters["mimetype"] as! String + lineBreak + lineBreak)".utf8Data)
-//                let string = String(data: parameters["data"] as! Data, encoding: .utf8)
-        body.append(parameters["data"] as! Data)
-                body.append(lineBreak.utf8Data)
-//            default:
-//                throw NetworkError.encodingFailed
-//            }
-            body.append("--\(boundary)--\(lineBreak)".utf8Data)
-//        }
-        print(body)
-        urlRequest.httpBody = body
-
+        // Create the boundary and convert the data to formdata
+        let boundary = "----\(UUID().uuidString)"
+        let fullData = photoDataToFormData(data: parameters["data"] as! Data, boundary:boundary, fileName:parameters["filename"] as! String)
+        
+        // Set the headers
+        urlRequest.setValue("multipart/form-data; boundary=" + boundary,
+                            forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue(String(fullData.count),
+                            forHTTPHeaderField: "Content-Length")
+        // Set the Body
+        urlRequest.httpBody = fullData
+    }
+    
+    // convert the photo data to form data
+    func photoDataToFormData(data:Data,boundary:String,fileName:String) -> Data {
+        var fullData = Data()
+        
+        // 1 - Start with the boundary
+        let lineOne = "--" + boundary + "\r\n"
+        fullData.append(lineOne.data(using: .utf8, allowLossyConversion: true)!)
+        
+        // 2 - Add the Content-Disposition
+        let lineTwo = "Content-Disposition: form-data; name=\"data\"; filename=\"" + fileName + "\"\r\n"
+        fullData.append(lineTwo.data(using: .utf8, allowLossyConversion: true)!)
+        
+        // 3 - Add the Content-Type
+        let lineThree = "Content-Type: image/jpeg\r\n\r\n"
+        fullData.append(lineThree.data(using: .utf8, allowLossyConversion: true)!)
+        
+        // 4 - Add the actual data
+        fullData.append(data as Data)
+        
+        // 5 - Add a new line
+        let lineFive = "\r\n"
+        fullData.append(lineFive.data(using: .utf8, allowLossyConversion: true)!)
+        
+        // 6 - The end. make sure this is -- and then the boundary and then -- again
+        let lineSix = "--" + boundary + "--\r\n"
+        fullData.append(lineSix.data(using: .utf8, allowLossyConversion: true)!)
+        
+        return fullData
     }
     
     
 }
 
-fileprivate extension String {
-    
-    var utf8Data: Data! {
-        return self.data(using: .utf8)
-    }
-    
-}
