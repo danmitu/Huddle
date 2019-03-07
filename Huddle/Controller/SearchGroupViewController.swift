@@ -2,8 +2,8 @@
 //  SearchGroupViewController.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 2/26/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -77,8 +77,8 @@ class SearchGroupViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "GroupTableViewCell", for: indexPath) as! GroupTableViewCell
-        let group = self.groupData[indexPath.row] //allGroupData[indexPath.row]
-        cell.set(groupName: group.title ?? "", distance: group.distance ?? 0.0, description: group.description ?? "", id: group.id)
+        let group = self.groupData[indexPath.row]
+        cell.set(groupName: group.title, distance: group.distance, description: group.description, id: group.id)
         
         return cell
     }
@@ -99,7 +99,7 @@ class SearchGroupViewController: UITableViewController {
         let dispatchGroup = DispatchGroup()
         dispatchGroup.enter()
         
-        networkManager.searchForGroups(id: self.category.rawValue, radius: 999999) { groups, error in
+        networkManager.searchForGroups(id: self.category.rawValue, radius: 999999) { error, groups in
             if let error = error { print(error) }
             self.groupData = groups ?? [Group]()
             dispatchGroup.leave()

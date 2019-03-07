@@ -2,8 +2,8 @@
 //  EventViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 2/21/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -30,7 +30,6 @@ class EventViewController: AsyncTableViewController {
     init(eventId: Int) {
         self.eventId = eventId
         super.init(style: .grouped)
-        performNetworkRequest()
     }
     
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -39,6 +38,7 @@ class EventViewController: AsyncTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        performNetworkRequest()
         tableView.tableHeaderView = headerView
         performNetworkRequest()
         rsvpButtonCell.button.addTarget(self, action: #selector(userDidPressRSVPButton), for: .touchUpInside)
@@ -167,7 +167,7 @@ class EventViewController: AsyncTableViewController {
     // MARK: - Helper Methods
     
     private func performNetworkRequest() {
-        let dispatchGroup = DispatchGroup()
+        let dg = DispatchGroup()
         
         var id: Int?
         // view model components
@@ -175,54 +175,42 @@ class EventViewController: AsyncTableViewController {
         var group: Group?
         var isGroupMember: Bool?
         
-        // when all else fails...
-        let lastResortErrorHandler = { [weak self] (error: String) in
-            dispatchGroup.leave()
-            self?.displayError(message: error) { [weak self] in
-                self?.navigationController?.popViewController(animated: true)
-            }
-        }
-        
         isLoadingDisplay = true
         
         // >>>>>>>> Get Event
-        dispatchGroup.enter()
+        dg.enter()
         networkManager.read(event: eventId) { [weak self] error, newEvent in
-            guard error == nil else { lastResortErrorHandler(error!); return }
-            guard let newEvent = newEvent else { lastResortErrorHandler("There was an error loading this page."); return }
+            guard self != nil && self!.responseErrorHandler(error, newEvent) else { dg.leave(); return }
             event = newEvent
             
             // >>>>>>>> Get Group
-            dispatchGroup.enter()
-            self?.networkManager.read(group: newEvent.groupId) { newGroup, error in
-                guard error == nil else { lastResortErrorHandler(error!); return }
-                guard let newGroup = newGroup else { lastResortErrorHandler("There was an error loading this page."); return }
+            dg.enter()
+            self!.networkManager.read(group: newEvent!.groupId) { [weak self] error, newGroup in
+                guard self != nil && self!.responseErrorHandler(error, newGroup) else { dg.leave(); return }
                 group = newGroup
-                dispatchGroup.leave() // for Get Group
+                dg.leave()
             }
             
             // >>>>>>>> Get Group Membership
-            dispatchGroup.enter()
-            self?.networkManager.checkSelfIsMember(withinGroup: newEvent.groupId) { newIsGroupMember, error in
-                guard error == nil else { lastResortErrorHandler(error!); return }
-                guard let newIsGroupMember = newIsGroupMember else { lastResortErrorHandler("There was an error loading this page."); return }
-                isGroupMember = newIsGroupMember
-                dispatchGroup.leave() // for Get Group Membership
+            dg.enter()
+            self!.networkManager.checkSelfIsMember(withinGroup: newEvent!.groupId) { [weak self] error, isNewGroupMember in
+                guard self != nil && self!.responseErrorHandler(error, isNewGroupMember) else { dg.leave(); return }
+                isGroupMember = isNewGroupMember!["value"]!
+                dg.leave()
             }
             
-            dispatchGroup.leave() // for Get Event
+            dg.leave() // for Get Event
         }
         
         // >>>>>>>> Get Self
-        dispatchGroup.enter()
-        networkManager.read(profile: nil) { member, error in
-            guard error == nil else { lastResortErrorHandler(error!); return }
-            guard let newId = member?.id else { lastResortErrorHandler("There was an error loading this page."); return }
-            id = newId
-            dispatchGroup.leave() // for Get Self
+        dg.enter()
+        networkManager.read(profile: nil) { [weak self] error, member in
+            guard self != nil && self!.responseErrorHandler(error, member) else { dg.leave(); return }
+            id = member!.id
+            dg.leave()
         }
 
-        dispatchGroup.notify(queue: .main) { [weak self] in
+        dg.notify(queue: .main) { [weak self] in
             if let id = id, let event = event, let group = group, let isGroupMember = isGroupMember {
                 let viewModel = EventViewModel(personalId: id, event: event, group: group, isGroupMember: isGroupMember)
                 self?.viewModel = viewModel

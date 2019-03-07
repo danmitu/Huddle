@@ -2,60 +2,116 @@
 //  GroupEditorViewController.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 2/19/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
 import MapKit
 import CoreLocation
 
-class GroupEditorViewController: UITableViewController, UINavigationControllerDelegate, UITextFieldDelegate, ImageOptionsGiver {
+fileprivate struct GroupForm {
+    var title: String?
+    var description: String?
+    var location: CLLocation?
+    var locationName: String?
+    var category: Category?
+    
+    init() {
+        self.title = nil
+        self.description = nil
+        self.location = nil
+        self.locationName = nil
+        self.category = nil
+    }
+    
+    init(previous group: Group) {
+        self.title = group.title
+        self.description = group.description
+        self.location = group.location.location
+        self.locationName = group.location.name
+        self.category = group.category
+    }
+    
+    func getEmptyFields() -> [String] {
+        var b = [String]()
+        if title == nil { b.append("name") }
+        if description == nil { b.append("description") }
+        if location == nil { b.append("location") }
+        if category == nil { b.append("category") }
+        return b
+    }
+    
+    func merge(with previousGroup: Group) -> Group {
+        
+        let namedLocation = NamedLocation(id: previousGroup.location.id,
+                                          name: self.locationName ?? previousGroup.location.name,
+                                          location: self.location ?? previousGroup.location.location)
+        
+        return Group(id: previousGroup.id,
+                     title: self.title ?? previousGroup.title,
+                     description: self.description ?? previousGroup.description,
+                     ownerId: previousGroup.ownerId,
+                     ownerName: previousGroup.ownerName,
+                     location: namedLocation,
+                     distance: previousGroup.distance,
+                     category: self.category ?? previousGroup.category)
+    }
+
+}
+
+class GroupEditorViewController: FormTableViewController {
+    
+    init(for mode: Mode) {
+        self.mode = mode
+        switch mode {
+        case .creating:
+            self.groupForm = GroupForm()
+            cells = [ titleCell, aboutCell, categoryCell, locationCell ]
+            super.init(style: .grouped)
+        case .editing(group: let g):
+            self.groupForm = GroupForm(previous: g)
+            self.cells = [ titleCell, aboutCell, categoryCell, locationCell, deleteButtonCell ]
+            super.init(style: .grouped)
+            self.setAllCells(to: groupForm)
+        }
+    }
+    
+    required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) is not supported") }
     
     private let networkManager = NetworkManager()
     
-    var group: Group?
+    private var groupForm: GroupForm
     
-    var joinedGroups = [Group]()
+    let mode: Mode
     
-    private var groupsToLeave = Set<Group>()
-    
-    private enum Section: Int, CaseIterable {
-        case details
+    enum Mode {
+        case creating /// creating a new group
+        case editing(group: Group) /// editing an existing group
     }
-    
-    // MARK: - View Lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.rightBarButtonItem = doneBarButton
-        navigationItem.leftBarButtonItem = cancelBarButton
-        self.tableView.isEditing = true
-        self.tableView.allowsSelectionDuringEditing = true
-        self.navigationItem.title = "Update Group"
-        self.titleCell.textField.delegate = self
-        self.titleCell.textField.text = group?.title
-        locationCell.detailTextLabel!.text = group?.location?.name ?? ""
-        categoryCell.detailTextLabel!.text = group?.category.name
         
-        // cannot be done at initialization 😢
-        doneBarButton.target = self
-        doneBarButton.action = #selector(doneButtonWasPressed)
-        cancelBarButton.target = self
-        cancelBarButton.action = #selector(cancelButtonWasPressed)
+        navigationItem.title = {
+            switch mode {
+            case .creating: return "New Group"
+            case .editing: return "Edit Group"
+            }
+        }()
+        
+        titleCell.textField.addTarget(self, action: #selector(updateTitle), for: .editingChanged)
     }
     
-    // MARK: - Other Views
+    private let cells: [UITableViewCell]
     
-    private let doneBarButton = UIBarButtonItem(barButtonSystemItem: .done, target: nil, action: nil)
+    private func setAllCells(to group: GroupForm) {
+        if let title = group.title { setTitleView(to: title) }
+        if let location = group.location { setLocationView(to: location) }
+        if let category = group.category { setCategoryView(to: category) }
+    }
     
-    private lazy var cancelBarButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
-    
-    private let activityIndicatorBarItem = UIBarButtonItem(customView: UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20)))
-    
-    // MARK: - Static Cells
-    
-    // MARK: Personal Section
+    // MARK: - Title
     
     private let titleCell: TitledTextFieldTableViewCell = {
         let cell = TitledTextFieldTableViewCell(reuseIdentifier: "TitledTextFieldTableViewCell")
@@ -66,6 +122,34 @@ class GroupEditorViewController: UITableViewController, UINavigationControllerDe
         return cell
     }()
     
+    private func setTitleView(to string: String) {
+        titleCell.textField.text = string
+    }
+    
+    @objc private func updateTitle() {
+        groupForm.title = titleCell.textField.text
+    }
+    
+    // MARK: - About
+    
+    private let aboutCell: UITableViewCell = {
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
+        cell.textLabel!.text = "About"
+        cell.accessoryType = .disclosureIndicator
+        cell.selectionStyle = .none
+        return cell
+    }()
+    
+    func launchAboutGroupTextViewController() {
+        let textViewController = TextViewController()
+        textViewController.setInitialText(groupForm.description ?? "")
+        textViewController.whenDoneEditing = { [weak self] string in
+            self?.groupForm.description = string
+        }
+        navigationController?.pushViewController(textViewController, animated: true)
+    }
+
+    // MARK: - Category
     
     private let categoryCell: UITableViewCell = {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
@@ -75,6 +159,25 @@ class GroupEditorViewController: UITableViewController, UINavigationControllerDe
         return cell
     }()
     
+    private func launchCategoryPicker() {
+        let categoryViewController = CategoryViewController()
+        categoryViewController.whenSelected = { [weak self] category in
+            self?.updateCategory(category)
+            self?.setCategoryView(to: category)
+        }
+        navigationController?.pushViewController(categoryViewController, animated: true)
+    }
+    
+    private func setCategoryView(to category: Category) {
+        categoryCell.detailTextLabel?.text = category.name
+    }
+    
+    private func updateCategory(_ category: Category) {
+        groupForm.category = category
+    }
+    
+    // MARK: - Location
+    
     private let locationCell: UITableViewCell = {
         let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
         cell.textLabel!.text = "Location"
@@ -83,172 +186,132 @@ class GroupEditorViewController: UITableViewController, UINavigationControllerDe
         return cell
     }()
     
-    private let aboutCell: UITableViewCell = {
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
-        cell.textLabel!.text = "About Group"
-        cell.accessoryType = .disclosureIndicator
+    func launchLocationPickerViewController() {
+        let mapViewController = ChooseLocationViewController()
+        mapViewController.navigationItem.title = "Location"
+        mapViewController.whenDoneSelecting = { [weak self] placemark in
+            if let location = placemark.location {
+                self?.groupForm.location = location
+                self?.setLocationView(to: location)
+                self?.saveName(forLocation: location)
+            }
+        }
+        navigationController?.pushViewController(mapViewController, animated: true)
+    }
+    
+    func saveName(forLocation location: CLLocation) {
+        PreferredLocationFormat.describe(location, using: .shortAddress) { [weak self] strings in
+            guard let strings = strings?.first else { return }
+            let locationName = strings.joined(separator: ", ")
+            self?.groupForm.locationName = locationName
+        }
+    }
+    
+    func setLocationView(to location: CLLocation) {
+        PreferredLocationFormat.describe(location, using: .cityState) { [weak self] strings in
+            guard let strings = strings?.first else { return }
+            let oldValue = self?.locationCell.detailTextLabel?.text
+            let newValue = strings.joined(separator: ", ")
+            if oldValue != newValue {
+                self?.locationCell.detailTextLabel?.text = newValue
+            }
+        }
+    }
+    
+    // MARK: - Deletion
+    
+    private let deleteButtonCell: ButtonTableViewCell = {
+        let cell = ButtonTableViewCell()
+        cell.button.setTitle("Delete Event", for: .normal)
+        cell.button.setTitleColor(.red, for: .normal)
+        cell.button.addTarget(self, action: #selector(deleteButtonWasPressed), for: .touchUpInside)
         cell.selectionStyle = .none
         return cell
     }()
     
-    // MARK: - Table View Data Source
-    
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return Section.allCases.count
+    @objc private func deleteButtonWasPressed() {
+        confirmDelete() { [weak self] yesDelete in
+            if yesDelete {
+                self?.sendDelete()
+            }
+        }
     }
     
+    private func confirmDelete(completer: @escaping (Bool)->()) {
+        DestructiveConfirmationPresenter(title: "Delete this event?", message: "Are you sure you want to permanently delete this group?", acceptTitle: "Delete", rejectTitle: "Cancel", handler: { outcome in
+            switch outcome {
+            case .accepted: completer(true)
+            case .rejected: completer(false)
+            }
+        }).present(in: self)
+    }
+
+
+    // MARK: - Table View Stuff
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch Section(rawValue: section)! {
-        case .details: return 4
-        }
+        assert(section == 0)
+        return cells.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        switch Section(rawValue: indexPath.section)! {
-        case .details:
-            switch indexPath.row {
-            case 0: return titleCell
-            case 1: return locationCell
-            case 2: return categoryCell
-            case 3: return aboutCell
-            default: fatalError("Unreachable")
-            }
+        return cells[indexPath.row]
+    }
+
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedCell = cells[indexPath.row]
+        
+        if selectedCell == aboutCell {
+            launchAboutGroupTextViewController()
+        } else if selectedCell == categoryCell {
+            launchCategoryPicker()
+        } else if selectedCell == locationCell {
+            launchLocationPickerViewController()
         }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch Section(rawValue: section)! {
-        default: return nil
+    // MARK: - Other
+    
+    override func doneButtonWasPressed() {
+        switch mode {
+        case .creating: sendNewGroup()
+        case .editing: sendUpdatedGroup()
         }
     }
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        switch Section(rawValue: indexPath.section)! {
-        default:
-            return false
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        switch Section(rawValue: indexPath.section)! {
-        default:
+
+    private func sendNewGroup() {
+        guard case .creating = mode else { return }
+
+        // Check for any necessary fields being left blank.
+        let emptyFields = groupForm.getEmptyFields()
+        guard emptyFields.isEmpty else {
+            let errorMessage = "The follow fields cannot be blank: \(emptyFields.joined(separator: ", "))."
+            displayError(message: errorMessage, {})
+            submissionStatus = .waitingForInput
             return
         }
-    }
-    
-    // MARK: - Table View Delegate
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch Section(rawValue: indexPath.section)! {
-        case .details:
-            switch indexPath.row {
-            case 1: // Loation Cell
-                let mapViewController = ChooseLocationViewController()
-                mapViewController.navigationItem.title = "Location"
-                mapViewController.whenDoneSelecting = { [weak self] placemark in
-                    self?.locationCell.detailTextLabel?.text = placemark.locality
-                    self?.group?.location?.name = placemark.locality ?? ""
-                    self?.group?.location?.location = placemark.location!
-                    self?.navigationController?.popViewController(animated: true)
-                }
-                navigationController?.pushViewController(mapViewController, animated: true)
-            case 2: // Category Cell
-                let tableViewController = CategoryViewController(style: .grouped)
-                tableViewController.navigationItem.title = "Select Category"
-                tableViewController.whenSelected = { [weak self] category in
-                    self?.group?.category = category
-//                    self?.categoryCell.textLabel?.text = category.name
-                    self?.viewDidLoad()
-                }
-                navigationController?.pushViewController(tableViewController, animated: true)
-                
-            case 3: // About Me Cell
-                let textViewController = TextViewController()
-                textViewController.navigationItem.title = "About Group"
-                textViewController.setInitialText(group?.description ?? "")
-                textViewController.whenDoneEditing = { [weak self] text in
-                    self?.group?.description = text
-                }
-                navigationController?.pushViewController(textViewController, animated: true)
-            default: break
-            }
-        }
         
+        submissionStatus = .submitting
+        networkManager.createGroup(title: groupForm.title!,
+                                   description: groupForm.title!,
+                                   locationName: groupForm.locationName!,
+                                   latitude: (groupForm.location?.coordinate.latitude)!,
+                                   longitude: (groupForm.location?.coordinate.longitude)!,
+                                   category: groupForm.category!,
+                                   completion: requestHandler)
     }
     
-    override func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        switch Section(rawValue: indexPath.section)! {
-        default: return .none
-        }
+    private func sendUpdatedGroup() {
+        guard case .editing(let oldGroup) = mode else { return }
+        let updatedGroup = groupForm.merge(with: oldGroup)
+        networkManager.update(group: updatedGroup, completion: requestHandler)
     }
     
-    // MARK: - Actions
-    
-    @objc func doneButtonWasPressed() {
-        sendUpdates()
-    }
-    
-    @objc func cancelButtonWasPressed() {
-        self.dismiss(animated: true)
-    }
-    
-    @objc func changeProfileImageButtonPressed() {
-        presentImageOptions()
-    }
-    
-    @objc func passwordButtonWasPressed() {
-        let passwordResetViewController = ResetPasswordViewController(style: .grouped)
-        let navigationViewController = UINavigationController(rootViewController: passwordResetViewController)
-        present(navigationViewController, animated: true)
-    }
-    
-    // MARK: - Text Field Delegate
-    
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        self.view.endEditing(true)
-        return false
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        if textField == titleCell.textField {
-            group?.title = titleCell.textField.text
-        }
-    }
-    
-    // MARK: - Other Methods
-    
-    func sendUpdates() {
-        guard let group = group else { return }
-        setButtons(for: .submitting)
-        
-        let dispatchGroup = DispatchGroup()
-        
-        dispatchGroup.enter()
-        networkManager.update(group: group) { error in
-            if let error = error { print(error) }
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.notify(queue: .main) { [weak self] in
-            self?.setButtons(for: .waitingForInput)
-            self?.dismiss(animated: true)
-        }
-        
-    }
-    
-    private func setButtons(for status: SubmissionStatus) {
-        switch status {
-        case .waitingForInput:
-            cancelBarButton.isEnabled = true
-            doneBarButton.isEnabled = true
-            navigationItem.setRightBarButton(cancelBarButton, animated: true)
-            (activityIndicatorBarItem.customView as! UIActivityIndicatorView).stopAnimating()
-        case .submitting:
-            cancelBarButton.isEnabled = false
-            navigationItem.setRightBarButton(activityIndicatorBarItem, animated: true)
-            (activityIndicatorBarItem.customView as! UIActivityIndicatorView).startAnimating()
-        default: break
-        }
+    private func sendDelete() {
+        guard case .editing(let oldGroup) = mode else { return }
+        submissionStatus = .submitting
+        networkManager.delete(group: oldGroup.id, completion: requestHandler)
     }
     
 }

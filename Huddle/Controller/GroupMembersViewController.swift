@@ -2,13 +2,13 @@
 //  GroupMembersViewController.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 2/14/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
 
-class GroupMembersViewController: UITableViewController {
+class GroupMembersViewController: AsyncTableViewController {
 
     private var members = [Member]()
     
@@ -25,16 +25,11 @@ class GroupMembersViewController: UITableViewController {
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) is not supported") }
     
     private func performNetworkRequest() {
-        networkManager.getGroupMembers(for: groupId) { [weak self] members, error in
-            guard error == nil else {
-                self?.displayError(message: error!) { [weak self] in
-                    self?.navigationController?.popViewController(animated: true)
-                }
-                return
-            }
+        networkManager.getGroupMembers(for: groupId) { [weak self] error, members in
+            guard self != nil && self!.responseErrorHandler(error, members) else { return }
             DispatchQueue.main.async {
-                self?.members = members!
-                self?.tableView.reloadData()
+                self!.members = members!
+                self!.tableView.reloadData()
             }
         }
     }

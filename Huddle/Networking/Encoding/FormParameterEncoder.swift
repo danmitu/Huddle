@@ -2,8 +2,8 @@
 //  FormParameterEncoder.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 2/13/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 //  source: https://stackoverflow.com/questions/29623187/upload-image-with-multipart-form-data-ios-in-swift
 //

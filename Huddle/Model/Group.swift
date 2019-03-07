@@ -2,8 +2,8 @@
 //  Group.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 2/13/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import Foundation
@@ -11,39 +11,38 @@ import MapKit
 
 fileprivate struct RawGroup: Decodable {
     let id: Int
-    let title: String?
-    let description: String?
+    let title: String
+    let description: String
     let ownerid: Int
-    let owner: String?
-    let locationid: Int?
-    let location: String?
-    let latitude: Float?
-    let longitude: Float?
-    let memberid: Int?
-    let categoryid: Int?
-    let distance: Float?
+    let owner: String
+    let locationid: Int
+    let location: String
+    let latitude: Float
+    let longitude: Float
+    let memberid: Int
+    let categoryid: Int
+    let distance: Float
 }
 
 struct Group: Decodable, Hashable {
-    var id: Int
-    var title: String?
-    var description: String?
-    var ownerId: Int
-    var ownerName: String?
-    var location: NamedLocation?
-    var category: Category
-    var distance: Float?
+    let id: Int
+    let title: String
+    let description: String
+    let ownerId: Int
+    let ownerName: String
+    let location: NamedLocation
+    let category: Category
+    let distance: Float
     
-    // TODO: delete me
-    // For Testing. This needs to be removed
-    init(id: Int, title: String, description: String, ownerID: Int, locationName: String, category: Int, distance: Float) {
+    init(id: Int, title: String, description: String, ownerId: Int, ownerName: String, location: NamedLocation, distance: Float, category: Category) {
         self.id = id
         self.title = title
         self.description = description
-        self.ownerId = ownerID
-        self.location = NamedLocation(id: 1, name: locationName, location: CLLocation(latitude: CLLocationDegrees(1), longitude: CLLocationDegrees(1)))
-        self.category = Category(rawValue: category) ?? .none
+        self.ownerId = ownerId
+        self.ownerName = ownerName
+        self.location = location
         self.distance = distance
+        self.category = category
     }
     
     init(from decoder: Decoder) throws {
@@ -53,17 +52,10 @@ struct Group: Decodable, Hashable {
         self.description = rawGroup.description
         self.ownerId = rawGroup.ownerid
         self.ownerName = rawGroup.owner
-        self.category = Category(rawValue: rawGroup.categoryid ?? 0) ?? .none
+        self.category = Category(rawValue: rawGroup.categoryid) ?? .none
         self.distance = rawGroup.distance
         
-        if let rawLocationName = rawGroup.location,
-            let rawLatitude = rawGroup.latitude,
-            let rawLongitude = rawGroup.longitude,
-            let rawLocationId = rawGroup.locationid {
-            let location = CLLocation(latitude: CLLocationDegrees(rawLatitude), longitude: CLLocationDegrees(rawLongitude))
-            self.location = NamedLocation(id: rawLocationId, name: rawLocationName, location: location)
-        } else {
-            self.location = nil
-        }
+        let location = CLLocation(latitude: CLLocationDegrees(rawGroup.latitude), longitude: CLLocationDegrees(rawGroup.longitude))
+        self.location = NamedLocation(id: rawGroup.locationid, name: rawGroup.location, location: location)
     }
 }

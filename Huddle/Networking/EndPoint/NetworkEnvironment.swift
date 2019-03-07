@@ -2,8 +2,8 @@
 //  NetworkEnvironment.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 1/21/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 //  Source: https://medium.com/flawless-app-stories/writing-network-layer-in-swift-protocol-oriented-approach-4fa40ef1f908
 //
@@ -36,6 +36,7 @@ enum HuddleApi: EndPointType {
     case eventsCalendar
     case eventsForGroup(groupId: Int)
     case groupsRead(groupId: Int)
+    case groupsCreate(title: String, description: String, locationName: String, latitude: Double, longitude: Double, category: Int)
     case groupsMine
     case groupsIsMember(groupId: Int)
     case groupsIsOwner(groupId: Int)
@@ -45,6 +46,7 @@ enum HuddleApi: EndPointType {
     case groupUpdate(group: Group)
     case groupMembers(groupId: Int)
     case groupSearch(category: Int, radius: Int?)
+    case groupDelete(groupId: Int)
     case categoriesAll
     
     var baseURL: URL {
@@ -71,6 +73,7 @@ enum HuddleApi: EndPointType {
         case .eventsCalendar: return "events/calendar"
         case .eventsForGroup: return "events/readall"
         case .groupsRead: return "groups/read"
+        case .groupsCreate: return "groups/create"
         case .groupsMine: return "groups/mygroups"
         case .groupsIsMember: return "groups/ismember"
         case .groupsIsOwner: return "groups/isowner"
@@ -80,6 +83,7 @@ enum HuddleApi: EndPointType {
         case .groupUpdate: return "groups/update"
         case .groupMembers: return "groups/members"
         case .groupSearch: return "categories/groups"
+        case .groupDelete: return "groups/delete"
         case .categoriesAll: return "categories/all"
         }
     }
@@ -104,6 +108,7 @@ enum HuddleApi: EndPointType {
         case .eventsCalendar: return .get
         case .eventsForGroup: return .get
         case .groupsRead: return .get
+        case .groupsCreate: return .post
         case .groupsMine: return .get
         case .groupsIsMember: return .get
         case .groupsIsOwner: return .get
@@ -113,6 +118,7 @@ enum HuddleApi: EndPointType {
         case .groupUpdate: return .put
         case .groupMembers: return .get
         case .groupSearch: return .get
+        case .groupDelete: return .delete
         case .categoriesAll: return .get
         }
     }
@@ -168,11 +174,6 @@ enum HuddleApi: EndPointType {
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["id":id])
-        
-//        case .membersProfileImageUpload(media: let media):
-//            return .requestParameters(bodyParameters: ["profileImage":media],
-//                                      bodyEncoding: .formDataEncoding,
-//                                      urlParameters: nil)
             
         case .membersProfileImageUpload(media: let media):
             return .requestParameters(bodyParameters: ["filename":media.filename,
@@ -233,6 +234,20 @@ enum HuddleApi: EndPointType {
             return .requestParameters(bodyParameters: nil,
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: ["id":id])
+        
+        case .groupsCreate(title: let title,
+                           description: let description,
+                           locationName: let locationName,
+                           latitude: let latitude,
+                           longitude: let longitude,
+                           category: let category):
+            return .requestParameters(bodyParameters: ["Title":title,
+                                                       "Description":description,
+                                                       "Location":locationName,
+                                                       "Latitude":latitude,
+                                                       "Longitude":longitude,
+                                                       "CategoryID":category
+                                                       ], bodyEncoding: .jsonEncoding, urlParameters: nil)
             
         case .groupsMine:
             return .requestParameters(bodyParameters: nil, bodyEncoding: .urlEncoding, urlParameters: nil)
@@ -264,11 +279,11 @@ enum HuddleApi: EndPointType {
             
         case .groupUpdate(group: let group):
             return .requestParameters(bodyParameters: ["ID":group.id,
-                                                       "Title":group.title ?? "",
-                                                       "Description":group.description ?? "",
-                                                       "Location":group.location?.name ?? "",
-                                                       "Latitude":group.location?.location.coordinate.latitude ?? "",
-                                                       "Longitude":group.location?.location.coordinate.longitude ?? "",
+                                                       "Title":group.title,
+                                                       "Description":group.description,
+                                                       "Location":group.location.name,
+                                                       "Latitude":group.location.location.coordinate.latitude,
+                                                       "Longitude":group.location.location.coordinate.longitude,
                                                        "CategoryID": group.category.rawValue
                                                        ],
                                       bodyEncoding: .jsonEncoding,
@@ -287,6 +302,9 @@ enum HuddleApi: EndPointType {
                                       bodyEncoding: .urlEncoding,
                                       urlParameters: urlParameters)
 
+        case .groupDelete(groupId: let id):
+            return .requestParameters(bodyParameters: ["ID":id], bodyEncoding: .jsonEncoding, urlParameters: nil)
+            
             
         case .categoriesAll:
             return .request

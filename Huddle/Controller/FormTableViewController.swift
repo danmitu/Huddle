@@ -2,8 +2,8 @@
 //  FormTableViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 3/2/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -13,6 +13,8 @@ enum SubmissionStatus {
     case submitting
     case submitted
 }
+
+typealias Completer = ()->Void
 
 class FormTableViewController: UITableViewController {
     
@@ -65,6 +67,18 @@ class FormTableViewController: UITableViewController {
     
     @objc func cancelButtonWasPressed() {
         self.dismiss(animated: true)
+    }
+    
+    /// Generic function for handling a request returning an error.
+    func requestHandler(_ error: String?) {
+        guard error == nil else {
+            displayError(message: error!) { [weak self] in
+                self?.submissionStatus = .waitingForInput
+            }
+            return
+        }
+        submissionStatus = .submitted
+        dismiss(animated: true)
     }
 
 }

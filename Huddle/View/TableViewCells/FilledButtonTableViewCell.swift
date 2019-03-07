@@ -2,8 +2,8 @@
 //  ButtonFieldTableViewCell.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 2/6/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -40,7 +40,6 @@ class FilledButtonTableViewCell: UITableViewCell {
         button.setTitle("Title", for: .normal)
         button.setTitleColor(.white, for: .normal)
         button.setTitleColor(.white, for: .highlighted)
-//        button.addTarget(self, action: #selector(showRegisterController), for: .touchUpInside)
         button.backgroundColor = UIColor.preferredTeal
         button.normalBackgroundColor = UIColor.preferredTeal
         button.disabledBackgroundColor = UIColor.disabledGrey
@@ -58,21 +57,5 @@ class FilledButtonTableViewCell: UITableViewCell {
             }
         }
     }
-    
-//    let button: UIButton = {
-//        let button = UIButton()
-//        button.translatesAutoresizingMaskIntoConstraints = false
-//        button.setTitle("Title", for: .normal)
-//        return button
-//    }()
-    
-//    private let containerStackView: UIStackView = {
-//        let stackView = UIStackView()
-//        stackView.translatesAutoresizingMaskIntoConstraints = false
-//        stackView.axis = .vertical
-//        stackView.distribution = .fillEqually
-//        stackView.spacing = 8
-//        return stackView
-//    }()
     
 }

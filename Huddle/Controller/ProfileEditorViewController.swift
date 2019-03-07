@@ -2,15 +2,15 @@
 //  ProfileEditorViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 1/30/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
 import MapKit
 import CoreLocation
 
-class ProfileEditorViewController: UITableViewController, UINavigationControllerDelegate, UITextFieldDelegate, ImageOptionsGiver {
+class ProfileEditorViewController: FormTableViewController, UINavigationControllerDelegate, UITextFieldDelegate, ImageOptionsGiver {
     
     private let networkManager = NetworkManager()
     
@@ -31,8 +31,6 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.tableHeaderView = profilePhotoEditorView
-        navigationItem.rightBarButtonItem = doneBarButton
-        navigationItem.leftBarButtonItem = cancelBarButton
         self.tableView.isEditing = true
         self.tableView.allowsSelectionDuringEditing = true
         self.navigationItem.title = "Update Profile"
@@ -42,21 +40,10 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         (self.displayLocationCell.accessoryView as! UISwitch).isOn = member?.publicLocation ?? false
         locationCell.detailTextLabel!.text = member?.homeLocation?.name ?? ""
         profilePhotoEditorView.userProfileImageView.image = member?.profilePhoto
-        
-        // cannot be done at initialization 😢
-        doneBarButton.target = self
-        doneBarButton.action = #selector(doneButtonWasPressed)
-        cancelBarButton.target = self
-        cancelBarButton.action = #selector(cancelButtonWasPressed)
+        nameCell.textField.addTarget(self, action: #selector(updateName), for: .editingChanged)
     }
     
     // MARK: - Other Views
-    
-    private let doneBarButton = UIBarButtonItem(barButtonSystemItem: .done, target: nil, action: nil)
-    
-    private lazy var cancelBarButton = UIBarButtonItem(barButtonSystemItem: .cancel, target: nil, action: nil)
-    
-    private let activityIndicatorBarItem = UIBarButtonItem(customView: UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 20, height: 20)))
     
     let profilePhotoEditorView: ProfilePhotoEditorView = {
         let view = Bundle.main.loadNibNamed("ProfilePhotoEditorView", owner: self, options: nil)![0] as! ProfilePhotoEditorView
@@ -238,12 +225,12 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     
     // MARK: - Actions
     
-    @objc func doneButtonWasPressed() {
-        sendUpdates()
+    @objc func updateName() {
+        member?.name = nameCell.textField.text
     }
     
-    @objc func cancelButtonWasPressed() {
-        self.dismiss(animated: true)
+    @objc override func doneButtonWasPressed() {
+        sendUpdates()
     }
     
     @objc func groupPrivacySwitchDidChange(_ sender: UISwitch) {
@@ -303,7 +290,7 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
     
     func sendUpdates() {
         guard let member = member else { return }
-        setButtons(for: .submitting)
+        submissionStatus = .submitting
         
         let dispatchGroup = DispatchGroup()
         
@@ -330,25 +317,10 @@ class ProfileEditorViewController: UITableViewController, UINavigationController
         }
         
         dispatchGroup.notify(queue: .main) { [weak self] in
-            self?.setButtons(for: .waitingForInput)
+            self?.submissionStatus = .submitted
             self?.dismiss(animated: true)
         }
 
-    }
-    
-    private func setButtons(for status: SubmissionStatus) {
-        switch status {
-        case .waitingForInput:
-            cancelBarButton.isEnabled = true
-            doneBarButton.isEnabled = true
-            navigationItem.setRightBarButton(cancelBarButton, animated: true)
-            (activityIndicatorBarItem.customView as! UIActivityIndicatorView).stopAnimating()
-        case .submitting:
-            cancelBarButton.isEnabled = false
-            navigationItem.setRightBarButton(activityIndicatorBarItem, animated: true)
-            (activityIndicatorBarItem.customView as! UIActivityIndicatorView).startAnimating()
-        default: break
-        }
     }
     
 }

@@ -2,13 +2,13 @@
 //  GroupViewController.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 2/13/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
 
-class GroupViewController: UITableViewController {
+class GroupViewController: AsyncTableViewController {
     
     private var eventData = [Event]()
     
@@ -17,7 +17,6 @@ class GroupViewController: UITableViewController {
     init(groupId: Int) {
         self.targetGroupId = groupId
         super.init(style: .grouped)
-        performNetworkRequest()
     }
     
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) is not supported") }
@@ -32,7 +31,7 @@ class GroupViewController: UITableViewController {
         didSet {
             tableView.beginUpdates()
             groupHeaderView.groupNameLabel.text = group?.title
-            groupHeaderView.groupLocationLabel.text = group?.location?.name
+            groupHeaderView.groupLocationLabel.text = group?.location.name
             groupHeaderView.groupCategoryLabel.text = group?.category.name
             aboutTableViewCell.textLabel?.text = group?.description
             tableView.endUpdates()
@@ -149,7 +148,7 @@ class GroupViewController: UITableViewController {
             let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarTableViewCell", for: indexPath) as! CalendarTableViewCell
             
             let event = eventData[indexPath.row]
-            cell.set(eventName: event.name, groupName: group!.title!, date: event.start, location: event.location.name)
+            cell.set(eventName: event.name, groupName: group!.title, date: event.start, location: event.location.name)
             return cell
         case .join:
             cell = joinButtonCell
@@ -208,8 +207,7 @@ class GroupViewController: UITableViewController {
         let editAction = UIAlertAction(title: "Edit Group", style: .default, handler: {
             action in
             
-            let editGroupViewController = GroupEditorViewController(style: .grouped)
-            editGroupViewController.group = self.group
+            let editGroupViewController = GroupEditorViewController(for: .editing(group: self.group!))
             let navigationController = UINavigationController(rootViewController: editGroupViewController)
             self.present(navigationController, animated: true)
         })
@@ -263,59 +261,56 @@ class GroupViewController: UITableViewController {
     
     private func performNetworkRequest(completion: (()->())? = nil) {
         
-        let dispatchGroup = DispatchGroup()
-        dispatchGroup.enter()
-        networkManager.read(group: targetGroupId) { [weak self] group, error in
-            guard error == nil else {
-                print(error!)
-                dispatchGroup.leave()
+        // temporary items that are set all at once
+        var tGroup: Group?
+        var tIsMember: Bool?
+        var tIsOwner: Bool?
+        var tEvents: [Event]?
+        
+        let dg = DispatchGroup()
+        dg.enter()
+        networkManager.read(group: targetGroupId) { [weak self] error, newGroup in
+            guard self != nil && self!.responseErrorHandler(error, newGroup) else { dg.leave(); return }
+            tGroup = newGroup
+            dg.leave()
+        }
+        
+        dg.enter()
+        networkManager.checkSelfIsMember(withinGroup: targetGroupId) { [weak self] error, value in
+            guard self != nil && self!.responseErrorHandler(error, value) else { dg.leave(); return }
+            tIsMember = value!["value"]!
+            dg.leave()
+        }
+        
+        dg.enter()
+        networkManager.checkSelfIsOwner(withinGroup: targetGroupId) { [weak self] error, value in
+            guard self != nil && self!.responseErrorHandler(error, value) else { dg.leave(); return }
+            tIsOwner = value!["value"]!
+            
+            dg.enter()
+            self?.networkManager.getEvents(forGroup: self!.targetGroupId) { [weak self] error, newEvents in
+                guard self != nil && self!.responseErrorHandler(error, newEvents) else { dg.leave(); return }
+                tEvents = newEvents
+                dg.leave()
+            }
+            dg.leave()
+        }
+
+        dg.notify(queue: .main) { [weak self] in
+            guard let group = tGroup else {
+                completion?()
+                self?.navigationController?.popViewController(animated: true);
                 return
             }
             self?.group = group
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        networkManager.checkSelfIsMember(withinGroup: targetGroupId) { [weak self] value, error in
-            guard error == nil else {
-                print(error!)
-                dispatchGroup.leave()
-                return
-            }
-            guard let isMember = value else { return }
-            self?.isMember = isMember
-            dispatchGroup.leave()
-        }
-        
-        dispatchGroup.enter()
-        networkManager.checkSelfIsOwner(withinGroup: targetGroupId) { [weak self] value, error in
-            guard error == nil else {
-                print(error!)
-                dispatchGroup.leave()
-                return
-            }
-            guard let isOwner = value else { return }
-            self?.isOwner = isOwner
-            
-            dispatchGroup.enter()
-            self?.networkManager.getEvents(forGroup: self!.targetGroupId) { [weak self] error, events in
-                guard error == nil else {
-                    print(error!)
-                    dispatchGroup.leave()
-                    return
-                }
-                guard let events = events else { return }
+            if let isMember = tIsMember { self?.isMember = isMember }
+            if let isOwner = tIsOwner { self?.isOwner = isOwner }
+            if let events = tEvents {
                 self?.eventData = events
                 DispatchQueue.main.async { [weak self] in
                     self?.tableView.reloadSections(IndexSet(integer: Section.events.rawValue), with: .automatic)
                 }
-                dispatchGroup.leave()
             }
-            dispatchGroup.leave()
-        }
-
-        dispatchGroup.notify(queue: .main) { [weak self] in
-            self?.tableView.reloadData()
             completion?()
         }
     }

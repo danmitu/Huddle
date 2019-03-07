@@ -2,8 +2,8 @@
 //  NetworkManager.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 1/21/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 //  Source: https://medium.com/flawless-app-stories/writing-network-layer-in-swift-protocol-oriented-approach-4fa40ef1f908
 //
@@ -12,6 +12,7 @@ import UIKit
 
 enum NetworkResponse:String {
     case success
+    case networkError = "Please check your network connection."
     case authenticationError = "You need to be authenticated first."
     case badRequest = "Bad request"
     case outdated = "The url you requested is outdated."
@@ -35,152 +36,140 @@ struct NetworkManager {
     
     // MARK: - Do Stuff Methods
     
-    // MARK: Members
-    
-    func read(profile id: Int?, completion: @escaping (_ member: Member?, _ error: String?)->()) {
-        let routeToCall: HuddleApi = id == nil ? .membersRead : .membersReadUser(id: id!)
-        router.request(routeToCall) { data, response, error in
+    /// Send a request that might receive an error.
+    private func request(_ endpoint: HuddleApi, _ completion: @escaping (_ error: String?)->()) {
+        router.request(endpoint) { _, response, error in
             guard error == nil else {
-                completion(nil, "Please check your network connection.")
+                completion(NetworkResponse.networkError.rawValue)
+                print(error!)
                 return
             }
-            guard let jsonData = data else {
-                completion(nil, NetworkResponse.noData.rawValue)
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success: completion(nil)
+            case .failure(let errorStr): completion(errorStr)
+            }
+        }
+    }
+    
+    /// Send a request that might receive an error and gets some data.
+    private func request<T:Decodable>(_ endpoint: HuddleApi, _ completion: @escaping (_ error: String?, _ item: T?)->()) {
+        router.request(endpoint) { data, response, error in
+            guard error == nil else {
+                completion(NetworkResponse.networkError.rawValue, nil)
+                print(error!)
                 return
             }
-            
+            guard let data = data else {
+                completion(NetworkResponse.noData.rawValue, nil)
+                print(error!)
+                return
+            }
             let response = response as! HTTPURLResponse
             let result = self.handleNetworkResponse(response)
             switch result {
             case .success:
-                let member = try! JSONDecoder().decode(Member.self, from: jsonData)
-                completion(member, nil)
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
+                guard let decodedData = try? JSONDecoder().decode(T.self, from: data) else {
+                    completion(NetworkError.encodingFailed.rawValue, nil)
+                    return
+                }
+                completion(nil, decodedData)
+            case .failure(let errorStr):
+                completion(errorStr, nil)
             }
         }
+    }
+    
+    private func requestJson<T:Decodable>(_ endpoint: HuddleApi, _ completion: @escaping (_ error: String?, _ item: [String:T]?)->()) {
+        router.request(endpoint) { data, response, error in
+            guard error == nil else {
+                completion(NetworkResponse.networkError.rawValue, nil)
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                completion(NetworkResponse.noData.rawValue, nil)
+                print(NetworkResponse.noData.rawValue)
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as! [String:T] else {
+                    completion(NetworkResponse.unableToDecode.rawValue, nil)
+                    print(NetworkResponse.unableToDecode.rawValue)
+                    return
+                }
+                completion(nil, dict)
+            case .failure(let errorStr):
+                completion(errorStr, nil)
+            }
+        }
+    }
+    
+    /// Send a request that might receive an error and gets a json object (dictionary).
+    private func requestJsonArray<T:Decodable>(_ endpoint: HuddleApi, _ completion: @escaping (_ error: String?, _ item: [[String:T]]?)->()) {
+        router.request(endpoint) { data, response, error in
+            guard error == nil else {
+                completion(NetworkResponse.networkError.rawValue, nil)
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                completion(NetworkResponse.noData.rawValue, nil)
+                print(NetworkResponse.noData.rawValue)
+                return
+            }
+            let response = response as! HTTPURLResponse
+            let result = self.handleNetworkResponse(response)
+            switch result {
+            case .success:
+                guard let dict = try? JSONSerialization.jsonObject(with: data, options: []) as! [[String:T]] else {
+                    completion(NetworkResponse.unableToDecode.rawValue, nil)
+                    print(NetworkResponse.unableToDecode.rawValue)
+                    return
+                }
+                completion(nil, dict)
+            case .failure(let errorStr):
+                completion(errorStr, nil)
+            }
+        }
+    }
+    
+    // MARK: Members
+    
+    func read(profile id: Int?, _ completion: @escaping ( _ error: String?, _ member: Member?)->()) {
+        let endpoint: HuddleApi = id == nil ? .membersRead : .membersReadUser(id: id!)
+        request(endpoint, completion)
     }
     
     func update(member: Member, completion: @escaping (_ error: String?)->()) {
-        router.request(.membersUpdate(member: member)) { _, response, error in
-            guard error == nil else {
-                print(error!)
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.membersUpdate(member: member), completion)
     }
     
     func update(group: Group, completion: @escaping (_ error: String?)->()) {
-        router.request(.groupUpdate(group: group)) { _, response, error in
-            guard error == nil else {
-                print(error!)
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
-    }
-    
-    func checkLogin(completion: @escaping (_ result: Bool?)->()) {
-        router.request(.membersRead) { _, response, error in
-            guard error == nil else {
-                completion(nil)
-                return
-            }
-            let response = response as! HTTPURLResponse
-            switch response.statusCode {
-            case 200...299: completion(true)
-            case 401...500: completion(false)
-            default: completion(nil)
-            }
-        }
+        request(.groupUpdate(group: group), completion)
     }
     
     func login(email: String, password: String, completion: @escaping (_ error: String?)->()) {
-        router.request(.membersLogin(email: email, password: password)) { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.membersLogin(email: email, password: password), completion)
     }
     
     func logout(completion: @escaping (_ error: String?)->()) {
-        router.request(.membersLogout, completion: { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        })
+        request(.membersLogout, completion)
     }
     
     func createMember(email: String, password: String, fullName: String,  completion: @escaping (_ error: String?)->()) {
-        router.request(.membersCreateAccount(email: email, password: password, fullName: fullName)) { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.membersCreateAccount(email: email, password: password, fullName: fullName), completion)
     }
     
     func updateMemberCredentials(oldPassword: String, newPassword: String, completion: @escaping (_ error: String?)->()) {
-        router.request(.membersUpdatePassword(oldPassword: oldPassword, newPassword: newPassword)) { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.membersUpdatePassword(oldPassword: oldPassword, newPassword: newPassword), completion)
     }
     
-    func get(profileImageForMember memberId: Int?, completion: @escaping (_ image: UIImage?, _ error: String?)->()) {
+    func get(profileImageForMember memberId: Int?, completion: @escaping (_ error: String?, _ image: UIImage?)->()) {
         let endpoint: HuddleApi
         
         switch memberId {
@@ -190,395 +179,123 @@ struct NetworkManager {
         
         router.request(endpoint, completion: { data, response, error in
             guard error == nil else {
-                completion(nil, "Please check your network connection.")
+                completion(NetworkResponse.networkError.rawValue, nil)
+                print(error!)
+                return
+            }
+            guard let data = data else {
+                completion(NetworkResponse.noData.rawValue, nil)
+                print(error!)
                 return
             }
             let response = response as! HTTPURLResponse
             let result = self.handleNetworkResponse(response)
             switch result {
             case .success:
-                let image = UIImage(data: data!) ?? nil
-                completion(image, nil)
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
+                guard let image = UIImage(data: data) else {
+                    completion(NetworkError.encodingFailed.rawValue, nil)
+                    return
+                }
+                completion(nil, image)
+            case .failure(let errorStr):
+                completion(errorStr, nil)
             }
         })
     }
     
     func upload(memberProfileImage image: UIImage, completion: @escaping (_ error: String?)->()) {
         let media = Media(withImageAsJPEG: image)!
-        router.request(.membersProfileImageUpload(media: media)) { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.membersProfileImageUpload(media: media), completion)
     }
     
     // MARK: Events
     
     func read(event id: Int, _ completion: @escaping (_ error: String?, _ event: Event?)->()) {
-        router.request(.eventsRead(eventId: id)) { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.", nil)
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                guard let event = try? JSONDecoder().decode(Event.self, from: data!) else {
-                    completion(NetworkError.encodingFailed.rawValue, nil)
-                    return
-                }
-                completion(nil, event)
-            case .failure(let networkFailureError):
-                completion(networkFailureError, nil)
-            }
-        }
+        request(.eventsRead(eventId: id), completion)
     }
     
     func createEvent(groupId: Int, title: String, description: String, location: String, latitude: Double, longitude: Double, start: Date, end: Date, _ completion: @escaping (_ error: String?)->()) {
         let startString = PreferredDateFormat.describe(start, using: .format1)!
         let endString = PreferredDateFormat.describe(end, using: .format1)!
         let endpoint = HuddleApi.eventsCreate(groupId: groupId, title: title, description: description, location: location, latitude: latitude, longitude: longitude, start: startString, end: endString)
-        router.request(endpoint) { _, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-            
-        }
+        request(endpoint, completion)
     }
     
     func update(event: Event, _ completion: @escaping (_ error: String?)->()) {
-        router.request(.eventsUpdate(event: event)) { data, response, error in
-            guard error == nil else { completion("Please check your network connection."); return }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.eventsUpdate(event: event), completion)
     }
     
     func delete(event id: Int, _ completion: @escaping (_ error: String?)->()) {
-        router.request(.eventsDelete(eventId: id)) { data, response, error in
-            guard error == nil else { completion("Please check your network connection."); return }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.eventsDelete(eventId: id), completion)
     }
     
     func setRsvp(forEvent id: Int, to value: Bool, _ completion: @escaping (_ error: String?)->()) {
-        router.request(.eventsRSVP(eventId: id, status: value)) { data, response, error in
-            guard error == nil else { completion("Please check your network connection."); return }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-            }
-        }
+        request(.eventsRSVP(eventId: id, status: value), completion)
     }
     
     func getCalendar(_ completion: @escaping (_ error: String?, _ event: [Event]?)->()) {
-        router.request(.eventsCalendar) { data, response , error in
-            guard error == nil else {
-                completion("Please check your network connection.", nil)
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                guard let events = try? JSONDecoder().decode([Event].self, from: data!) else {
-                    completion(NetworkError.encodingFailed.rawValue, nil)
-                    return
-                }
-                completion(nil, events)
-            case .failure(let networkFailureError):
-                completion(networkFailureError, nil)
-            }
-        }
+        request(.eventsCalendar, completion)
     }
     
     func getEvents(forGroup id: Int, _ completion: @escaping (_ error: String?, _ groups: [Event]?)->()) {
-        router.request(.eventsForGroup(groupId: id)) { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.", nil)
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                guard let events = try? JSONDecoder().decode([Event].self, from: data!) else {
-                    completion(NetworkError.encodingFailed.rawValue, nil)
-                    return
-                }
-                completion(nil, events)
-            case .failure(let networkFailureError):
-                completion(networkFailureError, nil)
-            }
-        }
+        request(.eventsForGroup(groupId: id), completion)
     }
     
     
     // MARK: Groups
     
-    func getGroups(forMember id: Int?, completion: @escaping (_ groups: [Group]?, _ error: String?)->()) {
+    func getGroups(forMember id: Int?, completion: @escaping (_ error: String?, _ groups: [Group]?)->()) {
         let routeToCall: HuddleApi = id == nil ? .groupsMine : .groupsOther(id: id!)
-        router.request(routeToCall, completion: { data, response, error in
-            guard error == nil else {
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            guard let jsonData = data else {
-                completion(nil, NetworkResponse.noData.rawValue)
-                return
-            }
-            
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                if let groups = try? JSONDecoder().decode([Group].self, from: jsonData) {
-                    completion(groups, nil)
-                } else {
-                    completion(nil, nil)
-                }
-                return
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
-                return
-            }
-        })
+        request(routeToCall, completion)
     }
     
-    func read(group id: Int, completion: @escaping (_ group: Group?, _ error: String?)->()) {
-        
-        router.request(.groupsRead(groupId: id)) { data, response, error in
-            guard error == nil else {
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            guard let jsonData = data else {
-                completion(nil, NetworkResponse.noData.rawValue)
-                return
-            }
-            
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                if let group = try? JSONDecoder().decode(Group.self, from: jsonData) {
-                    completion(group, nil)
-                } else {
-                    completion(nil, nil)
-                }
-                return
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
-            }
-        }
+    func read(group id: Int, completion: @escaping (_ error: String?, _ group: Group?)->()) {
+        request(.groupsRead(groupId: id), completion)
     }
     
+    func createGroup(title: String, description: String, locationName: String, latitude: Double, longitude: Double, category: Category, completion: @escaping (_ error: String?)->()) {
+        let endpoint: HuddleApi = .groupsCreate(title: title,
+                                                description: description,
+                                                locationName: locationName,
+                                                latitude: latitude,
+                                                longitude: longitude,
+                                                category: category.rawValue)
+       request(endpoint, completion)
+    }
     
     func join(group id: Int, completion: @escaping (_ error: String?)->()) {
-        router.request(.groupsJoin(groupId: id), completion: { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-                return
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-                return
-            }
-        })
+        request(.groupsJoin(groupId: id), completion)
     }
     
     func removeSelf(fromGroup id: Int, completion: @escaping (_ error: String?)->()) {
-        router.request(.groupsRemoveMe(groupId: id), completion: { data, response, error in
-            guard error == nil else {
-                completion("Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                completion(nil)
-                return
-            case .failure(let networkFailureError):
-                completion(networkFailureError)
-                return
-            }
-        })
+        request(.groupsRemoveMe(groupId: id), completion)
     }
     
-    func checkSelfIsMember(withinGroup id: Int, completion: @escaping (_ value: Bool?, _ error: String?)->()) {
-        router.request(.groupsIsMember(groupId: id)) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                let value = String(String(bytes: data!, encoding: .utf8)!.dropLast(1)).bool!
-                completion(value, nil)
-                return
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
-                return
-            }
-        }
+    func checkSelfIsMember(withinGroup id: Int, completion: @escaping (_ error: String?, _ value: [String:Bool]?)->()) {
+        requestJson(.groupsIsMember(groupId: id), completion)
     }
     
-    func checkSelfIsOwner(withinGroup id: Int, completion: @escaping (_ value: Bool?, _ error: String?)->()) {
-        router.request(.groupsIsOwner(groupId: id)) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                let value = String(String(bytes: data!, encoding: .utf8)!.dropLast(1)).bool!
-                completion(value, nil)
-                return
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
-                return
-            }
-        }
+    func checkSelfIsOwner(withinGroup id: Int, completion: @escaping (_ error: String?, _ value: [String:Bool]?)->()) {
+        requestJson(.groupsIsOwner(groupId: id), completion)
+//        request(.groupsIsOwner(groupId: id), completion)
     }
     
-    func getGroupMembers(for id: Int, completion: @escaping (_ groups: [Member]?, _ error: String?)->()) {
-        router.request(.groupMembers(groupId: id)) { data, response, error in
-            guard error == nil else {
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            guard let data = data else {
-                completion(nil, NetworkResponse.noData.rawValue)
-                return
-            }
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                if let members = try? JSONDecoder().decode([Member].self, from: data) {
-                    completion(members, nil)
-                } else {
-                    completion(nil, nil)
-                }
-                return
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
-                return
-            }
-
-        }
+    func getGroupMembers(for id: Int, completion: @escaping (_ error: String?, _ groups: [Member]?)->()) {
+        request(.groupMembers(groupId: id), completion)
     }
     
-    func searchForGroups(id: Int, radius: Int?, completion: @escaping (_ groups: [Group]?, _ error: String?)->()) {
-        router.request(.groupSearch(category: id, radius: radius), completion: { data, response, error in
-            guard error == nil else {
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            guard let jsonData = data else {
-                completion(nil, NetworkResponse.noData.rawValue)
-                return
-            }
-            
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            switch result {
-            case .success:
-                if let groups = try? JSONDecoder().decode([Group].self, from: jsonData) {
-                    completion(groups, nil)
-                } else {
-                    completion(nil, nil)
-                }
-                return
-            case .failure(let networkFailureError):
-                completion(nil, networkFailureError)
-                return
-            }
-        })
+    func searchForGroups(id: Int, radius: Int?, completion: @escaping (_ error: String?, _ groups: [Group]?)->()) {
+        request(.groupSearch(category: id, radius: radius), completion)
     }
     
+    func delete(group id: Int, completion: @escaping (_ error: String?)->()) {
+        request(.groupDelete(groupId: id), completion)
+    }
     
     // MARK: Categories
     
-    func getAllCategories(completion: @escaping (_ categories: [Int]?, _ error: String?)->()) {
-        router.request(.categoriesAll) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                completion(nil, "Please check your network connection.")
-                return
-            }
-            guard let data = data else {
-                print(NetworkResponse.noData.rawValue)
-                completion(nil, NetworkResponse.noData.rawValue)
-                return
-            }
-            guard let dictionary = try? JSONSerialization.jsonObject(with: data, options: []) as! [[String:Int]] else {
-                print(NetworkResponse.unableToDecode.rawValue)
-                completion(nil, NetworkResponse.unableToDecode.rawValue)
-                return
-            }
-            
-            let response = response as! HTTPURLResponse
-            let result = self.handleNetworkResponse(response)
-            let categories = dictionary.map({ $0["id"]! })
-            switch result {
-            case .success:
-                completion(categories, nil)
-            case .failure(let errorString):
-                completion(nil, errorString)
-            }
-        }
+    func getAllCategories(completion: @escaping (_ error: String?, _ categories: [[String:Int]]?)->()) {
+        requestJsonArray(.categoriesAll, completion)
     }
     
     // MARK: - Helpers
@@ -593,4 +310,3 @@ struct NetworkManager {
         }
     }
 }
-

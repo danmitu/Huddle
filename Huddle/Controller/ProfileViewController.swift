@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ProfileViewController: UITableViewController {
+class ProfileViewController: AsyncTableViewController {
     
     /// - Parameter profileOwnerId: Needed if this represents a public profile. `nil` by default meaning this is the user's profile.
     init(profileOwnerId: Int? = nil) {
@@ -39,18 +39,32 @@ class ProfileViewController: UITableViewController {
         
     private var member: Member? {
         didSet {
-            tableView.beginUpdates()
-            detailedProfilePhotoView.profileNameLabel.text = member?.name
-            detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation?.name ?? ""
-            aboutTableViewCell.textLabel?.text = member?.bio
-            detailedProfilePhotoView.profilePhotoImageView.image = member?.profilePhoto ?? UIImage(named: "User Profile Placeholder")!
-            tableView.endUpdates()
+            guard member != nil else { return }
+
+            detailedProfilePhotoView.profileNameLabel.text = member!.name
+            
+            if member!.publicLocation {
+                detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation!.name
+            } else {
+                detailedProfilePhotoView.locationNameLabel.text = ""
+            }
+            
+            aboutTableViewCell.textLabel?.text = member!.bio
+            detailedProfilePhotoView.profilePhotoImageView.image = member!.profilePhoto ?? UIImage(named: "User Profile Placeholder")!
         }
     }
 
     private var joinedGroups = [Group]() {
         didSet {
             self.tableView.reloadSections(IndexSet(integer: Section.groups.rawValue), with: UITableView.RowAnimation.automatic)
+        }
+    }
+    
+    private var numberGroups: Int {
+        if let member = member {
+            return member.publicGroup ? joinedGroups.count : 0
+        } else {
+            return 0
         }
     }
     
@@ -132,7 +146,7 @@ class ProfileViewController: UITableViewController {
         case .about:
             return 1
         case .groups:
-            return joinedGroups.count
+            return numberGroups
         case .logout:
             switch owner {
             case .personalProfile: return 1
@@ -220,34 +234,47 @@ class ProfileViewController: UITableViewController {
         case .publicProfile(id: let publicId): id = publicId
         }
         
-        let dispatchGroup = DispatchGroup()
+        // temp values
+        var tMember: Member?
+        var tGroups: [Group]?
+        var tImage: UIImage?
         
-        dispatchGroup.enter()
-        networkManager.read(profile: id) { member, error in
-            if let error = error { print(error) }
-            self.member = member
-            dispatchGroup.leave()
+        let dg = DispatchGroup()
+        dg.enter()
+        networkManager.read(profile: id) { [weak self] error, member in
+            guard self != nil && self!.responseErrorHandler(error, member) else { return }
+            tMember = member
+            dg.leave()
         }
         
-        dispatchGroup.enter()
-        networkManager.getGroups(forMember: id) { groups, error in
-            if let error = error { print(error) }
-            self.joinedGroups = groups ?? [Group]()
-            dispatchGroup.leave()
+        dg.enter()
+        networkManager.getGroups(forMember: id) { [weak self] error, groups in
+            guard self != nil && self!.responseErrorHandler(error, groups) else { return }
+            tGroups = groups
+            dg.leave()
         }
         
-        dispatchGroup.enter()
-        networkManager.get(profileImageForMember: id) { [weak self] image, error in
-            if let error = error { print(error) }
-            self?.member?.profilePhoto = image
-            dispatchGroup.leave()
+        dg.enter()
+        networkManager.get(profileImageForMember: id) { [weak self] error, image in
+            guard self != nil else { return }
+            tImage = image
+            dg.leave()
         }
         
-        dispatchGroup.notify(queue: .main) {
+        dg.notify(queue: .main) { [weak self] in
+            guard self != nil else { return }
+            
+            if let newMember = tMember {
+                self?.member = newMember
+            }
+            if let groups = tGroups {
+                self?.joinedGroups = groups
+            }
+            if let image = tImage {
+                self?.member?.profilePhoto = image
+            }
             completion?()
         }
     }
-    
-    
     
 }

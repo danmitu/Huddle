@@ -2,8 +2,8 @@
 //  LogInViewController.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 1/23/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -123,9 +123,6 @@ class LoginViewController: UIViewController {
         loginItemsStackView.addArrangedSubview(passwordTextField)
         loginItemsStackView.addArrangedSubview(loginButton)
         loginItemsStackView.addArrangedSubview(createAccountButton)
-        // Slack discussion on Jan 30th...
-        // We are removing the recover password option for now!
-        //        loginItems.addArrangedSubview(resetButton)
         self.view.addSubview(loginItemsStackView)
         logoImageViewContainer.addSubview(logoImageView)
         self.view.addSubview(logoImageViewContainer)
@@ -175,7 +172,7 @@ class LoginViewController: UIViewController {
     @objc func attemptLogin(sender: UIButton) {
         guard fieldsAreValid else { return }
         
-        networkManager.login(email: emailTextField.text!, password: passwordTextField.text!) { error in
+        networkManager.login(email: emailTextField.text!, password: passwordTextField.text!) { error in    
             guard error == nil else {
                 OkPresenter(title: "Login Failed",
                             message: "\(error!)",

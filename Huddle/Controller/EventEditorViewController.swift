@@ -2,14 +2,12 @@
 //  EventEditorViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 2/22/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
 import MapKit
-
-typealias Completer = ()->Void
 
 fileprivate struct EventForm {
     
@@ -52,8 +50,8 @@ fileprivate struct EventForm {
     
     func merge(with previousEvent: Event) -> Event {
         
-        let namedLocation = NamedLocation(id: previousEvent.id,
-                                          name: self.locationName ?? previousEvent.name,
+        let namedLocation = NamedLocation(id: previousEvent.location.id,
+                                          name: self.locationName ?? previousEvent.location.name,
                                           location: self.location ?? previousEvent.location.location)
         
         return Event(id: previousEvent.id,
@@ -108,10 +106,6 @@ class EventEditorViewController: FormTableViewController {
             }
         }()
         
-        doneBarButton.target = self
-        doneBarButton.action = #selector(doneButtonWasPressed)
-        cancelBarButton.target = self
-        cancelBarButton.action = #selector(cancelButtonWasPressed)
         nameCell.textField.addTarget(self, action: #selector(updateName), for: .editingChanged)
     }
     
@@ -165,7 +159,7 @@ class EventEditorViewController: FormTableViewController {
         return cell
     }()
     
-    private func setStartDateView(_ date: Date) {
+    private func setStartDateView(_ date: Date?) {
         setView(date: date, for: startDateCell)
     }
     
@@ -175,22 +169,25 @@ class EventEditorViewController: FormTableViewController {
         return cell
     }()
     
-    private func setEndDateView(_ date: Date) {
+    private func setEndDateView(_ date: Date?) {
         setView(date: date, for: endDateCell)
     }
     
-    private func setView(date: Date, for cell: UITableViewCell) {
+    private func setView(date: Date?, for cell: UITableViewCell) {
+        guard let date = date else { cell.detailTextLabel!.text = ""; return }
         cell.detailTextLabel!.text = PreferredDateFormat.describe(date, using: .format2)
     }
     
     private func startDateSelected() {
+        setStartDateView(Date())
         insertDatePicker(below: startDateCell, minimumDate: Date(), maximumDate: eventForm.end)
     }
     
     private func endDateSelected() {
+        setEndDateView(Date())
         insertDatePicker(below: endDateCell, minimumDate: eventForm.start, maximumDate: nil)
     }
-    
+
     // MARK: - Date Picker
     
     private var activeDatePicker: (parentCell: UITableViewCell, datePickerCell: DatePickerTableViewCell)?
@@ -203,9 +200,25 @@ class EventEditorViewController: FormTableViewController {
         if activeDatePicker.parentCell == startDateCell {
             setStartDateView(selectedDate)
             eventForm.start = selectedDate
+            if let endDate = eventForm.end {
+                if endDate < selectedDate {
+                    setEndDateView(nil)
+                    eventForm.end = nil
+                } else {
+                    print("\(endDate) vs \(selectedDate)")
+                }
+            }
         } else if activeDatePicker.parentCell == endDateCell {
             setEndDateView(selectedDate)
             eventForm.end = selectedDate
+            if let startDate = eventForm.start {
+                if startDate > selectedDate {
+                    setStartDateView(nil)
+                    eventForm.start = nil
+                } else {
+                    print("\(startDate) vs \(selectedDate)")
+                }
+            }
         } else {
             fatalError("Unreachable")
         }
@@ -301,7 +314,7 @@ class EventEditorViewController: FormTableViewController {
         }).present(in: self)
     }
     
-    // MARK: Table View Stuff
+    // MARK: - Table View Stuff
     
     private lazy var cells: [UITableViewCell] = {
         var cells = [nameCell, descriptionCell, locationCell, startDateCell, endDateCell]
@@ -397,6 +410,5 @@ class EventEditorViewController: FormTableViewController {
             self?.dismiss(animated: true)
         }
     }
-    
     
 }

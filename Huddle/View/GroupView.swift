@@ -2,8 +2,8 @@
 //  GroupView.swift
 //  Huddle
 //
-//  Created by Gerry Ashlock on 2/26/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -68,7 +68,6 @@ class GroupView: UIStackView {
             distanceText = String(format: "%d miles away", Int(distance))
         }
         groupDistanceLabel.text = distanceText
-//        nameAndDistanceTextLabel.text = String(format: "\(groupName.uppercased()): (%.02f miles away)", distance)
     }
     
 }

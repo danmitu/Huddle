@@ -2,10 +2,9 @@
 //  BaseViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 1/18/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
-
 
 import UIKit
 
@@ -74,13 +73,10 @@ class BaseViewController: UITabBarController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        networkManager.checkLogin() { result in
-            guard let isLoggedIn = result else {
-                OkPresenter(title: "Network Error", message: "Please check your network settings.", handler: nil).present(in: self)
+        networkManager.read(profile: nil) { [weak self] error, _ in
+            guard error == nil else {
+                self!.present(LoginViewController(), animated: true)
                 return
-            }
-            if !isLoggedIn {
-                self.present(LoginViewController(), animated: true)
             }
         }
     }

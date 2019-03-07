@@ -2,7 +2,8 @@
 //  ResetPasswordViewController.swift
 //  Huddle
 //
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit

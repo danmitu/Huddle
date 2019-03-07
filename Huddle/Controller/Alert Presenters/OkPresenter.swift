@@ -2,8 +2,8 @@
 //  OkPresenter.swift
 //  Inbox
 //
-//  Created by Dan Mitu on 9/11/18.
-//  Copyright © 2018 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit

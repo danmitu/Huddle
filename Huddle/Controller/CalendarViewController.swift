@@ -2,13 +2,13 @@
 //  CalendarViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 1/18/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
 
-class CalendarViewController: UITableViewController {
+class CalendarViewController: AsyncTableViewController {
     
     private let networkManager = NetworkManager()
     
@@ -22,6 +22,13 @@ class CalendarViewController: UITableViewController {
         performNetworkRequest()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if !self.isBeingPresented {
+            performNetworkRequest()
+        }
+    }
+    
     // MARK: - Table View Datasource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -30,11 +37,8 @@ class CalendarViewController: UITableViewController {
     
      override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarTableViewCell", for: indexPath) as! CalendarTableViewCell
-        
         let event = events![indexPath.row]
-        // TODO: Fix group
-        cell.set(eventName: event.name, groupName: "group name", date: event.start, location: event.location.name)
-
+        cell.set(eventName: event.name, groupName: "", date: event.start, location: event.location.name)
         return cell
      }
     
@@ -45,7 +49,9 @@ class CalendarViewController: UITableViewController {
     
     private func performNetworkRequest() {
         networkManager.getCalendar() { [weak self] error, events in
-            self?.events = events
+            guard self != nil && self!.responseErrorHandler(error, events) else { return }
+            self?.events = events!
+            self?.tableView.reloadData()
         }
     }
     

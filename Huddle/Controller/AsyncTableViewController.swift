@@ -2,8 +2,8 @@
 //  AsyncTableViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 3/1/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -29,4 +29,21 @@ class AsyncTableViewController: UITableViewController {
         }
     }
     
+    /// Displays an error with the error string if it exists, or if the data is nil. Then it pops the current view controllers.
+    /// Returns true if everything is good to go. 
+    func responseErrorHandler<T>(_ error: String?, _ data: T?) -> Bool {
+        if let error = error {
+            displayError(message: error) { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            return false
+        }
+        guard data != nil else {
+            displayError(message: "There was an error loading this page.") { [weak self] in
+                self?.navigationController?.popViewController(animated: true)
+            }
+            return false
+        }
+        return true
+    }
 }

@@ -2,8 +2,8 @@
 //  ExploreViewController.swift
 //  Huddle
 //
-//  Created by Dan Mitu on 2/27/19.
-//  Copyright © 2019 Dan Mitu. All rights reserved.
+//  Team Atlas - OSU Capstone - Winter '19
+//  Gerry Ashlock and Dan Mitu
 //
 
 import UIKit
@@ -17,14 +17,21 @@ class ExploreViewController: AsyncTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(launchNewGroup))
         self.navigationItem.title = "Pick an Interest"
         isLoadingDisplay = true
-        networkManager.getAllCategories() { [weak self] categories, error in
-            guard self != nil else { return }
-            self!.categories = categories!.map({ Category(rawValue: $0)! })
+        networkManager.getAllCategories() { [weak self] error, categories in
+            guard self != nil && self!.responseErrorHandler(error, categories) else { return }
+            self!.categories = categories!.flatMap({ $0 }).map({ Category(rawValue: $0.value)! })
             self!.isLoadingDisplay = false
             self!.tableView.reloadData()
         }
+    }
+    
+    @objc private func launchNewGroup() {
+        let groupVc = GroupEditorViewController(for: .creating)
+        let navCon = UINavigationController(rootViewController: groupVc)
+        present(navCon, animated: true)
     }
 
     // MARK: - Table view data source
