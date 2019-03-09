@@ -11,7 +11,7 @@ import UIKit
 class CategoryViewController: UITableViewController, UINavigationControllerDelegate {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return Category.allCases.count - 1
+        return Category.allCases.count - 2
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

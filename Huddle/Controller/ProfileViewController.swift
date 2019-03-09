@@ -43,11 +43,22 @@ class ProfileViewController: AsyncTableViewController {
 
             detailedProfilePhotoView.profileNameLabel.text = member!.name
             
-            if member!.publicLocation {
+            switch owner {
+            case .publicProfile:
+                
+                if member!.publicLocation {
+                    detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation!.name
+                } else {
+                    detailedProfilePhotoView.locationNameLabel.text = ""
+                }
+            case .personalProfile:
                 detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation!.name
-            } else {
-                detailedProfilePhotoView.locationNameLabel.text = ""
             }
+//            if member!.publicLocation {
+//                detailedProfilePhotoView.locationNameLabel.text = member?.homeLocation!.name
+//            } else {
+//                detailedProfilePhotoView.locationNameLabel.text = ""
+//            }
             
             aboutTableViewCell.textLabel?.text = member!.bio
             detailedProfilePhotoView.profilePhotoImageView.image = member!.profilePhoto ?? UIImage(named: "User Profile Placeholder")!
@@ -62,7 +73,13 @@ class ProfileViewController: AsyncTableViewController {
     
     private var numberGroups: Int {
         if let member = member {
-            return member.publicGroup ? joinedGroups.count : 0
+            switch owner {
+            case .personalProfile:
+                return joinedGroups.count
+            case .publicProfile:
+                return member.publicGroup ? joinedGroups.count : 0
+            }
+//            return member.publicGroup ? joinedGroups.count : 0
         } else {
             return 0
         }

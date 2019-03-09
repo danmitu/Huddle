@@ -10,7 +10,6 @@ import UIKit
 
 class ExploreViewController: AsyncTableViewController {
 
-    private let networkManager = NetworkManager()
     
     private var categories: [Category]!
     
@@ -19,13 +18,7 @@ class ExploreViewController: AsyncTableViewController {
 
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "New Group", style: .plain, target: self, action: #selector(launchNewGroup))
         self.navigationItem.title = "Pick an Interest"
-        isLoadingDisplay = true
-        networkManager.getAllCategories() { [weak self] error, categories in
-            guard self != nil && self!.responseErrorHandler(error, categories) else { return }
-            self!.categories = categories!.flatMap({ $0 }).map({ Category(rawValue: $0.value)! })
-            self!.isLoadingDisplay = false
-            self!.tableView.reloadData()
-        }
+        self.categories = Category.allCases
     }
     
     @objc private func launchNewGroup() {
@@ -41,18 +34,18 @@ class ExploreViewController: AsyncTableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories!.count
+        return categories!.count - 2
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = UITableViewCell(style: .subtitle, reuseIdentifier: nil)
-        cell.textLabel?.text = categories[indexPath.row].name
-        cell.detailTextLabel?.text = categories[indexPath.row].description
+        cell.textLabel?.text = categories[indexPath.row + 1].name
+        cell.detailTextLabel?.text = categories[indexPath.row + 1].description
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let groupViewController = SearchGroupViewController(category: categories[indexPath.row].rawValue)
+        let groupViewController = SearchGroupViewController(category: categories[indexPath.row + 1].rawValue)
         navigationController!.pushViewController(groupViewController, animated: true)
     }
     

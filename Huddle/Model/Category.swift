@@ -10,9 +10,10 @@ import Foundation
 
 enum Category : Int, CaseIterable, Hashable {
     case none = 0
-    case category1 = 1
-    case category2 = 2
-    case category3 = 3
+    case social = 1
+    case careerBusiness = 2
+    case bookclub = 3
+    case fitness = 4
     case other
     
     var description : String {
@@ -20,12 +21,14 @@ enum Category : Int, CaseIterable, Hashable {
             switch(self) {
             case .none:
                 return "None"
-            case .category1:
-                return "Cat 1"
-            case .category2:
-                return "category 2"
-            case .category3:
-                return "Category is 3"
+            case .social:
+                return "Social Description"
+            case .careerBusiness:
+                return "Career And Business Description"
+            case .bookclub:
+                return "Book Clubs Description"
+            case .fitness:
+                return "Fitness Description"
             case .other:
                 return "Unknown"
             }
@@ -36,12 +39,14 @@ enum Category : Int, CaseIterable, Hashable {
             switch (self) {
             case .none:
                 return "None"
-            case .category1:
-                return "Category 1"
-            case .category2:
-                return "Category 2"
-            case .category3:
-                return "Category 3"
+            case .social:
+                return "Social"
+            case .careerBusiness:
+                return "Career And Business"
+            case .bookclub:
+                return "Book Clubs"
+            case .fitness:
+                return "Fitness"
             case .other:
                 return "Unknown"
             }

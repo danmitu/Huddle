@@ -42,7 +42,7 @@ class SearchGroupViewController: UITableViewController {
         self.category = Category(rawValue: category) ?? .other
         self.radius = radius
         super.init(style: .plain)
-        self.navigationItem.title = self.category.description
+        self.navigationItem.title = self.category.name
     }
     
     required init?(coder aDecoder: NSCoder) {
