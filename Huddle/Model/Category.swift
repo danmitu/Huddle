@@ -22,13 +22,13 @@ enum Category : Int, CaseIterable, Hashable {
             case .none:
                 return "None"
             case .social:
-                return "Social Description"
+                return "For the socialites."
             case .careerBusiness:
-                return "Career And Business Description"
+                return "Better yourself and build your network."
             case .bookclub:
-                return "Book Clubs Description"
+                return "Read and discuss."
             case .fitness:
-                return "Fitness Description"
+                return "Get healthy together."
             case .other:
                 return "Unknown"
             }
