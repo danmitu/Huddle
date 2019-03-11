@@ -40,6 +40,7 @@ class EventViewController: AsyncTableViewController {
         super.viewDidLoad()
         performNetworkRequest()
         tableView.tableHeaderView = headerView
+        tableView.backgroundColor = .white
         performNetworkRequest()
         rsvpButtonCell.button.addTarget(self, action: #selector(userDidPressRSVPButton), for: .touchUpInside)
     }
