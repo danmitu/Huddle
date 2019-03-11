@@ -179,12 +179,12 @@ class EventEditorViewController: FormTableViewController {
     }
     
     private func startDateSelected() {
-        setStartDateView(Date())
+        setStartDateView(eventForm.start ?? Date())
         insertDatePicker(below: startDateCell, minimumDate: Date(), maximumDate: eventForm.end)
     }
     
     private func endDateSelected() {
-        setEndDateView(Date())
+        setEndDateView(eventForm.end ?? Date())
         insertDatePicker(below: endDateCell, minimumDate: eventForm.start, maximumDate: nil)
     }
 
