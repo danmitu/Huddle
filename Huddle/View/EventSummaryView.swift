@@ -65,7 +65,13 @@ class EventSummaryView: UIStackView {
             dateString = dateFormatter.string(from: date)
         }
         
-        locationAndDateLabel.text = "\(dateString) at \(location)"
+        let hasValidLocation = location.rangeOfCharacter(from: CharacterSet.letters) != nil
+        if hasValidLocation {
+            locationAndDateLabel.text = "\(dateString) at \(location)"
+        } else {
+            locationAndDateLabel.text = "\(dateString)"
+        }
+
         self.groupNameLabel.text = groupName.uppercased()
         self.eventNameLabel.text = eventName
     }
