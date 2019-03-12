@@ -50,7 +50,7 @@ class CalendarViewController: AsyncTableViewController {
     private func performNetworkRequest() {
         networkManager.getCalendar() { [weak self] error, events in
             guard self != nil && self!.responseErrorHandler(error, events) else { return }
-            self?.events = events!
+            self?.events = events!.sorted { $0.start > $1.start }
             self?.tableView.reloadData()
         }
     }
